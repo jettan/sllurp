@@ -12,6 +12,16 @@ logger = logging.getLogger('sllurp')
 
 args = None
 
+class hexact(argparse.Action):
+    'An argparse.Action that handles hex string input'
+    def __call__(self,parser, namespace, values, option_string=None):
+        base = 10
+        if '0x' in values: base = 16
+        setattr(namespace, self.dest, int(values,base))
+        return
+    pass
+
+
 def finish (_):
     logger.info('total # of tags seen: {}'.format(tagReport))
     if reactor.running:
@@ -36,7 +46,8 @@ def access (proto):
             'WordPtr': 0,
             'AccessPassword': 0,
             'WriteDataWordCount': args.write_words,
-            'WriteData': '\xbe\xef', # XXX allow user-defined pattern
+            #'WriteData': '\xbe\xef', # XXX allow user-defined pattern
+            'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
         }
 
     return proto.startAccess(readWords=readSpecParam,
@@ -88,6 +99,9 @@ def parse_args ():
     op.add_argument('-w', '--write-words', type=int,
             help='Number of words to write to MB 0 WordPtr 0')
     parser.add_argument('-l', '--logfile')
+    # specify content to write
+    parser.add_argument('-c', '--write_content', action=hexact,
+            help='Content to write when using -w, example: 0xaabb, 0x1234')
 
     args = parser.parse_args()
 
