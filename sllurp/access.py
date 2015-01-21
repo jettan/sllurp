@@ -9,8 +9,9 @@ import sllurp.llrp as llrp
 
 tagReport = 0
 logger = logging.getLogger('sllurp')
-
+fac = None
 args = None
+flag = 1
 
 class hexact(argparse.Action):
     'An argparse.Action that handles hex string input'
@@ -46,7 +47,6 @@ def access (proto):
             'WordPtr': 0,
             'AccessPassword': 0,
             'WriteDataWordCount': args.write_words,
-            #'WriteData': '\xbe\xef', # XXX allow user-defined pattern
             'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
         }
 
@@ -62,6 +62,13 @@ def tagReportCallback (llrpMsg):
     tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
     if len(tags):
         logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+        global flag
+        if (flag == 1):
+            fac.stopAccess()
+            #fac.deleteAccess()
+            flag = 0
+        #fac.addAccess()
+        #fac.enableAccess()
     else:
         logger.info('no tags seen')
         return
@@ -131,6 +138,7 @@ def main ():
     onFinish = defer.Deferred()
     onFinish.addCallback(finish)
 
+    global fac
     fac = llrp.LLRPClientFactory(onFinish=onFinish,
             disconnect_when_done=True,
             modulation=args.modulation,
@@ -139,7 +147,8 @@ def main ():
             tag_population=args.population,
             start_inventory=True,
             tx_power=args.tx_power,
-            report_every_n_tags=args.every_n,
+            #report_every_n_tags=args.every_n,
+            report_every_n_tags=1,
             tag_content_selector={
                 'EnableROSpecID': False,
                 'EnableSpecIndex': False,
