@@ -619,7 +619,6 @@ class LLRPClient (LineReceiver):
                 'ID': 0,
                 'AccessSpecID': 0 # all AccessSpecs
             }}))
-        self.setState(LLRPClient.STATE_SENT_DELETE_ACCESSSPEC)
 
         # Next ACCESS_SPEC to send.
         count = int(1)
@@ -629,20 +628,11 @@ class LLRPClient (LineReceiver):
             'WordPtr': 0,
             'AccessPassword': 0,
             'WriteDataWordCount': count,
-            'WriteData': '\xff\xff', # XXX allow user-defined pattern
+            'WriteData': '\xff\xff',
         }
-        started = defer.Deferred()
-        started.addCallback(self._setState_wrapper,
-                LLRPClient.STATE_INVENTORYING)
-        started.addErrback(self.panic, 'DELETE_ACCESSSPEC failed')
-        self._deferreds['DELETE_ACCESSSPEC_RESPONSE'].append(started)
 
-        d = defer.Deferred()
-        d.addCallback(self.startAccess, None, writeSpecParam)
-        d.addErrback(self.panic, 'DELETE_ACCESSSPEC failed')
-
-        self._deferreds['DELETE_ACCESSSPEC_RESPONSE'].append(d)
-        return d
+        # Hackfix to chain startAccess to send_DELETE, since appending a deferred doesn't seem to work...
+        task.deferLater(reactor, 0, self.startAccess, readWords=None, writeWords=writeSpecParam)
 
     def startAccess (self, readWords=None, writeWords=None, target = None,
             *args):
