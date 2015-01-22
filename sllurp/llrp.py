@@ -321,6 +321,7 @@ class LLRPClient (LineReceiver):
             return
 
         logger.debug('in handleMessage({}), there are {} Deferreds'.format(msgName, len(self._deferreds[msgName])))
+        logger.info(self.state)
 
         #######
         # LLRP client state machine follows.  Beware: gets thorny.  Note the
@@ -585,6 +586,7 @@ class LLRPClient (LineReceiver):
         self._deferreds['ADD_ACCESSSPEC_RESPONSE'].append(onCompletion)
 
     def send_DISABLE_ACCESSSPEC (self, accessSpecID, onCompletion=None):
+        logger.info('Disabling current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DISABLE_ACCESSSPEC': {
                 'Ver':  1,
@@ -609,6 +611,7 @@ class LLRPClient (LineReceiver):
             self._deferreds['ENABLE_ACCESSSPEC_RESPONSE'].append(onCompletion)
 
     def send_DELETE_ACCESSSPEC (self, accessSpecID, onCompletion=None):
+        logger.info('Deleting current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DELETE_ACCESSSPEC': {
                 'Ver': 1,
@@ -618,8 +621,32 @@ class LLRPClient (LineReceiver):
             }}))
         self.setState(LLRPClient.STATE_SENT_DELETE_ACCESSSPEC)
 
+        # Next ACCESS_SPEC to send.
+        count = int(1)
+        writeSpecParam = {
+            'OpSpecID': 0,
+            'MB': 3,
+            'WordPtr': 0,
+            'AccessPassword': 0,
+            'WriteDataWordCount': count,
+            'WriteData': '\xff\xff', # XXX allow user-defined pattern
+        }
+        started = defer.Deferred()
+        started.addCallback(self._setState_wrapper,
+                LLRPClient.STATE_INVENTORYING)
+        started.addErrback(self.panic, 'DELETE_ACCESSSPEC failed')
+        self._deferreds['DELETE_ACCESSSPEC_RESPONSE'].append(started)
+
+        d = defer.Deferred()
+        d.addCallback(self.startAccess, None, writeSpecParam)
+        d.addErrback(self.panic, 'DELETE_ACCESSSPEC failed')
+
+        self._deferreds['DELETE_ACCESSSPEC_RESPONSE'].append(d)
+        return d
+
     def startAccess (self, readWords=None, writeWords=None, target = None,
             *args):
+        logger.info('startAccess entered')
         m = Message_struct['AccessSpec']
         if not target:
             target = {
