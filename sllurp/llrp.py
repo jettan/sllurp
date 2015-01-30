@@ -628,7 +628,7 @@ class LLRPClient (LineReceiver):
             'WordPtr': 0,
             'AccessPassword': 0,
             'WriteDataWordCount': count,
-            'WriteData': '\xff\xff',
+            'WriteData': '\x81\x00',
         }
 
         # Hackfix to chain startAccess to send_DELETE, since appending a deferred doesn't seem to work...
