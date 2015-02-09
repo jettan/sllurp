@@ -610,7 +610,9 @@ class LLRPClient (LineReceiver):
         if onCompletion:
             self._deferreds['ENABLE_ACCESSSPEC_RESPONSE'].append(onCompletion)
 
-    def send_DELETE_ACCESSSPEC (self, accessSpecID, onCompletion=None):
+
+    # TODO: Fix this super ugly placeholder argument!
+    def send_DELETE_ACCESSSPEC (self, placeHolderArg, readSpecParam, writeSpecParam, onCompletion=None):
         logger.info('Deleting current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DELETE_ACCESSSPEC': {
@@ -620,21 +622,11 @@ class LLRPClient (LineReceiver):
                 'AccessSpecID': 0 # all AccessSpecs
             }}))
 
-        # Next ACCESS_SPEC to send.
-        count = int(1)
-        writeSpecParam = {
-            'OpSpecID': 0,
-            'MB': 3,
-            'WordPtr': 0,
-            'AccessPassword': 0,
-            'WriteDataWordCount': count,
-            'WriteData': '\x81\x00',
-        }
-
         # Hackfix to chain startAccess to send_DELETE, since appending a deferred doesn't seem to work...
-        task.deferLater(reactor, 0, self.startAccess, readWords=None, writeWords=writeSpecParam)
+        task.deferLater(reactor, 0, self.startAccess, readWords=readSpecParam, writeWords=writeSpecParam)
 
-    def startAccess (self, readWords=None, writeWords=None, target = None,
+    # TODO: Fix this super ugly placeholder argument!
+    def startAccess (self, placeHolderArg=None, readWords=None, writeWords=None, target = None,
             *args):
         logger.info('startAccess entered')
         m = Message_struct['AccessSpec']
@@ -709,11 +701,11 @@ class LLRPClient (LineReceiver):
 
         self.send_ADD_ACCESSSPEC(accessSpec, onCompletion=d)
 
-    def stopAccess(self):
+    def nextAccess(self, readSpecPar, writeSpecPar):
         accessSpecID = 1
 
         d = defer.Deferred()
-        d.addCallback(self.send_DELETE_ACCESSSPEC, accessSpecID)
+        d.addCallback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar)
         d.addErrback(self.panic, 'DISABLE_ACCESSSPEC failed')
 
         self.send_DISABLE_ACCESSSPEC(1, onCompletion=d)
@@ -889,10 +881,10 @@ class LLRPClientFactory (ClientFactory):
 
         return proto
 
-    def stopAccess(self):
+    def nextAccess(self, readParam=None, writeParam=None):
         logger.info('Stopping current accessSpec.')
         for proto in self.protocols:
-            proto.stopAccess()
+            proto.nextAccess(readSpecPar=readParam, writeSpecPar=writeParam)
 
     def deleteAccess(self):
         logger.info('Deleting accessSpec.')
@@ -943,3 +935,4 @@ class LLRPClientFactory (ClientFactory):
             LLRPClient.getStateName(proto.state) for proto in self.protocols}
         logger.info('states: {}'.format(states))
         return states
+

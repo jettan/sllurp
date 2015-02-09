@@ -12,6 +12,7 @@ logger = logging.getLogger('sllurp')
 fac = None
 args = None
 flag = 1
+writeChar = 'a'
 
 class hexact(argparse.Action):
     'An argparse.Action that handles hex string input'
@@ -58,17 +59,34 @@ def politeShutdown (factory):
 
 def tagReportCallback (llrpMsg):
     """Function to run each time the reader reports seeing tags."""
+    
+    # *** Build the protocol here ***
+    # Next ACCESS_SPEC to send.
+    count = int(1)
+    
     global tagReport
     tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
     if len(tags):
         logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
         global flag
+        global writeChar
         if (flag == 1):
-            fac.stopAccess()
-            #fac.deleteAccess()
-            flag = 0
-        #fac.addAccess()
-        #fac.enableAccess()
+            writeData= 'a' + writeChar
+            logger.info('Sending writeData:')
+            logger.info(writeData)
+            writeSpecParam = {
+                'OpSpecID': 0,
+                'MB': 3,
+                'WordPtr': 0,
+                'AccessPassword': 0,
+                'WriteDataWordCount': count,
+                'WriteData': writeData,
+            }
+            writeChar = chr(ord(writeChar)+1)
+            fac.nextAccess(readParam=None, writeParam=writeSpecParam)
+        
+        # Change access spec every 5 reports.
+        flag = (flag + 1) % 5
     else:
         logger.info('no tags seen')
         return
@@ -147,8 +165,7 @@ def main ():
             tag_population=args.population,
             start_inventory=True,
             tx_power=args.tx_power,
-            #report_every_n_tags=args.every_n,
-            report_every_n_tags=1,
+            report_every_n_tags=args.every_n,
             tag_content_selector={
                 'EnableROSpecID': False,
                 'EnableSpecIndex': False,
