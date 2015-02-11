@@ -111,12 +111,14 @@ def tagReportCallback (llrpMsg):
                 fac.nextAccess(readParam=None, writeParam=writeSpecParam)
             
             # Change access spec every x reports.
-            flag = (flag + 1) % 10
+            flag = (flag + 1) % 2
     else:
         logger.info('no tags seen')
         return
     for tag in tags:
         tagReport += tag['TagSeenCount'][0]
+
+
 
 def parse_args ():
     global args
@@ -190,8 +192,8 @@ def main ():
             tag_population=args.population,
             start_inventory=True,
             tx_power=args.tx_power,
-            #report_every_n_tags=args.every_n,
-            report_every_n_tags=600,
+            report_every_n_tags=args.every_n,
+            #report_every_n_tags=600,
             tag_content_selector={
                 'EnableROSpecID': False,
                 'EnableSpecIndex': False,
