@@ -321,7 +321,7 @@ class LLRPClient (LineReceiver):
             return
 
         logger.debug('in handleMessage({}), there are {} Deferreds'.format(msgName, len(self._deferreds[msgName])))
-        logger.info(self.state)
+        #logger.info(self.state)
 
         #######
         # LLRP client state machine follows.  Beware: gets thorny.  Note the
