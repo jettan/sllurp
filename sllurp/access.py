@@ -13,7 +13,8 @@ fac = None
 args = None
 flag = 2
 writeChar = '`'
-checkChar = None
+checkCharhi = None
+checkCharlo = None
 
 class hexact(argparse.Action):
     'An argparse.Action that handles hex string input'
@@ -31,10 +32,12 @@ def finish (_):
         reactor.stop()
 
 def access (proto):
-    global checkChar
-    checkChar = ord(chr(args.write_content & 0xff))
+    global checkCharhi
+    global checkCharlo
+    checkCharhi = ord(chr(args.write_content >> 8))
+    checkCharlo = ord(chr(args.write_content & 0xff))
     logger.info('Ord checkchar: ')
-    logger.info(checkChar)
+    logger.info(str(checkCharhi) +  str(checkCharlo))
     
     readSpecParam = None
     if args.read_words:
@@ -75,20 +78,24 @@ def tagReportCallback (llrpMsg):
     if len(tags):
         #logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
         logger.info(tags[0]['EPC-96'][18:22])
+        
         global flag
         global writeChar
-        global checkChar
+        global checkCharlo
+        global checkCharhi
         
-        #logger.info(chr(checkChar))
-        readEPC = int(tags[0]['EPC-96'][20:22],16)
+        #logger.info(checkChar)
+        readEPChi = int(tags[0]['EPC-96'][18:20],16)
+        readEPClo = int(tags[0]['EPC-96'][20:22],16)
         
-        # If read epc substring is the same as the char we commanded the reader to write, it's time for the write the next char.
-        if (readEPC == checkChar):
+        # If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
+        if (readEPChi == checkCharhi and readEPClo == checkCharlo):
             if (flag == 1):
                 logger.info('Incrementing writeChar')
                 writeChar = chr(ord(writeChar)+1)
-                checkChar = ord(writeChar)
-                writeData= 'a' + writeChar
+                checkCharhi = ord(writeChar)
+                checkCharlo = ord(writeChar)
+                writeData= writeChar + writeChar
                 
                 logger.info('Sending writeData:')
                 logger.info(writeData)
@@ -184,7 +191,7 @@ def main ():
             start_inventory=True,
             tx_power=args.tx_power,
             #report_every_n_tags=args.every_n,
-            report_every_n_tags=500,
+            report_every_n_tags=600,
             tag_content_selector={
                 'EnableROSpecID': False,
                 'EnableSpecIndex': False,
