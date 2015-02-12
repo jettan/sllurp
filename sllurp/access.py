@@ -12,111 +12,119 @@ logger = logging.getLogger('sllurp')
 fac = None
 args = None
 flag = 2
-writeChar = '`'
 checkCharhi = None
 checkCharlo = None
+finger = [0,2]
+
+hexstring = "4412200000002110422063308440A550C660E770088129914AA16BB18CC1ADD1CEE1EFF18A"
+hexindex  = "feff000102030405060708090a0b0c0d0e0f101112131415161718191a2021222324252627"
 
 class hexact(argparse.Action):
-    'An argparse.Action that handles hex string input'
-    def __call__(self,parser, namespace, values, option_string=None):
-        base = 10
-        if '0x' in values: base = 16
-        setattr(namespace, self.dest, int(values,base))
-        return
-    pass
+	'An argparse.Action that handles hex string input'
+	def __call__(self,parser, namespace, values, option_string=None):
+		base = 10
+		if '0x' in values: base = 16
+		setattr(namespace, self.dest, int(values,base))
+		return
+	pass
+
+
+def get_hex_from_string (s):
+	return chr(int(s,16))
 
 
 def finish (_):
-    logger.info('total # of tags seen: {}'.format(tagReport))
-    if reactor.running:
-        reactor.stop()
+	logger.info('total # of tags seen: {}'.format(tagReport))
+	
+	if reactor.running:
+		reactor.stop()
+
 
 def access (proto):
-    global checkCharhi
-    global checkCharlo
-    checkCharhi = ord(chr(args.write_content >> 8))
-    checkCharlo = ord(chr(args.write_content & 0xff))
-    logger.info('Ord checkchar: ')
-    logger.info(str(checkCharhi) +  str(checkCharlo))
-    
-    readSpecParam = None
-    if args.read_words:
-        readSpecParam = {
-            'OpSpecID': 0,
-            'MB': 3,
-            'WordPtr': 0,
-            'AccessPassword': 0,
-            'WordCount': args.read_words
-        }
+	global checkCharhi
+	global checkCharlo
+	checkCharhi = ord(chr(args.write_content >> 8))
+	checkCharlo = ord(chr(args.write_content & 0xff))
+	logger.info('Ord checkchar: ')
+	logger.info(str(checkCharhi) +  str(checkCharlo))
+	
+	readSpecParam = None
+	if args.read_words:
+		readSpecParam = {
+			'OpSpecID': 0,
+			'MB': 3,
+			'WordPtr': 0,
+			'AccessPassword': 0,
+			'WordCount': args.read_words
+		}
+	
+	writeSpecParam = None
+	if args.write_words:
+		writeSpecParam = {
+			'OpSpecID': 0,
+			'MB': 3,
+			'WordPtr': 0,
+			'AccessPassword': 0,
+			'WriteDataWordCount': args.write_words,
+			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
+		}
+	
+	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam)
 
-    writeSpecParam = None
-    if args.write_words:
-        writeSpecParam = {
-            'OpSpecID': 0,
-            'MB': 3,
-            'WordPtr': 0,
-            'AccessPassword': 0,
-            'WriteDataWordCount': args.write_words,
-            'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
-        }
 
-    return proto.startAccess(readWords=readSpecParam,
-            writeWords=writeSpecParam)
 
 def politeShutdown (factory):
-    return factory.politeShutdown()
+	return factory.politeShutdown()
+
+
 
 def tagReportCallback (llrpMsg):
-    """Function to run each time the reader reports seeing tags."""
-    
-    # *** Build the protocol here ***
-    # Next ACCESS_SPEC to send.
-    count = int(1)
-    
-    global tagReport
-    tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
-    if len(tags):
-        #logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-        logger.info(tags[0]['EPC-96'][18:22])
-        
-        global flag
-        global writeChar
-        global checkCharlo
-        global checkCharhi
-        
-        #logger.info(checkChar)
-        readEPChi = int(tags[0]['EPC-96'][18:20],16)
-        readEPClo = int(tags[0]['EPC-96'][20:22],16)
-        
-        # If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
-        if (readEPChi == checkCharhi and readEPClo == checkCharlo):
-            if (flag == 1):
-                logger.info('Incrementing writeChar')
-                writeChar = chr(ord(writeChar)+1)
-                checkCharhi = ord(writeChar)
-                checkCharlo = ord(writeChar)
-                writeData= writeChar + writeChar
-                
-                logger.info('Sending writeData:')
-                logger.info(writeData)
-                
-                writeSpecParam = {
-                    'OpSpecID': 0,
-                    'MB': 3,
-                    'WordPtr': 0,
-                    'AccessPassword': 0,
-                    'WriteDataWordCount': count,
-                    'WriteData': writeData,
-                }
-                fac.nextAccess(readParam=None, writeParam=writeSpecParam)
-            
-            # Change access spec every x reports.
-            flag = (flag + 1) % 2
-    else:
-        logger.info('no tags seen')
-        return
-    for tag in tags:
-        tagReport += tag['TagSeenCount'][0]
+	"""Function to run each time the reader reports seeing tags."""
+	
+	global tagReport
+	global flag
+	global checkCharlo
+	global checkCharhi
+	global hexstring
+	global finger
+	
+	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
+	if len(tags):
+		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+		logger.info(tags[0]['EPC-96'][18:22])
+		
+		readEPChi = int(tags[0]['EPC-96'][18:20],16)
+		readEPClo = int(tags[0]['EPC-96'][20:22],16)
+		
+		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
+		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
+			if (flag == 1):
+				logger.info('Changing ACCESS_SPEC')
+				write_hi = get_hex_from_string(hexindex[finger[0]:finger[1]])
+				write_lo = get_hex_from_string(hexstring[finger[0]:finger[1]])
+				finger = [x+2 for x in finger]
+				checkCharhi = ord(write_hi)
+				checkCharlo = ord(write_lo)
+				writeData = write_hi + write_lo
+				
+				
+				writeSpecParam = {
+					'OpSpecID': 0,
+					'MB': 3,
+					'WordPtr': 0,
+					'AccessPassword': 0,
+					'WriteDataWordCount': int(1),
+					'WriteData': writeData,
+				}
+				fac.nextAccess(readParam=None, writeParam=writeSpecParam)
+			
+			# Change access spec every x reports.
+			flag = (flag + 1) % 2
+	else:
+		logger.info('no tags seen')
+		return
+	for tag in tags:
+		tagReport += tag['TagSeenCount'][0]
 
 
 
@@ -156,6 +164,7 @@ def parse_args ():
             help='Content to write when using -w, example: 0xaabb, 0x1234')
 
     args = parser.parse_args()
+
 
 def init_logging ():
     logLevel = (args.debug and logging.DEBUG or logging.INFO)
