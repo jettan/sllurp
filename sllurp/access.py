@@ -11,13 +11,19 @@ tagReport = 0
 logger = logging.getLogger('sllurp')
 fac = None
 args = None
-flag = 2
-checkCharhi = None
-checkCharlo = None
-finger = [0,2]
 
-hexstring = "4412200000002110422063308440A550C660E770088129914AA16BB18CC1ADD1CEE1EFF18A"
-hexindex  = "feff000102030405060708090a0b0c0d0e0f101112131415161718191a2021222324252627"
+# Stuff needed for changing access_specs.
+current_line = None
+checkCharhi  = None
+checkCharlo  = None
+
+flag  = 0
+index = 0
+
+strindex  = [1,3]
+hexindex  = ":fdfeff00020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e4042"
+hexfile   = open("led_mod.hex", 'r')
+lines     = hexfile.readlines()
 
 class hexact(argparse.Action):
 	'An argparse.Action that handles hex string input'
@@ -29,8 +35,8 @@ class hexact(argparse.Action):
 	pass
 
 
-def get_hex_from_string (s):
-	return chr(int(s,16))
+def char_to_hex (c):
+	return chr(int(c,16))
 
 
 def finish (_):
@@ -85,13 +91,15 @@ def tagReportCallback (llrpMsg):
 	global flag
 	global checkCharlo
 	global checkCharhi
-	global hexstring
-	global finger
+	global lines
+	global current_line
+	global strindex
+	global index
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-		logger.info(tags[0]['EPC-96'][18:22])
+		logger.info(tags[0]['EPC-96'])
 		
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
@@ -99,24 +107,40 @@ def tagReportCallback (llrpMsg):
 		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
 		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
 			if (flag == 1):
-				logger.info('Changing ACCESS_SPEC')
-				write_hi = get_hex_from_string(hexindex[finger[0]:finger[1]])
-				write_lo = get_hex_from_string(hexstring[finger[0]:finger[1]])
-				finger = [x+2 for x in finger]
-				checkCharhi = ord(write_hi)
-				checkCharlo = ord(write_lo)
-				writeData = write_hi + write_lo
 				
-				
-				writeSpecParam = {
-					'OpSpecID': 0,
-					'MB': 3,
-					'WordPtr': 0,
-					'AccessPassword': 0,
-					'WriteDataWordCount': int(1),
-					'WriteData': writeData,
-				}
-				fac.nextAccess(readParam=None, writeParam=writeSpecParam)
+				if (index < len(lines)):
+					current_line = lines[index]
+					
+					logger.info('Changing ACCESS_SPEC')
+					write_hi = char_to_hex(hexindex[strindex[0]:strindex[1]])
+					write_lo = char_to_hex(current_line[strindex[0]:strindex[1]])
+					strindex = [x + 2 for x in strindex]
+					
+					# End of file reached.
+					if (index == len(lines) - 1):
+						write_hi = char_to_hex("be")
+						write_lo = char_to_hex("ef")
+					
+					# If end of line has been reached, do special stuff.
+					if (strindex[1] > len(current_line)):
+						write_hi = char_to_hex("cc")
+						strindex = [1,3]
+						index = index + 1
+					
+					
+					checkCharhi = ord(write_hi)
+					checkCharlo = ord(write_lo)
+					writeData = write_hi + write_lo
+					
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(1),
+						'WriteData': writeData,
+					}
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam)
 			
 			# Change access spec every x reports.
 			flag = (flag + 1) % 2
