@@ -99,7 +99,7 @@ def tagReportCallback (llrpMsg):
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-		logger.info(tags[0]['EPC-96'])
+		logger.info(tags[0]['EPC-96'][12:])
 		
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
