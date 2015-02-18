@@ -673,8 +673,8 @@ class LLRPClient (LineReceiver):
             'ROSpecID': 0, # all ROSpecs
             'AccessSpecStopTrigger': {
                 # 1 = stop after OperationCountValue accesses
-                'AccessSpecStopTriggerType': 0,
-                'OperationCountValue': 1,
+                'AccessSpecStopTriggerType': 1,
+                'OperationCountValue': 5,
             },
             'AccessCommand': {
                 'TagSpecParameter': {
@@ -706,7 +706,8 @@ class LLRPClient (LineReceiver):
 
         d = defer.Deferred()
         d.addCallback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar)
-        d.addErrback(self.panic, 'DISABLE_ACCESSSPEC failed')
+        d.addErrback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar)
+        #d.addErrback(self.panic, 'DISABLE_ACCESSSPEC failed')
 
         self.send_DISABLE_ACCESSSPEC(1, onCompletion=d)
 
