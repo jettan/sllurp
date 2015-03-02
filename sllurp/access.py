@@ -22,8 +22,8 @@ index = 0
 eof   = 0
 
 strindex  = [1,3]
-hexindex  = ":fdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
-hexfile   = open("led_mod.hex", 'r')
+hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+hexfile   = open("wisp_led.hex", 'r')
 lines     = hexfile.readlines()
 
 class hexact(argparse.Action):
