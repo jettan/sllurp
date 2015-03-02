@@ -19,9 +19,10 @@ checkCharlo  = None
 
 flag  = 0
 index = 0
+eof   = 0
 
 strindex  = [1,3]
-hexindex  = ":fdfeff00020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e4042"
+hexindex  = ":fdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 hexfile   = open("led_mod.hex", 'r')
 lines     = hexfile.readlines()
 
@@ -95,15 +96,31 @@ def tagReportCallback (llrpMsg):
 	global current_line
 	global strindex
 	global index
+	global eof
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-		logger.info(tags[0]['EPC-96'][12:])
+		logger.info(tags[0]['EPC-96'][10:])
 		
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
 		
+		
+		if (eof == 1):
+			write_hi = char_to_hex("be")
+			write_lo = char_to_hex("ef")
+			writeData = write_hi + write_lo
+			writeSpecParam = {
+				'OpSpecID': 0,
+				'MB': 3,
+				'WordPtr': 0,
+				'AccessPassword': 0,
+				'WriteDataWordCount': int(1),
+				'WriteData': writeData,
+			}
+			fac.nextAccess(readParam=None, writeParam=writeSpecParam)
+			
 		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
 		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
 			if (flag == 1):
@@ -120,6 +137,7 @@ def tagReportCallback (llrpMsg):
 					if (index == len(lines) - 1):
 						write_hi = char_to_hex("be")
 						write_lo = char_to_hex("ef")
+						eof = 1
 					
 					# If end of line has been reached, do special stuff.
 					if (strindex[1] > len(current_line)):
