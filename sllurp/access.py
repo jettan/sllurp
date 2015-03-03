@@ -19,7 +19,6 @@ checkCharlo  = None
 
 flag  = 0
 index = 0
-eof   = 0
 
 strindex  = [1,3]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
@@ -75,8 +74,13 @@ def access (proto):
 			'WriteDataWordCount': args.write_words,
 			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
 		}
+		
+	accessSpecStopParam = {
+		'AccessSpecStopTriggerType': 1,
+		'OperationCountValue': 10,
+	}
 	
-	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam)
+	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
 
 
 
@@ -96,7 +100,6 @@ def tagReportCallback (llrpMsg):
 	global current_line
 	global strindex
 	global index
-	global eof
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
@@ -106,27 +109,17 @@ def tagReportCallback (llrpMsg):
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
 		
-		
-		if (eof == 1):
-			write_hi = char_to_hex("be")
-			write_lo = char_to_hex("ef")
-			writeData = write_hi + write_lo
-			writeSpecParam = {
-				'OpSpecID': 0,
-				'MB': 3,
-				'WordPtr': 0,
-				'AccessPassword': 0,
-				'WriteDataWordCount': int(1),
-				'WriteData': writeData,
-			}
-			fac.nextAccess(readParam=None, writeParam=writeSpecParam)
-			
 		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
 		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
 			if (flag == 1):
 				
 				if (index < len(lines)):
 					current_line = lines[index]
+					
+					accessSpecStopParam = {
+						'AccessSpecStopTriggerType': 1,
+						'OperationCountValue': 5,
+					}
 					
 					logger.info('Changing ACCESS_SPEC')
 					write_hi = char_to_hex(hexindex[strindex[0]:strindex[1]])
@@ -137,7 +130,11 @@ def tagReportCallback (llrpMsg):
 					if (index == len(lines) - 1):
 						write_hi = char_to_hex("be")
 						write_lo = char_to_hex("ef")
-						eof = 1
+						
+						accessSpecStopParam = {
+							'AccessSpecStopTriggerType': 0,
+							'OperationCountValue': 1,
+						}
 					
 					# If end of line has been reached, do special stuff.
 					if (strindex[1] > len(current_line)):
@@ -158,7 +155,7 @@ def tagReportCallback (llrpMsg):
 						'WriteDataWordCount': int(1),
 						'WriteData': writeData,
 					}
-					fac.nextAccess(readParam=None, writeParam=writeSpecParam)
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 			
 			# Change access spec every x reports.
 			flag = (flag + 1) % 2

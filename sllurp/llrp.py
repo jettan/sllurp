@@ -612,7 +612,7 @@ class LLRPClient (LineReceiver):
 
 
     # TODO: Fix this super ugly placeholder argument!
-    def send_DELETE_ACCESSSPEC (self, placeHolderArg, readSpecParam, writeSpecParam, onCompletion=None):
+    def send_DELETE_ACCESSSPEC (self, placeHolderArg, readSpecParam, writeSpecParam, stopParam, onCompletion=None):
         logger.info('Deleting current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DELETE_ACCESSSPEC': {
@@ -623,12 +623,13 @@ class LLRPClient (LineReceiver):
             }}))
 
         # Hackfix to chain startAccess to send_DELETE, since appending a deferred doesn't seem to work...
-        task.deferLater(reactor, 0, self.startAccess, readWords=readSpecParam, writeWords=writeSpecParam)
+        task.deferLater(reactor, 0, self.startAccess, readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=stopParam)
 
     # TODO: Fix this super ugly placeholder argument!
-    def startAccess (self, placeHolderArg=None, readWords=None, writeWords=None, target = None,
+    def startAccess (self, placeHolderArg=None, readWords=None, writeWords=None, accessStopParam=None, target = None,
             *args):
         logger.info('startAccess entered')
+        logger.info(accessStopParam)
         m = Message_struct['AccessSpec']
         if not target:
             target = {
@@ -664,6 +665,13 @@ class LLRPClient (LineReceiver):
         else:
             raise LLRPError('startAccess requires readWords or writeWords.')
 
+        if accessStopParam:
+            opSpecParam['AccessSpecStopTriggerType'] = accessStopParam['AccessSpecStopTriggerType']
+            opSpecParam['OperationCountValue']       = accessStopParam['OperationCountValue']
+        else:
+            opSpecParam['AccessSpecStopTriggerType'] = 1
+            opSpecParam['OperationCountValue']       = 5
+
         accessSpec = {
             'Type': m['type'],
             'AccessSpecID': accessSpecID,
@@ -671,11 +679,7 @@ class LLRPClient (LineReceiver):
             'ProtocolID': AirProtocol['EPCGlobalClass1Gen2'],
             'C': False, # disabled by default
             'ROSpecID': 0, # all ROSpecs
-            'AccessSpecStopTrigger': {
-                # 1 = stop after OperationCountValue accesses
-                'AccessSpecStopTriggerType': 1,
-                'OperationCountValue': 5,
-            },
+            'AccessSpecStopTrigger': accessStopParam,
             'AccessCommand': {
                 'TagSpecParameter': {
                     'C1G2TargetTag': { # XXX correct values?
@@ -701,12 +705,12 @@ class LLRPClient (LineReceiver):
 
         self.send_ADD_ACCESSSPEC(accessSpec, onCompletion=d)
 
-    def nextAccess(self, readSpecPar, writeSpecPar):
+    def nextAccess(self, readSpecPar, writeSpecPar, stopSpecPar):
         accessSpecID = 1
 
         d = defer.Deferred()
-        d.addCallback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar)
-        d.addErrback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar)
+        d.addCallback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar, stopSpecPar)
+        d.addErrback(self.send_DELETE_ACCESSSPEC, readSpecPar, writeSpecPar, stopSpecPar)
         #d.addErrback(self.panic, 'DISABLE_ACCESSSPEC failed')
 
         self.send_DISABLE_ACCESSSPEC(1, onCompletion=d)
@@ -882,10 +886,10 @@ class LLRPClientFactory (ClientFactory):
 
         return proto
 
-    def nextAccess(self, readParam=None, writeParam=None):
+    def nextAccess(self, readParam=None, writeParam=None, stopParam=None):
         logger.info('Stopping current accessSpec.')
         for proto in self.protocols:
-            proto.nextAccess(readSpecPar=readParam, writeSpecPar=writeParam)
+            proto.nextAccess(readSpecPar=readParam, writeSpecPar=writeParam, stopSpecPar=stopParam)
 
     def deleteAccess(self):
         logger.info('Deleting accessSpec.')
