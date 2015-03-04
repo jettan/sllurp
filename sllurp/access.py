@@ -17,7 +17,7 @@ current_line = None
 checkCharhi  = None
 checkCharlo  = None
 
-flag  = 0
+flag  = 1
 index = 0
 
 strindex  = [1,3]
@@ -51,8 +51,6 @@ def access (proto):
 	global checkCharlo
 	checkCharhi = ord(chr(args.write_content >> 8))
 	checkCharlo = ord(chr(args.write_content & 0xff))
-	logger.info('Ord checkchar: ')
-	logger.info(str(checkCharhi) +  str(checkCharlo))
 	
 	readSpecParam = None
 	if args.read_words:
@@ -74,11 +72,19 @@ def access (proto):
 			'WriteDataWordCount': args.write_words,
 			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
 		}
-		
-	accessSpecStopParam = {
-		'AccessSpecStopTriggerType': 1,
-		'OperationCountValue': 10,
-	}
+	
+	# If command to go into FRAM write is issued, make accessSpec finite.
+	if (args.write_content == 45317):
+		accessSpecStopParam = {
+			'AccessSpecStopTriggerType': 1,
+			'OperationCountValue': 10,
+		}
+	# Otherwise, jump to application and keep accessSpec alive.
+	else:
+		accessSpecStopParam = {
+			'AccessSpecStopTriggerType': 0,
+			'OperationCountValue': 1,
+		}
 	
 	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
 
@@ -104,6 +110,11 @@ def tagReportCallback (llrpMsg):
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+		#try:
+		#	logger.info(tags[0]['OpSpecResult'])
+		#except:
+		#	logger.info('')
+		
 		logger.info(tags[0]['EPC-96'][10:])
 		
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
@@ -158,7 +169,7 @@ def tagReportCallback (llrpMsg):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 			
 			# Change access spec every x reports.
-			flag = (flag + 1) % 2
+			#flag = (flag + 1) % 2
 	else:
 		logger.info('no tags seen')
 		return
