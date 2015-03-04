@@ -19,6 +19,7 @@ checkCharlo  = None
 
 flag  = 1
 index = 0
+miss  = 0
 
 strindex  = [1,3]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
@@ -106,16 +107,18 @@ def tagReportCallback (llrpMsg):
 	global current_line
 	global strindex
 	global index
+	global miss
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-		#try:
-		#	logger.info(tags[0]['OpSpecResult'])
-		#except:
-		#	logger.info('')
+		try:
+			opspecresultlength = len(tags[0]['OpSpecResult'])
+		except:
+			miss = miss + 1
 		
-		logger.info(tags[0]['EPC-96'][10:])
+		
+		logger.info(tags[0]['EPC-96'][10:22])
 		
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
@@ -123,13 +126,14 @@ def tagReportCallback (llrpMsg):
 		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
 		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
 			if (flag == 1):
+				miss = 0
 				
 				if (index < len(lines)):
 					current_line = lines[index]
 					
 					accessSpecStopParam = {
 						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': 5,
+						'OperationCountValue': 1,
 					}
 					
 					logger.info('Changing ACCESS_SPEC')
@@ -170,6 +174,28 @@ def tagReportCallback (llrpMsg):
 			
 			# Change access spec every x reports.
 			#flag = (flag + 1) % 2
+		
+		# Resend if we missed the access spec window.
+		if (miss == 3):
+			logger.info('Resend!')
+			
+			accessSpecStopParam = {
+				'AccessSpecStopTriggerType': 1,
+				'OperationCountValue': 1,
+			}
+			
+			writeSpecParam = {
+				'OpSpecID': 0,
+				'MB': 3,
+				'WordPtr': 0,
+				'AccessPassword': 0,
+				'WriteDataWordCount': int(1),
+				'WriteData': (chr(checkCharhi) + chr(checkCharlo)),
+			}
+			miss = 0
+			fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			
+		
 	else:
 		logger.info('no tags seen')
 		return
