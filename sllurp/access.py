@@ -133,7 +133,7 @@ def tagReportCallback (llrpMsg):
 					
 					accessSpecStopParam = {
 						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': 1,
+						'OperationCountValue': 5,
 					}
 					
 					logger.info('Changing ACCESS_SPEC')
