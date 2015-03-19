@@ -20,7 +20,7 @@ checkCharlo  = None
 flag  = 1
 index = 0
 miss  = 0
-
+fail  = 0
 strindex  = [1,3]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 hexfile   = None
@@ -108,6 +108,7 @@ def tagReportCallback (llrpMsg):
 	global strindex
 	global index
 	global miss
+	global fail
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
@@ -127,7 +128,7 @@ def tagReportCallback (llrpMsg):
 		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
 			if (flag == 1):
 				miss = 0
-				
+				fail = 0
 				if (index < len(lines)):
 					current_line = lines[index]
 					
@@ -172,29 +173,31 @@ def tagReportCallback (llrpMsg):
 					}
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 			
-			# Change access spec every x reports.
-			#flag = (flag + 1) % 2
-		
 		# Resend if we missed the access spec window.
 		if (miss == 3):
-			logger.info('Resend!')
+			# Maximum tolerated fails.
+			if (fail <= 3):
+				fail = fail + 1
+				logger.info('Resend!')
 			
-			accessSpecStopParam = {
-				'AccessSpecStopTriggerType': 1,
-				'OperationCountValue': 1,
-			}
-			
-			writeSpecParam = {
-				'OpSpecID': 0,
-				'MB': 3,
-				'WordPtr': 0,
-				'AccessPassword': 0,
-				'WriteDataWordCount': int(1),
-				'WriteData': (chr(checkCharhi) + chr(checkCharlo)),
-			}
-			miss = 0
-			fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-			
+				accessSpecStopParam = {
+					'AccessSpecStopTriggerType': 1,
+					'OperationCountValue': 1,
+				}
+				
+				writeSpecParam = {
+					'OpSpecID': 0,
+					'MB': 3,
+					'WordPtr': 0,
+					'AccessPassword': 0,
+					'WriteDataWordCount': int(1),
+					'WriteData': (chr(checkCharhi) + chr(checkCharlo)),
+				}
+				miss = 0
+				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			else:
+				logger.info('Too many failures! Aborting transmission.')
+				fac.politeShutdown()
 		
 	else:
 		logger.info('no tags seen')
