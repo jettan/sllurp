@@ -22,6 +22,7 @@ flag  = 1
 index = 0
 miss  = 0
 fail  = 0
+writing = 0
 
 strindex  = [1,3]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
@@ -55,8 +56,7 @@ def finish (_):
 def access (proto):
 	global checkCharhi
 	global checkCharlo
-	checkCharhi = ord(chr(args.write_content >> 8))
-	checkCharlo = ord(chr(args.write_content & 0xff))
+	global writing
 	
 	readSpecParam = None
 	if args.read_words:
@@ -70,6 +70,9 @@ def access (proto):
 	
 	writeSpecParam = None
 	if args.write_words:
+		checkCharhi = ord(chr(args.write_content >> 8))
+		checkCharlo = ord(chr(args.write_content & 0xff))
+		writing = 1
 		writeSpecParam = {
 			'OpSpecID': 0,
 			'MB': 3,
@@ -116,6 +119,7 @@ def tagReportCallback (llrpMsg):
 	global fail
 	global total_bytes_to_send
 	global bytes_sent
+	global writing
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
@@ -132,7 +136,7 @@ def tagReportCallback (llrpMsg):
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
 		
 		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
-		if (readEPChi == checkCharhi and readEPClo == checkCharlo):
+		if (readEPChi == checkCharhi and readEPClo == checkCharlo and writing == 1):
 			if (flag == 1):
 				miss = 0
 				fail = 0
@@ -185,7 +189,7 @@ def tagReportCallback (llrpMsg):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 			
 		# Resend if we missed the access spec window.
-		if (miss == 3):
+		if (miss == 3 and writing == 1):
 			# Maximum tolerated fails.
 			if (fail <= 3):
 				fail = fail + 1
@@ -209,7 +213,6 @@ def tagReportCallback (llrpMsg):
 			else:
 				logger.info('Too many failures! Aborting transmission.')
 				fac.politeShutdown()
-		
 	else:
 		logger.info('no tags seen')
 		return
