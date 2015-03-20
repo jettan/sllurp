@@ -137,7 +137,7 @@ def tagReportCallback (llrpMsg):
 				miss = 0
 				fail = 0
 				if (index < len(lines)):
-					bytes_sent = bytes_sent + 1
+					bytes_sent = min(bytes_sent + 1, total_bytes_to_send)
 					current_line = lines[index]
 					
 					accessSpecStopParam = {
@@ -288,7 +288,7 @@ def main ():
 	lines     = hexfile.readlines()
 	
 	for i in range(0,len(lines)-1):
-		total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2) - 2
+		total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2)
 	
 	logger.info('Bytes to send: ' + str(total_bytes_to_send))
 	
