@@ -586,7 +586,7 @@ class LLRPClient (LineReceiver):
         self._deferreds['ADD_ACCESSSPEC_RESPONSE'].append(onCompletion)
 
     def send_DISABLE_ACCESSSPEC (self, accessSpecID, onCompletion=None):
-        logger.info('Disabling current accessSpec.')
+        #logger.info('Disabling current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DISABLE_ACCESSSPEC': {
                 'Ver':  1,
@@ -613,7 +613,7 @@ class LLRPClient (LineReceiver):
 
     # TODO: Fix this super ugly placeholder argument!
     def send_DELETE_ACCESSSPEC (self, placeHolderArg, readSpecParam, writeSpecParam, stopParam, onCompletion=None):
-        logger.info('Deleting current accessSpec.')
+        #logger.info('Deleting current accessSpec.')
         self.sendLLRPMessage(LLRPMessage(msgdict={
             'DELETE_ACCESSSPEC': {
                 'Ver': 1,
@@ -628,8 +628,8 @@ class LLRPClient (LineReceiver):
     # TODO: Fix this super ugly placeholder argument!
     def startAccess (self, placeHolderArg=None, readWords=None, writeWords=None, accessStopParam=None, target = None,
             *args):
-        logger.info('startAccess entered')
-        logger.info(accessStopParam)
+        #logger.info('startAccess entered')
+        #logger.info(accessStopParam)
         m = Message_struct['AccessSpec']
         if not target:
             target = {
@@ -887,18 +887,10 @@ class LLRPClientFactory (ClientFactory):
         return proto
 
     def nextAccess(self, readParam=None, writeParam=None, stopParam=None):
-        logger.info('Stopping current accessSpec.')
+        #logger.info('Stopping current accessSpec.')
         for proto in self.protocols:
             proto.nextAccess(readSpecPar=readParam, writeSpecPar=writeParam, stopSpecPar=stopParam)
 
-    def deleteAccess(self):
-        logger.info('Deleting accessSpec.')
-
-    def addAccess(self):
-        logger.info('Adding accessSpec.')
-
-    def enableAccess(self):
-        logger.info('Enabling accessSpec.')
 
     def clientConnectionLost(self, connector, reason):
         logger.info('lost connection: {}'.format(reason.getErrorMessage()))

@@ -3,6 +3,7 @@ import argparse
 import logging
 import pprint
 import time
+import os
 from twisted.internet import reactor, defer
 
 import sllurp.llrp as llrp
@@ -21,10 +22,14 @@ flag  = 1
 index = 0
 miss  = 0
 fail  = 0
+
 strindex  = [1,3]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 hexfile   = None
 lines     = None
+
+total_bytes_to_send = 0
+bytes_sent    = 0
 
 class hexact(argparse.Action):
 	'An argparse.Action that handles hex string input'
@@ -109,6 +114,8 @@ def tagReportCallback (llrpMsg):
 	global index
 	global miss
 	global fail
+	global total_bytes_to_send
+	global bytes_sent
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
@@ -130,6 +137,7 @@ def tagReportCallback (llrpMsg):
 				miss = 0
 				fail = 0
 				if (index < len(lines)):
+					bytes_sent = bytes_sent + 1
 					current_line = lines[index]
 					
 					accessSpecStopParam = {
@@ -137,7 +145,9 @@ def tagReportCallback (llrpMsg):
 						'OperationCountValue': 5,
 					}
 					
-					logger.info('Changing ACCESS_SPEC')
+					#logger.info('Changing ACCESS_SPEC')
+					os.system('clear')
+					logger.info('Progress: ' + str(round((float(bytes_sent)/total_bytes_to_send) *100,4)) + '% Done (' + str(bytes_sent) + '/' + str(total_bytes_to_send) + ')')
 					write_hi = char_to_hex(hexindex[strindex[0]:strindex[1]])
 					write_lo = char_to_hex(current_line[strindex[0]:strindex[1]])
 					strindex = [x + 2 for x in strindex]
@@ -146,6 +156,7 @@ def tagReportCallback (llrpMsg):
 					if (index == len(lines) - 1):
 						write_hi = char_to_hex("be")
 						write_lo = char_to_hex("ef")
+						bytes_sent = total_bytes_to_send
 						
 						accessSpecStopParam = {
 							'AccessSpecStopTriggerType': 0,
@@ -271,9 +282,15 @@ def main ():
 	
 	global hexfile
 	global lines
+	global total_bytes_to_send
 	
 	hexfile   = open(args.filename, 'r')
 	lines     = hexfile.readlines()
+	
+	for i in range(0,len(lines)-1):
+		total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2) - 2
+	
+	logger.info('Bytes to send: ' + str(total_bytes_to_send))
 	
 	# will be called when all connections have terminated normally
 	onFinish = defer.Deferred()
