@@ -2765,7 +2765,7 @@ class LLRPROSpec(dict):
     def __init__(self, llrpcli, msgid, priority=0, state='Disabled',
             antennas=(1,), tx_power=91, duration_sec=None,
             report_every_n_tags=None, tag_content_selector={},
-            session=2, tag_population=4):
+            session=2, tag_population=32):
         # Sanity checks
         if msgid <= 0:
             raise LLRPError('invalid ROSpec message ID {} (need >0)'.format(\

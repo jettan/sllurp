@@ -32,6 +32,9 @@ lines     = None
 total_bytes_to_send = 0
 bytes_sent    = 0
 
+start_time = None
+current_time = None
+
 class hexact(argparse.Action):
 	'An argparse.Action that handles hex string input'
 	def __call__(self,parser, namespace, values, option_string=None):
@@ -57,6 +60,7 @@ def access (proto):
 	global checkCharhi
 	global checkCharlo
 	global writing
+	global start_time
 	
 	readSpecParam = None
 	if args.read_words:
@@ -95,6 +99,8 @@ def access (proto):
 			'OperationCountValue': 1,
 		}
 	
+	start_time = time.time()
+	
 	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
 
 
@@ -120,6 +126,8 @@ def tagReportCallback (llrpMsg):
 	global total_bytes_to_send
 	global bytes_sent
 	global writing
+	global current_time
+	global start_time
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
@@ -151,7 +159,9 @@ def tagReportCallback (llrpMsg):
 					
 					#logger.info('Changing ACCESS_SPEC')
 					os.system('clear')
-					logger.info('Progress: ' + str(round((float(bytes_sent)/total_bytes_to_send) *100,4)) + '% Done (' + str(bytes_sent) + '/' + str(total_bytes_to_send) + ')')
+					current_time = time.time()
+					elapsed_time = current_time - start_time
+					logger.info('Progress: ' + str(round((float(bytes_sent)/total_bytes_to_send) *100,4)) + '% Done (' + str(bytes_sent) + '/' + str(total_bytes_to_send) + '), Elapsed time: ' + str(elapsed_time) + ' secs')
 					write_hi = char_to_hex(hexindex[strindex[0]:strindex[1]])
 					write_lo = char_to_hex(current_line[strindex[0]:strindex[1]])
 					strindex = [x + 2 for x in strindex]
@@ -172,7 +182,6 @@ def tagReportCallback (llrpMsg):
 						write_hi = char_to_hex("cc")
 						strindex = [1,3]
 						index = index + 1
-					
 					
 					checkCharhi = ord(write_hi)
 					checkCharlo = ord(write_lo)
