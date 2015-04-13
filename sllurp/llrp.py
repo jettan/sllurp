@@ -628,8 +628,8 @@ class LLRPClient (LineReceiver):
     # TODO: Fix this super ugly placeholder argument!
     def startAccess (self, placeHolderArg=None, readWords=None, writeWords=None, accessStopParam=None, target = None,
             *args):
-        #logger.info('startAccess entered')
-        #logger.info(accessStopParam)
+        logger.info(accessStopParam)
+        #logger.info(writeWords)
         m = Message_struct['AccessSpec']
         if not target:
             target = {

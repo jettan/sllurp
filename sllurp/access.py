@@ -18,13 +18,15 @@ current_line = None
 checkCharhi  = None
 checkCharlo  = None
 
-flag  = 1
+write_data   = None
+
+flag  = 0
 index = 0
 miss  = 0
 fail  = 0
 writing = 0
 
-strindex  = [1,3]
+strindex  = [1,17]
 hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
 hexfile   = None
 lines     = None
@@ -61,6 +63,8 @@ def access (proto):
 	global checkCharlo
 	global writing
 	global start_time
+	global write_data
+	
 	
 	readSpecParam = None
 	if args.read_words:
@@ -88,6 +92,7 @@ def access (proto):
 	
 	# If command to go into FRAM write is issued, make accessSpec finite.
 	if (args.write_content == 45317):
+		write_data = "b105000000000000"
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 1,
 			'OperationCountValue': 10,
@@ -115,12 +120,14 @@ def tagReportCallback (llrpMsg):
 	
 	global tagReport
 	global flag
+	global strindex
+	global current_line
+	global lines
+	global index
+	global write_data
+	'''
 	global checkCharlo
 	global checkCharhi
-	global lines
-	global current_line
-	global strindex
-	global index
 	global miss
 	global fail
 	global total_bytes_to_send
@@ -128,18 +135,47 @@ def tagReportCallback (llrpMsg):
 	global writing
 	global current_time
 	global start_time
-	
+	'''
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+		
+		# Print EPC-96.
+		logger.info(tags[0]['EPC-96'][0:16])
 		try:
-			opspecresultlength = len(tags[0]['OpSpecResult'])
+			logger.info(tags[0]['OpSpecResult'])
+			
+		#	opspecresultlength = len(tags[0]['OpSpecResult'])
 		except:
-			miss = miss + 1
+			logger.info("")
+		#	miss = miss + 1
 		
+		# Give tag some time to write whole content of BlockWrite before sending the next BlockWrite.
+		if (index < len(lines) and tags[0]['EPC-96'][0:16] == write_data.lower()):
+			logger.info("Match!")
+			current_line = lines[index]
+			write_data = current_line[strindex[0]:strindex[1]]
+			logger.info(write_data)
+			#logger.info(write_data.decode("hex"))
+			index = index + 1
+			
+			accessSpecStopParam = {
+				'AccessSpecStopTriggerType': 1,
+				'OperationCountValue': 5,
+			}
+			
+			writeSpecParam = {
+				'OpSpecID': 0,
+				'MB': 3,
+				'WordPtr': 0,
+				'AccessPassword': 0,
+				'WriteDataWordCount': int(4),
+				'WriteData': write_data.decode("hex"),
+			}
+			fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			
 		
-		logger.info(tags[0]['EPC-96'][10:22])
-		
+		'''
 		readEPChi = int(tags[0]['EPC-96'][18:20],16)
 		readEPClo = int(tags[0]['EPC-96'][20:22],16)
 		
@@ -222,6 +258,7 @@ def tagReportCallback (llrpMsg):
 			else:
 				logger.info('Too many failures! Aborting transmission.')
 				fac.politeShutdown()
+		'''
 	else:
 		logger.info('no tags seen')
 		return
