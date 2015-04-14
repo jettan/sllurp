@@ -130,6 +130,11 @@ def doFirmwareFlashing (seen_tags):
 	if ((index < len(lines)) and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
 		logger.info("Match!")
 		
+		accessSpecStopParam = {
+			'AccessSpecStopTriggerType': 1,
+			'OperationCountValue': 15,
+		}
+		
 		# Start of a new line.
 		if (write_state == 0):
 			
@@ -145,6 +150,7 @@ def doFirmwareFlashing (seen_tags):
 			data_length = len(current_line) - 12
 			logger.info(data_length)
 			
+			
 			# If data length = 4, it's an ISR vector entry so we finish the whole line with 1 BlockWrite.
 			if (data_length == 4):
 				write_data = "fe" + current_line[1:7] + current_line[9:13]
@@ -152,11 +158,6 @@ def doFirmwareFlashing (seen_tags):
 				
 				# Construct the AccessSpec.
 				try:
-					accessSpecStopParam = {
-						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': 10,
-					}
-					
 					writeSpecParam = {
 						'OpSpecID': 0,
 						'MB': 3,
@@ -191,11 +192,6 @@ def doFirmwareFlashing (seen_tags):
 				
 				# Construct the AccessSpec.
 				try:
-					accessSpecStopParam = {
-						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': 10,
-					}
-					
 					writeSpecParam = {
 						'OpSpecID': 0,
 						'MB': 3,
@@ -225,11 +221,6 @@ def doFirmwareFlashing (seen_tags):
 			
 			# Construct the AccessSpec.
 			try:
-				accessSpecStopParam = {
-					'AccessSpecStopTriggerType': 1,
-					'OperationCountValue': 10,
-				}
-				
 				writeSpecParam = {
 					'OpSpecID': 0,
 					'MB': 3,
