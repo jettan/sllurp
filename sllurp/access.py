@@ -15,28 +15,33 @@ args = None
 
 # Stuff needed for changing access_specs.
 current_line = None
-checkCharhi  = None
-checkCharlo  = None
-
 write_data   = None
+write_state  = None
+pckt_num     = ["00", "01", "02", "03", "04"]
+hexindex     = 0
 
-flag  = 0
+
+# Line index of hexfile.
 index = 0
-miss  = 0
-fail  = 0
-writing = 0
 
-strindex  = [1,17]
-hexindex  = ":fdfeffdd000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+# Start and end indices of block in current line.
+strindex  = [9,25]
+
+# The Intel hexfile.
 hexfile   = None
+
+# List with all the lines in the hexfile.
 lines     = None
 
+# Transmission stats.
 total_bytes_to_send = 0
 bytes_sent    = 0
 
+# Time related vars.
 start_time = None
 current_time = None
 
+# Parse hex argument.
 class hexact(argparse.Action):
 	'An argparse.Action that handles hex string input'
 	def __call__(self,parser, namespace, values, option_string=None):
@@ -46,26 +51,20 @@ class hexact(argparse.Action):
 		return
 	pass
 
-
+# Convert a single character to hex.
 def char_to_hex (c):
 	return chr(int(c,16))
 
 
+# Stop the twisted reactor at the end of the program.
 def finish (_):
 	logger.info('total # of tags seen: {}'.format(tagReport))
 	
 	if reactor.running:
 		reactor.stop()
 
-
+# The first access command.
 def access (proto):
-	global checkCharhi
-	global checkCharlo
-	global writing
-	global start_time
-	global write_data
-	
-	
 	readSpecParam = None
 	if args.read_words:
 		readSpecParam = {
@@ -78,9 +77,6 @@ def access (proto):
 	
 	writeSpecParam = None
 	if args.write_words:
-		checkCharhi = ord(chr(args.write_content >> 8))
-		checkCharlo = ord(chr(args.write_content & 0xff))
-		writing = 1
 		writeSpecParam = {
 			'OpSpecID': 0,
 			'MB': 3,
@@ -90,159 +86,148 @@ def access (proto):
 			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
 		}
 	
-	# If command to go into FRAM write is issued, make accessSpec finite.
+	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
 	if (args.write_content == 45317):
-		write_data = "b105000000000000"
+		global write_data
+		global write_state
+		global start_time
+		
+		write_data = "b1050000000000000000"
+		write_state= 0
+		start_time = time.time()
+		
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 1,
 			'OperationCountValue': 10,
 		}
-	# Otherwise, jump to application and keep accessSpec alive.
+	
+	# Otherwise, use default behavior and keep AccessSpec alive.
 	else:
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 0,
 			'OperationCountValue': 1,
 		}
 	
-	start_time = time.time()
-	
 	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
-
 
 
 def politeShutdown (factory):
 	return factory.politeShutdown()
 
 
-
-def tagReportCallback (llrpMsg):
-	"""Function to run each time the reader reports seeing tags."""
-	
+def doFirmwareFlashing (seen_tags):
 	global tagReport
-	global flag
 	global strindex
 	global current_line
 	global lines
 	global index
 	global write_data
-	'''
-	global checkCharlo
-	global checkCharhi
-	global miss
-	global fail
-	global total_bytes_to_send
-	global bytes_sent
-	global writing
-	global current_time
-	global start_time
-	'''
-	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
-	if len(tags):
-		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+	global write_state
+	global pckt_num
+	global hexindex
 		
-		# Print EPC-96.
-		logger.info(tags[0]['EPC-96'][0:16])
-		try:
-			logger.info(tags[0]['OpSpecResult'])
+	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
+	if ((index < len(lines)) and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
+		logger.info("Match!")
+		
+		# Start of a new line.
+		if (write_state == 0):
 			
-		#	opspecresultlength = len(tags[0]['OpSpecResult'])
-		except:
-			logger.info("")
-		#	miss = miss + 1
-		
-		# Give tag some time to write whole content of BlockWrite before sending the next BlockWrite.
-		if (index < len(lines) and tags[0]['EPC-96'][0:16] == write_data.lower()):
-			logger.info("Match!")
+			# Update current line.
 			current_line = lines[index]
-			write_data = current_line[strindex[0]:strindex[1]]
-			logger.info(write_data)
-			#logger.info(write_data.decode("hex"))
-			index = index + 1
 			
-			accessSpecStopParam = {
-				'AccessSpecStopTriggerType': 1,
-				'OperationCountValue': 5,
-			}
+			# Check if EOF reached.
+			if (len(current_line) == 12):
+				logger.info("EOF reached.")
+				return
 			
-			writeSpecParam = {
-				'OpSpecID': 0,
-				'MB': 3,
-				'WordPtr': 0,
-				'AccessPassword': 0,
-				'WriteDataWordCount': int(4),
-				'WriteData': write_data.decode("hex"),
-			}
-			fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			# Check what the length of the data is before doing anything.
+			data_length = len(current_line) - 12
+			logger.info(data_length)
 			
-		
-		'''
-		readEPChi = int(tags[0]['EPC-96'][18:20],16)
-		readEPClo = int(tags[0]['EPC-96'][20:22],16)
-		
-		# If read epc substring is the same as the chars we told the reader to write, it's time for the write the next set of chars.
-		if (readEPChi == checkCharhi and readEPClo == checkCharlo and writing == 1):
-			if (flag == 1):
-				miss = 0
-				fail = 0
-				if (index < len(lines)):
-					bytes_sent = min(bytes_sent + 1, total_bytes_to_send)
-					current_line = lines[index]
-					
+			# If data length = 4, it's an ISR vector entry so we finish the whole line with 1 BlockWrite.
+			if (data_length == 4):
+				write_data = "fe" + current_line[1:7] + current_line[9:13]
+				logger.info("Next block: " + str(write_data))
+				
+				# Construct the AccessSpec.
+				try:
 					accessSpecStopParam = {
 						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': 5,
+						'OperationCountValue': 10,
 					}
-					
-					#logger.info('Changing ACCESS_SPEC')
-					os.system('clear')
-					current_time = time.time()
-					elapsed_time = current_time - start_time
-					logger.info('Progress: ' + str(round((float(bytes_sent)/total_bytes_to_send) *100,4)) + '% Done (' + str(bytes_sent) + '/' + str(total_bytes_to_send) + '), Elapsed time: ' + str(elapsed_time) + ' secs')
-					write_hi = char_to_hex(hexindex[strindex[0]:strindex[1]])
-					write_lo = char_to_hex(current_line[strindex[0]:strindex[1]])
-					strindex = [x + 2 for x in strindex]
-					
-					# End of file reached.
-					if (index == len(lines) - 1):
-						write_hi = char_to_hex("be")
-						write_lo = char_to_hex("ef")
-						bytes_sent = total_bytes_to_send
-						
-						accessSpecStopParam = {
-							'AccessSpecStopTriggerType': 0,
-							'OperationCountValue': 1,
-						}
-					
-					# If end of line has been reached, do special stuff.
-					if (strindex[1] > len(current_line)):
-						write_hi = char_to_hex("cc")
-						strindex = [1,3]
-						index = index + 1
-					
-					checkCharhi = ord(write_hi)
-					checkCharlo = ord(write_lo)
-					writeData = write_hi + write_lo
 					
 					writeSpecParam = {
 						'OpSpecID': 0,
 						'MB': 3,
 						'WordPtr': 0,
 						'AccessPassword': 0,
-						'WriteDataWordCount': int(1),
-						'WriteData': writeData,
+						'WriteDataWordCount': int(3),
+						'WriteData': write_data.decode("hex"),
 					}
+					
+					# Change write_data for comparison against EPC.
+					write_data = write_data + "00000000"
+					
+					# Proceed to next line.
+					index = index + 1
+					
+					# Call factory to do the next access.
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
+				
 			
-		# Resend if we missed the access spec window.
-		if (miss == 3 and writing == 1):
-			# Maximum tolerated fails.
-			if (fail <= 3):
-				fail = fail + 1
-				logger.info('Resend!')
+			if (data_length % 16 == 0):
+				logger.info("Mod16 success")
+				
+				# Reset hexindex and strindex for new set of data packets.
+				hexindex = 0
+				strindex  = [9,25]
+				
+				# write_data = [fd:size:address] (2 words)
+				write_data = "fd" + current_line[1:7]
+				logger.info("Next block: " + str(write_data))
+				
+				# Construct the AccessSpec.
+				try:
+					accessSpecStopParam = {
+						'AccessSpecStopTriggerType': 1,
+						'OperationCountValue': 10,
+					}
+					
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(2),
+						'WriteData': write_data.decode("hex"),
+					}
+					
+					# Change write_data for comparison against EPC.
+					write_data = write_data + "000000000000"
+					
+					# Proceed to next state.
+					write_state = 1
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
+		
+		# Data packets.
+		elif (write_state == 1):
+			# write_data = [pckt_id:pckt_num:data] (5 words)
+			write_data = "DA" + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
+			strindex = [min(x + 16, len(current_line)) for x in strindex]
+			logger.info("Next block: " + str(write_data))
 			
+			# Construct the AccessSpec.
+			try:
 				accessSpecStopParam = {
 					'AccessSpecStopTriggerType': 1,
-					'OperationCountValue': 1,
+					'OperationCountValue': 10,
 				}
 				
 				writeSpecParam = {
@@ -250,21 +235,48 @@ def tagReportCallback (llrpMsg):
 					'MB': 3,
 					'WordPtr': 0,
 					'AccessPassword': 0,
-					'WriteDataWordCount': int(1),
-					'WriteData': (chr(checkCharhi) + chr(checkCharlo)),
+					'WriteDataWordCount': int(5),
+					'WriteData': write_data.decode("hex"),
 				}
-				miss = 0
+				
+				hexindex = hexindex + 1
+				
+				# Done with data, so put state machine back to new line.
+				if (strindex[1] == len(current_line)):
+					write_state = 0
+					index = index + 1
+				
+				# Call factory to do the next access.
 				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-			else:
-				logger.info('Too many failures! Aborting transmission.')
-				fac.politeShutdown()
-		'''
+			except:
+				logger.info("Error when trying to construct next AccessSpec on data packets.")
+		
+
+def tagReportCallback (llrpMsg):
+	"""Function to run each time the reader reports seeing tags."""
+	
+	global tagReport
+	
+	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
+	if len(tags):
+		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+		
+		# Print EPC-96.
+		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
+		
+		try:
+			logger.info(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
+		except:
+			logger.info("")
+		
+		# Call protocol.
+		doFirmwareFlashing(tags)
+		
 	else:
 		logger.info('no tags seen')
 		return
 	for tag in tags:
 		tagReport += tag['TagSeenCount'][0]
-
 
 
 def parse_args ():
@@ -329,17 +341,18 @@ def main ():
 	parse_args()
 	init_logging()
 	
-	global hexfile
-	global lines
-	global total_bytes_to_send
+	if (args.filename):
+		global hexfile
+		global lines
+		global total_bytes_to_send
 	
-	hexfile   = open(args.filename, 'r')
-	lines     = hexfile.readlines()
-	
-	for i in range(0,len(lines)-1):
-		total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2)
-	
-	logger.info('Bytes to send: ' + str(total_bytes_to_send))
+		hexfile   = open(args.filename, 'r')
+		lines     = hexfile.readlines()
+		
+		for i in range(0,len(lines)-1):
+			total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2)
+		
+		logger.info('Bytes to send: ' + str(total_bytes_to_send))
 	
 	# will be called when all connections have terminated normally
 	onFinish = defer.Deferred()
@@ -369,8 +382,7 @@ def main ():
 	            'EnableAccessSpecID': True
 	        })
 	
-	# tagReportCallback will be called every time the reader sends a TagReport
-	# message (i.e., when it has "seen" tags).
+	# tagReportCallback will be called every time the reader sends a TagReport  message (i.e., when it has "seen" tags).
 	fac.addTagReportCallback(tagReportCallback)
 	
 	# start tag access once inventorying
