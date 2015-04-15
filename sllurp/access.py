@@ -144,7 +144,25 @@ def doFirmwareFlashing (seen_tags):
 			# Check if EOF reached.
 			if (len(current_line) == 12):
 				logger.info("EOF reached.")
-				return
+				write_state = -1
+				# Construct the AccessSpec.
+				try:
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(1),
+						'WriteData': '\xb0\x07',
+					}
+					
+					# Change write_data for comparison against EPC.
+					write_data = "b0070000000000000000"
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to send boot command.")
 			
 			# Check what the length of the data is before doing anything.
 			data_length = len(current_line) - 12
@@ -153,7 +171,7 @@ def doFirmwareFlashing (seen_tags):
 			
 			# If data length = 4, it's an ISR vector entry so we finish the whole line with 1 BlockWrite.
 			if (data_length == 4):
-				write_data = "fe" + current_line[1:7] + current_line[9:13]
+				write_data = "DE" + current_line[1:7] + current_line[9:13]
 				logger.info("Next block: " + str(write_data))
 				
 				# Construct the AccessSpec.
@@ -187,7 +205,7 @@ def doFirmwareFlashing (seen_tags):
 				strindex  = [9,25]
 				
 				# write_data = [fd:size:address] (2 words)
-				write_data = "fd" + current_line[1:7]
+				write_data = "DD" + current_line[1:7]
 				logger.info("Next block: " + str(write_data))
 				
 				# Construct the AccessSpec.
@@ -261,7 +279,8 @@ def tagReportCallback (llrpMsg):
 			logger.info("")
 		
 		# Call protocol.
-		doFirmwareFlashing(tags)
+		if not(hexfile == None):
+			doFirmwareFlashing(tags)
 		
 	else:
 		logger.info('no tags seen')
