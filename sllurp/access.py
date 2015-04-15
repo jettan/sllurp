@@ -141,8 +141,10 @@ def doFirmwareFlashing (seen_tags):
 			# Update current line.
 			current_line = lines[index]
 			
+			
+			
 			# Check if EOF reached.
-			if (len(current_line) == 12):
+			if (index == len(lines)-1):
 				logger.info("EOF reached.")
 				write_state = -1
 				# Construct the AccessSpec.
@@ -163,15 +165,26 @@ def doFirmwareFlashing (seen_tags):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 				except:
 					logger.info("Error when trying to send boot command.")
+				
+				return
+			
 			
 			# Check what the length of the data is before doing anything.
 			data_length = len(current_line) - 12
-			logger.info(data_length)
+			#logger.info(data_length)
 			
 			
-			# If data length = 4, it's an ISR vector entry so we finish the whole line with 1 BlockWrite.
-			if (data_length == 4):
-				write_data = "DE" + current_line[1:7] + current_line[9:13]
+			# If data length = 4, 8 or 12, we write the whole line with 1 BlockWrite.
+			if (data_length < 16 and (data_length % 4) == 0):
+				
+				num_words = data_length / 4
+				logger.info(num_words)
+				
+				write_data = "DE" + current_line[1:7]
+				
+				for x in range(0, num_words):
+					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
+				
 				logger.info("Next block: " + str(write_data))
 				
 				# Construct the AccessSpec.
@@ -181,12 +194,12 @@ def doFirmwareFlashing (seen_tags):
 						'MB': 3,
 						'WordPtr': 0,
 						'AccessPassword': 0,
-						'WriteDataWordCount': int(3),
+						'WriteDataWordCount': int(2+num_words),
 						'WriteData': write_data.decode("hex"),
 					}
 					
 					# Change write_data for comparison against EPC.
-					write_data = write_data + "00000000"
+					write_data = write_data + ("0000"*(3-num_words))
 					
 					# Proceed to next line.
 					index = index + 1
@@ -196,10 +209,8 @@ def doFirmwareFlashing (seen_tags):
 				except:
 					logger.info("Error when trying to construct next AccessSpec on new line.")
 				
-			
+			# Full length of BlockWrite.
 			if (data_length % 16 == 0):
-				logger.info("Mod16 success")
-				
 				# Reset hexindex and strindex for new set of data packets.
 				hexindex = 0
 				strindex  = [9,25]
@@ -229,6 +240,7 @@ def doFirmwareFlashing (seen_tags):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 				except:
 					logger.info("Error when trying to construct next AccessSpec on new line.")
+				
 		
 		# Data packets.
 		elif (write_state == 1):
