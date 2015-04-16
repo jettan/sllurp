@@ -21,7 +21,6 @@ write_state      = None
 pckt_num         = ["00", "01", "02", "03", "04"]
 hexindex         = 0
 
-
 # Line index of hexfile.
 index = 0
 
@@ -35,12 +34,13 @@ hexfile   = None
 lines     = None
 
 # Transmission stats.
-total_bytes_to_send = 0
-bytes_sent    = 0
+total_words_to_send = 0
+words_sent          = 0
 
 # Time related vars.
 start_time = None
 current_time = None
+
 
 # Parse hex argument.
 class hexact(argparse.Action):
@@ -127,10 +127,15 @@ def doFirmwareFlashing (seen_tags):
 	global pckt_num
 	global hexindex
 	global remaining_length
+	global start_time
+	global words_sent
+	global total_words_to_send
 	
 	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
-	if ((index < len(lines)) and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
-		logger.info("Match!")
+	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
+		
+		current_time = time.time()
+		progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
 		
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 1,
@@ -145,7 +150,7 @@ def doFirmwareFlashing (seen_tags):
 			
 			# Check if EOF reached.
 			if (index == len(lines)-1):
-				logger.info("EOF reached.")
+				logger.info("EOF reached. Booting into new firmware...")
 				write_state = -1
 				# Construct the AccessSpec.
 				try:
@@ -182,7 +187,7 @@ def doFirmwareFlashing (seen_tags):
 				for x in range(0, num_words):
 					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
 				
-				logger.info("Next block: " + str(write_data))
+				logger.info("Next block: " + str(write_data) + ("    "*(3-num_words)) + " " + progress_string)
 				
 				# Construct the AccessSpec.
 				try:
@@ -197,6 +202,7 @@ def doFirmwareFlashing (seen_tags):
 					
 					# Pad write_data with zeroes for comparison against EPC.
 					write_data = write_data + ("0000"*(3-num_words))
+					words_sent += num_words
 					
 					# Proceed to next line.
 					index = index + 1
@@ -215,7 +221,7 @@ def doFirmwareFlashing (seen_tags):
 				
 				# write_data = [fd:size:address] (2 words)
 				write_data = "DA" + current_line[1:7]
-				logger.info("Next block: " + str(write_data))
+				logger.info("Next block: " + str(write_data) + "             " + progress_string)
 				
 				# Construct the AccessSpec.
 				try:
@@ -269,7 +275,7 @@ def doFirmwareFlashing (seen_tags):
 				write_data = write_data + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
 				remaining_length = 0
 			
-			logger.info("Next block: " + str(write_data))
+			logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
 			
 			# Construct the AccessSpec.
 			try:
@@ -286,6 +292,7 @@ def doFirmwareFlashing (seen_tags):
 				
 				# Pad write_data with zeroes for comparison against EPC.
 				write_data = write_data + ("0000"*(4-num_words))
+				words_sent += num_words
 				
 				# Done with data, so put state machine back to new line.
 				if (remaining_length == 0):
@@ -302,28 +309,31 @@ def tagReportCallback (llrpMsg):
 	"""Function to run each time the reader reports seeing tags."""
 	
 	global tagReport
+	global write_state
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
+		logger.debug("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
 		
 		try:
-			logger.info(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
+			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
 		except:
-			logger.info("")
+			logger.debug("")
 		
 		# Call protocol.
 		if not(hexfile == None):
 			doFirmwareFlashing(tags)
 		
 	else:
-		logger.info('no tags seen')
+		if (write_state > -1):
+			logger.info('no tags seen')
 		return
 	for tag in tags:
-		tagReport += tag['TagSeenCount'][0]
+		if (write_state > -1):
+			tagReport += tag['TagSeenCount'][0]
 
 
 def parse_args ():
@@ -368,7 +378,8 @@ def parse_args ():
 
 def init_logging ():
 	logLevel = (args.debug and logging.DEBUG or logging.INFO)
-	logFormat = '%(asctime)s %(name)s: %(levelname)s: %(message)s'
+	#logFormat = '%(asctime)s %(name)s: %(levelname)s: %(message)s'
+	logFormat = '%(message)s'
 	formatter = logging.Formatter(logFormat)
 	stderr = logging.StreamHandler()
 	stderr.setFormatter(formatter)
@@ -391,15 +402,18 @@ def main ():
 	if (args.filename):
 		global hexfile
 		global lines
-		global total_bytes_to_send
-	
-		hexfile   = open(args.filename, 'r')
-		lines     = hexfile.readlines()
+		global total_words_to_send
+		global words_sent
+		
+		hexfile    = open(args.filename, 'r')
+		lines      = hexfile.readlines()
+		
+		words_sent = 0
 		
 		for i in range(0,len(lines)-1):
-			total_bytes_to_send = total_bytes_to_send + ((len(lines[i]) - 2)/2)
+			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
 		
-		logger.info('Bytes to send: ' + str(total_bytes_to_send))
+		logger.info('Words to send: ' + str(total_words_to_send))
 	
 	# will be called when all connections have terminated normally
 	onFinish = defer.Deferred()
@@ -415,7 +429,6 @@ def main ():
 	        start_inventory=True,
 	        tx_power=args.tx_power,
 	        report_every_n_tags=args.every_n,
-	        #report_every_n_tags=600,
 	        tag_content_selector={
 	            'EnableROSpecID': False,
 	            'EnableSpecIndex': False,
