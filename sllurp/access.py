@@ -14,11 +14,12 @@ fac = None
 args = None
 
 # Stuff needed for changing access_specs.
-current_line = None
-write_data   = None
-write_state  = None
-pckt_num     = ["00", "01", "02", "03", "04"]
-hexindex     = 0
+current_line     = None
+remaining_length = None
+write_data       = None
+write_state      = None
+pckt_num         = ["00", "01", "02", "03", "04"]
+hexindex         = 0
 
 
 # Line index of hexfile.
@@ -125,7 +126,8 @@ def doFirmwareFlashing (seen_tags):
 	global write_state
 	global pckt_num
 	global hexindex
-		
+	global remaining_length
+	
 	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
 	if ((index < len(lines)) and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
 		logger.info("Match!")
@@ -141,14 +143,16 @@ def doFirmwareFlashing (seen_tags):
 			# Update current line.
 			current_line = lines[index]
 			
-			
-			
 			# Check if EOF reached.
 			if (index == len(lines)-1):
 				logger.info("EOF reached.")
 				write_state = -1
 				# Construct the AccessSpec.
 				try:
+					accessSpecStopParam = {
+						'AccessSpecStopTriggerType': 0,
+						'OperationCountValue': 1,
+					}
 					writeSpecParam = {
 						'OpSpecID': 0,
 						'MB': 3,
@@ -157,9 +161,6 @@ def doFirmwareFlashing (seen_tags):
 						'WriteDataWordCount': int(1),
 						'WriteData': '\xb0\x07',
 					}
-					
-					# Change write_data for comparison against EPC.
-					write_data = "b0070000000000000000"
 					
 					# Call factory to do the next access.
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
@@ -171,16 +172,12 @@ def doFirmwareFlashing (seen_tags):
 			
 			# Check what the length of the data is before doing anything.
 			data_length = len(current_line) - 12
-			#logger.info(data_length)
-			
 			
 			# If data length = 4, 8 or 12, we write the whole line with 1 BlockWrite.
 			if (data_length < 16 and (data_length % 4) == 0):
-				
 				num_words = data_length / 4
-				logger.info(num_words)
 				
-				write_data = "DE" + current_line[1:7]
+				write_data = "DB" + current_line[1:7]
 				
 				for x in range(0, num_words):
 					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
@@ -198,7 +195,7 @@ def doFirmwareFlashing (seen_tags):
 						'WriteData': write_data.decode("hex"),
 					}
 					
-					# Change write_data for comparison against EPC.
+					# Pad write_data with zeroes for comparison against EPC.
 					write_data = write_data + ("0000"*(3-num_words))
 					
 					# Proceed to next line.
@@ -209,14 +206,15 @@ def doFirmwareFlashing (seen_tags):
 				except:
 					logger.info("Error when trying to construct next AccessSpec on new line.")
 				
-			# Full length of BlockWrite.
-			if (data_length % 16 == 0):
-				# Reset hexindex and strindex for new set of data packets.
+			# Need at least 1 full BlockWrite, so send header only first.
+			if (data_length >= 16):
+				# Reset hexindex, strindex and remaining length for new set of data packets.
 				hexindex = 0
 				strindex  = [9,25]
+				remaining_length = data_length
 				
 				# write_data = [fd:size:address] (2 words)
-				write_data = "DD" + current_line[1:7]
+				write_data = "DA" + current_line[1:7]
 				logger.info("Next block: " + str(write_data))
 				
 				# Construct the AccessSpec.
@@ -244,9 +242,33 @@ def doFirmwareFlashing (seen_tags):
 		
 		# Data packets.
 		elif (write_state == 1):
-			# write_data = [pckt_id:pckt_num:data] (5 words)
-			write_data = "DA" + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
-			strindex = [min(x + 16, len(current_line)) for x in strindex]
+			num_words = 4
+			# Proceed as normal, full length BlockWrite.
+			if (remaining_length >= 16):
+				write_data = "DF" + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
+				remaining_length = remaining_length - 16
+				
+				# Calculate new strindex.
+				strindex[0] = strindex[0] + 16
+				strindex[1] = min(strindex[1] + 16, strindex[1] + remaining_length)
+				
+			# We have less than 4 words left to write in this BlockWrite.
+			else:
+				num_words = remaining_length/4
+				write_data = ""
+				if (num_words == 1):
+					write_data = write_data + "DC"
+				elif (num_words == 2):
+					write_data = write_data + "DD"
+				elif (num_words == 3):
+					write_data = write_data + "DE"
+				else:
+					logger.info("I'm sorry I can't do that Dave!")
+					return
+				
+				write_data = write_data + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
+				remaining_length = 0
+			
 			logger.info("Next block: " + str(write_data))
 			
 			# Construct the AccessSpec.
@@ -256,16 +278,19 @@ def doFirmwareFlashing (seen_tags):
 					'MB': 3,
 					'WordPtr': 0,
 					'AccessPassword': 0,
-					'WriteDataWordCount': int(5),
+					'WriteDataWordCount': int(num_words+1),
 					'WriteData': write_data.decode("hex"),
 				}
 				
 				hexindex = hexindex + 1
 				
+				# Pad write_data with zeroes for comparison against EPC.
+				write_data = write_data + ("0000"*(4-num_words))
+				
 				# Done with data, so put state machine back to new line.
-				if (strindex[1] == len(current_line)):
+				if (remaining_length == 0):
 					write_state = 0
-					index = index + 1
+					index = index +1
 				
 				# Call factory to do the next access.
 				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
