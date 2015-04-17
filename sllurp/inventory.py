@@ -28,6 +28,13 @@ def tagReportCallback (llrpMsg):
     tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
     if len(tags):
         logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+        #logger.info("raw: " + str(tags[0]['EPC-96'][18:24]))
+        #x = int(tags[0]['EPC-96'][18:20], 16) if (int(tags[0]['EPC-96'][18:20], 16) < 128) else (int(tags[0]['EPC-96'][18:20], 16) - 256)
+        #y = int(tags[0]['EPC-96'][20:22], 16) if (int(tags[0]['EPC-96'][20:22], 16) < 128) else (int(tags[0]['EPC-96'][20:22], 16) - 256)
+        #z = int(tags[0]['EPC-96'][22:24], 16) if (int(tags[0]['EPC-96'][22:24], 16) < 128) else (int(tags[0]['EPC-96'][22:24], 16) - 256)
+        
+        #logger.info("x= " + str(x) + ", y= " + str(y) + ", z= " + str(z) )
+
     else:
         logger.info('no tags seen')
         return

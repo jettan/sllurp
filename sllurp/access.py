@@ -66,6 +66,7 @@ def finish (_):
 
 # The first access command.
 def access (proto):
+	global write_state
 	readSpecParam = None
 	if args.read_words:
 		readSpecParam = {
@@ -90,7 +91,6 @@ def access (proto):
 	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
 	if (args.write_content == 45317):
 		global write_data
-		global write_state
 		global start_time
 		
 		write_data = "b1050000000000000000"
@@ -104,6 +104,7 @@ def access (proto):
 	
 	# Otherwise, use default behavior and keep AccessSpec alive.
 	else:
+		write_state = -1
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 0,
 			'OperationCountValue': 1,
