@@ -1,0 +1,900 @@
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.790 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.035 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.301 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.551 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.814 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.071 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.335 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.591 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.845 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.101 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.355 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.605 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.875 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.125 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.390 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.635 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.931 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.175 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.445 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.695 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.955 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.207 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.475 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.725 secs
+(81/81) --- Time elapsed: 6.995 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 411
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.271 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.794 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.045 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.305 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.555 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.815 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.071 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.356 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.605 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.896 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.135 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.395 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.645 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.915 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.165 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.435 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.692 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.945 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.195 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.465 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.715 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.995 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.246 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.505 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.756 secs
+(80/80) --- Time elapsed: 7.015 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 449
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.259 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.510 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.779 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.030 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.289 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.540 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.809 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.059 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.339 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.590 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.851 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.101 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.360 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.610 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.879 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.129 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.410 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.660 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.920 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.170 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.445 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.696 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.949 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.200 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.459 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.710 secs
+(81/81) --- Time elapsed: 6.980 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 479
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.521 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.775 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.025 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.284 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.534 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.795 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.045 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.304 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.555 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.815 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.065 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.325 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.575 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.835 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.085 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.355 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.605 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.871 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.115 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.385 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.631 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.885 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.141 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.395 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.645 secs
+(80/80) --- Time elapsed: 6.921 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 435
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.262 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.513 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.778 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.023 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.292 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.542 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.823 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.073 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.343 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.598 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.863 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.113 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.378 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.623 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.882 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.143 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.414 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.663 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.932 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.183 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.472 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.723 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.988 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.233 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.493 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.743 secs
+(81/81) --- Time elapsed: 7.013 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 454
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.516 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.780 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.025 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.291 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.535 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.815 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.071 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.335 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.585 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.845 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.095 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.365 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.615 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.905 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.155 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.435 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.685 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.965 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.215 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.485 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.735 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.995 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.245 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.515 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.766 secs
+(80/80) --- Time elapsed: 7.031 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 470
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.258 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.517 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.787 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.037 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.307 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.557 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.828 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.089 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.338 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.588 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.847 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.097 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.357 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.609 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.867 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.117 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.377 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.627 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.897 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.147 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.414 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.658 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.933 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.177 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.447 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.699 secs
+(81/81) --- Time elapsed: 6.967 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 499
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.271 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.516 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.775 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.031 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.294 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.545 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.815 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.065 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.345 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.596 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.855 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.105 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.375 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.626 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.885 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.135 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.394 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.661 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.920 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.177 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.425 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.675 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.935 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.185 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.451 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.695 secs
+(80/80) --- Time elapsed: 6.971 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 520
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.266 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.517 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.776 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.032 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.286 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.536 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.796 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.046 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.306 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.557 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.826 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.076 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.346 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.597 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.856 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.118 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.386 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.637 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.896 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.156 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.453 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.696 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.962 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.206 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.476 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.727 secs
+(81/81) --- Time elapsed: 6.996 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 496
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.784 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.046 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.305 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.555 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.815 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.065 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.334 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.585 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.858 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.096 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.355 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.605 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.871 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.127 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.375 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.626 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.885 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.135 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.405 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.655 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.926 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.165 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.425 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.675 secs
+(80/80) --- Time elapsed: 6.950 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 534
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.775 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.024 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.304 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.554 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.815 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.065 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.340 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.584 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.855 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.105 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.376 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.616 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.876 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.125 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.384 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.634 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.905 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.155 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.426 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.665 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.926 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.175 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.445 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.695 secs
+(81/81) --- Time elapsed: 6.965 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 473
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.794 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.035 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.305 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.555 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.824 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.075 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.345 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.600 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.865 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.115 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.390 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.635 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.895 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.145 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.415 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.661 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.925 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.181 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.451 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.695 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.965 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.215 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.485 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.740 secs
+(80/80) --- Time elapsed: 7.021 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 464
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.264 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.514 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.774 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.034 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.304 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.561 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.814 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.065 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.334 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.584 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.870 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.115 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.375 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.624 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.885 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.135 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.394 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.645 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.905 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.155 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.415 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.664 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.944 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.194 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.465 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.714 secs
+(81/81) --- Time elapsed: 6.984 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 484
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.266 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.785 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.035 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.325 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.835 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 2.085 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.345 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.595 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.865 secs
+Next block: DA206440             (32/80) --- Time elapsed: 3.111 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.375 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.625 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.885 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 4.141 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.406 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.655 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.925 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 5.175 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.456 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.705 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.975 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 6.225 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.495 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.745 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 7.015 secs
+(80/80) --- Time elapsed: 7.271 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 497
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.261 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.510 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.779 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.030 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.289 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.540 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.799 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.050 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.320 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.587 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.835 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.080 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.350 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.600 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.860 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.122 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.376 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.620 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.910 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.160 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.419 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.671 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.936 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.186 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.440 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.690 secs
+(81/81) --- Time elapsed: 6.960 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 456
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.521 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.781 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.031 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.295 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.545 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.831 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.075 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.345 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.596 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.855 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.105 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.365 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.621 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.885 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.135 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.395 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.645 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.911 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.155 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.445 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.695 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.961 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.205 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.495 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.746 secs
+(80/80) --- Time elapsed: 7.011 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 475
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.265 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.515 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.780 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.025 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.290 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.535 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.805 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.055 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.325 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.575 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.845 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.095 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.375 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.625 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.895 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.145 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.415 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.665 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.946 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.185 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.456 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.705 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.991 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.235 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.495 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.745 secs
+(81/81) --- Time elapsed: 7.006 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 492
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.264 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.513 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.793 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.043 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.313 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.563 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 1.833 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.089 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.363 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.619 secs
+Next block: DA206440             (32/80) --- Time elapsed: 2.883 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.133 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.393 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.643 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 3.913 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.163 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.423 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.673 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 4.943 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.193 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.464 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.713 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 5.983 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.233 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.531 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.764 secs
+(80/80) --- Time elapsed: 7.029 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 486
+disconnecting
+log level: INFO
+Words to send: 81
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/81) --- Time elapsed: 0.262 secs
+Next block: DF002A1440181A425C01 (0/81) --- Time elapsed: 0.519 secs
+Next block: DF014018B240805A5C01 (4/81) --- Time elapsed: 0.788 secs
+Next block: DF028F0000009F000100 (8/81) --- Time elapsed: 1.032 secs
+Next block: DF031428890000008800 (12/81) --- Time elapsed: 1.318 secs
+Next block: DA206420             (16/81) --- Time elapsed: 1.562 secs
+Next block: DF0000000D3C0C097F4C (16/81) --- Time elapsed: 1.824 secs
+Next block: DF014F4F5F0600185F4F (20/81) --- Time elapsed: 2.079 secs
+Next block: DF020000A90004000D09 (24/81) --- Time elapsed: 2.332 secs
+Next block: DF034F13A9000400D908 (28/81) --- Time elapsed: 2.588 secs
+Next block: DA206440             (32/81) --- Time elapsed: 2.843 secs
+Next block: DF00F12B7AC23AD0085A (32/81) --- Time elapsed: 3.093 secs
+Next block: DF014018824A5C018F00 (36/81) --- Time elapsed: 3.358 secs
+Next block: DF0200009F0000000924 (40/81) --- Time elapsed: 3.602 secs
+Next block: DF038A000000033C6A13 (44/81) --- Time elapsed: 3.862 secs
+Next block: DA206460             (48/81) --- Time elapsed: 4.118 secs
+Next block: DF00AA0004009A000000 (48/81) --- Time elapsed: 4.372 secs
+Next block: DF01FA23281610018100 (52/81) --- Time elapsed: 4.640 secs
+Next block: DF020024B01398640C93 (56/81) --- Time elapsed: 4.892 secs
+Next block: DF030224B01300640C43 (60/81) --- Time elapsed: 5.143 secs
+Next block: DA206480             (64/81) --- Time elapsed: 5.403 secs
+Next block: DF00B0138864B0139C64 (64/81) --- Time elapsed: 5.652 secs
+Next block: DF01B240805A5C01B2D0 (68/81) --- Time elapsed: 5.922 secs
+Next block: DF0240002203FF3F0343 (72/81) --- Time elapsed: 6.172 secs
+Next block: DF031C4310010343FF3F (76/81) --- Time elapsed: 6.442 secs
+Next block: DB02FDFE6E64         (80/81) --- Time elapsed: 6.699 secs
+(81/81) --- Time elapsed: 6.958 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 495
+disconnecting
+log level: INFO
+Words to send: 80
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DA206400             (0/80) --- Time elapsed: 0.264 secs
+Next block: DF002A1440181A425C01 (0/80) --- Time elapsed: 0.516 secs
+Next block: DF014018B240805A5C01 (4/80) --- Time elapsed: 0.774 secs
+Next block: DF028F0000009F000100 (8/80) --- Time elapsed: 1.025 secs
+Next block: DF031428890000008800 (12/80) --- Time elapsed: 1.530 secs
+Next block: DA206420             (16/80) --- Time elapsed: 1.794 secs
+Next block: DF0000000D3C0C097F4C (16/80) --- Time elapsed: 2.045 secs
+Next block: DF014F4F5F0600185F4F (20/80) --- Time elapsed: 2.306 secs
+Next block: DF020000A90004000D09 (24/80) --- Time elapsed: 2.555 secs
+Next block: DF034F13A9000400D908 (28/80) --- Time elapsed: 2.815 secs
+Next block: DA206440             (32/80) --- Time elapsed: 3.064 secs
+Next block: DF00F12B7AC23AD0085A (32/80) --- Time elapsed: 3.341 secs
+Next block: DF014018824A5C018F00 (36/80) --- Time elapsed: 3.584 secs
+Next block: DF0200009F0000000924 (40/80) --- Time elapsed: 3.854 secs
+Next block: DF038A000000033C6A13 (44/80) --- Time elapsed: 4.110 secs
+Next block: DA206460             (48/80) --- Time elapsed: 4.380 secs
+Next block: DF00AA0004009A000000 (48/80) --- Time elapsed: 4.636 secs
+Next block: DF01FA23281610018100 (52/80) --- Time elapsed: 4.884 secs
+Next block: DF020024B01396640C93 (56/80) --- Time elapsed: 5.147 secs
+Next block: DF030224B01300640C43 (60/80) --- Time elapsed: 5.401 secs
+Next block: DA1E6480             (64/80) --- Time elapsed: 5.657 secs
+Next block: DF00B0138864B0139A64 (64/80) --- Time elapsed: 5.904 secs
+Next block: DF01B240805A5C01D2D3 (68/80) --- Time elapsed: 6.166 secs
+Next block: DF022302FF3F03431C43 (72/80) --- Time elapsed: 6.434 secs
+Next block: DE0310010343FF3F     (76/80) --- Time elapsed: 6.685 secs
+Next block: DB02FDFE6E64         (79/80) --- Time elapsed: 6.955 secs
+(80/80) --- Time elapsed: 7.211 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 507
+disconnecting
