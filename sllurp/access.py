@@ -20,6 +20,7 @@ write_data       = None
 write_state      = None
 pckt_num         = ["00", "01", "02", "03", "04"]
 hexindex         = 0
+correct_count    = 0
 
 # Line index of hexfile.
 index = 0
@@ -67,6 +68,7 @@ def finish (_):
 # The first access command.
 def access (proto):
 	global write_state
+	write_state = -1
 	readSpecParam = None
 	if args.read_words:
 		readSpecParam = {
@@ -85,7 +87,8 @@ def access (proto):
 			'WordPtr': 0,
 			'AccessPassword': 0,
 			'WriteDataWordCount': args.write_words,
-			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
+			#'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
+			'WriteData': ('\x13\x37'*args.write_words),
 		}
 	
 	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
@@ -104,7 +107,6 @@ def access (proto):
 	
 	# Otherwise, use default behavior and keep AccessSpec alive.
 	else:
-		write_state = -1
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 0,
 			'OperationCountValue': 1,
@@ -151,7 +153,7 @@ def doFirmwareFlashing (seen_tags):
 			
 			# Check if EOF reached.
 			if (index == len(lines)-1):
-				logger.info("EOF reached. Booting into new firmware...")
+				logger.info(progress_string + " EOF reached. Booting into new firmware...")
 				write_state = -1
 				# Construct the AccessSpec.
 				try:
@@ -314,10 +316,10 @@ def tagReportCallback (llrpMsg):
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
 	if len(tags):
-		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+		logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		logger.debug("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
+		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
@@ -333,8 +335,9 @@ def tagReportCallback (llrpMsg):
 			logger.info('no tags seen')
 		return
 	for tag in tags:
-		if (write_state > -1):
-			tagReport += tag['TagSeenCount'][0]
+		#if (write_state > -1):
+		#	tagReport += tag['TagSeenCount'][0]
+		tagReport += tag['TagSeenCount'][0]
 
 
 def parse_args ():
