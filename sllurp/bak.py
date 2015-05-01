@@ -88,8 +88,8 @@ def access (proto):
 			'WordPtr': 0,
 			'AccessPassword': 0,
 			'WriteDataWordCount': args.write_words,
-			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
-			#'WriteData': ('\x13\x37'*args.write_words),
+			#'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
+			'WriteData': ('\x13\x37'*args.write_words),
 		}
 	
 	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
@@ -140,7 +140,7 @@ def doFirmwareFlashing (seen_tags):
 	#window_time = window_time + 1
 	
 	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
-	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:20] == write_data[0:20].lower())):
+	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:20] == write_data.lower())):
 	#if (write_state >= 0 and window_time == 10):
 	#	window_time = 0
 		current_time = time.time()
@@ -188,7 +188,7 @@ def doFirmwareFlashing (seen_tags):
 			data_length = len(current_line) - 12
 			
 			# If data length = 4, 8 or 12, we write the whole line with 1 BlockWrite.
-			if ((data_length % 4) == 0):
+			if (data_length < 16 and (data_length % 4) == 0):
 				num_words = data_length / 4
 				
 				write_data = "DB" + current_line[1:7]
@@ -196,7 +196,7 @@ def doFirmwareFlashing (seen_tags):
 				for x in range(0, num_words):
 					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
 				
-				logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
+				logger.info("Next block: " + str(write_data) + ("    "*(3-num_words)) + " " + progress_string)
 				
 				# Construct the AccessSpec.
 				try:
@@ -210,7 +210,7 @@ def doFirmwareFlashing (seen_tags):
 					}
 					
 					# Pad write_data with zeroes for comparison against EPC.
-					write_data = write_data + ("0000"*(4-num_words))
+					write_data = write_data + ("0000"*(3-num_words))
 					words_sent += num_words
 					
 					# Proceed to next line.
@@ -221,6 +221,97 @@ def doFirmwareFlashing (seen_tags):
 				except:
 					logger.info("Error when trying to construct next AccessSpec on new line.")
 				
+			# Need at least 1 full BlockWrite, so send header only first.
+			if (data_length >= 16):
+				# Reset hexindex, strindex and remaining length for new set of data packets.
+				hexindex = 0
+				strindex  = [9,25]
+				remaining_length = data_length
+				
+				# write_data = [fd:size:address] (2 words)
+				write_data = "DA" + current_line[1:7]
+				logger.info("Next block: " + str(write_data) + "             " + progress_string)
+				
+				# Construct the AccessSpec.
+				try:
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(2),
+						'WriteData': write_data.decode("hex"),
+					}
+					
+					# Change write_data for comparison against EPC.
+					write_data = write_data + "000000000000"
+					
+					# Proceed to next state.
+					write_state = 1
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
+				
+		
+		# Data packets.
+		elif (write_state == 1):
+			num_words = 4
+			# Proceed as normal, full length BlockWrite.
+			if (remaining_length >= 16):
+				write_data = "DF" + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
+				remaining_length = remaining_length - 16
+				
+				# Calculate new strindex.
+				strindex[0] = strindex[0] + 16
+				strindex[1] = min(strindex[1] + 16, strindex[1] + remaining_length)
+				
+			# We have less than 4 words left to write in this BlockWrite.
+			else:
+				num_words = remaining_length/4
+				write_data = ""
+				if (num_words == 1):
+					write_data = write_data + "DC"
+				elif (num_words == 2):
+					write_data = write_data + "DD"
+				elif (num_words == 3):
+					write_data = write_data + "DE"
+				else:
+					logger.info("I'm sorry I can't do that Dave!")
+					return
+				
+				write_data = write_data + pckt_num[hexindex] + current_line[strindex[0]:strindex[1]]
+				remaining_length = 0
+			
+			logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
+			
+			# Construct the AccessSpec.
+			try:
+				writeSpecParam = {
+					'OpSpecID': 0,
+					'MB': 3,
+					'WordPtr': 0,
+					'AccessPassword': 0,
+					'WriteDataWordCount': int(num_words+1),
+					'WriteData': write_data.decode("hex"),
+				}
+				
+				hexindex = hexindex + 1
+				
+				# Pad write_data with zeroes for comparison against EPC.
+				write_data = write_data + ("0000"*(4-num_words))
+				words_sent += num_words
+				
+				# Done with data, so put state machine back to new line.
+				if (remaining_length == 0):
+					write_state = 0
+					index = index +1
+				
+				# Call factory to do the next access.
+				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			except:
+				logger.info("Error when trying to construct next AccessSpec on data packets.")
 		
 
 def tagReportCallback (llrpMsg):
@@ -234,7 +325,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
+		logger.debug("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
