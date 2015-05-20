@@ -332,6 +332,13 @@ def main ():
 		for i in range(0,len(lines)-1):
 			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
 		
+		for line in lines:
+			sum = 0
+			for i in range(0,(len(line)-3)/2):
+				sum += int("0x"+line[2*i+1:2*i+3], 0)
+			sum = sum % 256
+			logger.info(hex(256-sum))
+		
 		logger.info('Words to send: ' + str(total_words_to_send))
 	
 	# will be called when all connections have terminated normally
