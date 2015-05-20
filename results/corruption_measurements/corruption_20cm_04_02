@@ -1,0 +1,147 @@
+log level: INFO
+Words to send: 512
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: DB0864001111111111111111 (0/512) --- Time elapsed: 0.264 secs
+Next block: DB0864082222222222222222 (4/512) --- Time elapsed: 0.515 secs
+Next block: DB0864103333333333333333 (8/512) --- Time elapsed: 0.774 secs
+Next block: DB0864184444444444444444 (12/512) --- Time elapsed: 1.024 secs
+Next block: DB0864205555555555555555 (16/512) --- Time elapsed: 1.294 secs
+Next block: DB0864286666666666666666 (20/512) --- Time elapsed: 1.546 secs
+Next block: DB0864307777777777777777 (24/512) --- Time elapsed: 1.804 secs
+Next block: DB0864388888888888888888 (28/512) --- Time elapsed: 2.055 secs
+Next block: DB0864409999999999999999 (32/512) --- Time elapsed: 2.324 secs
+Next block: DB086448AAAAAAAAAAAAAAAA (36/512) --- Time elapsed: 2.575 secs
+Next block: DB086450BBBBBBBBBBBBBBBB (40/512) --- Time elapsed: 2.835 secs
+Next block: DB086458CCCCCCCCCCCCCCCC (44/512) --- Time elapsed: 3.085 secs
+Next block: DB086460DDDDDDDDDDDDDDDD (48/512) --- Time elapsed: 3.374 secs
+Next block: DB086468EEEEEEEEEEEEEEEE (52/512) --- Time elapsed: 3.625 secs
+Next block: DB086470FFFFFFFFFFFFFFFF (56/512) --- Time elapsed: 3.884 secs
+Next block: DB0864781111111111111111 (60/512) --- Time elapsed: 4.141 secs
+Next block: DB0864802222222222222222 (64/512) --- Time elapsed: 4.394 secs
+Next block: DB0864883333333333333333 (68/512) --- Time elapsed: 4.645 secs
+Next block: DB0864904444444444444444 (72/512) --- Time elapsed: 4.905 secs
+Next block: DB0864985555555555555555 (76/512) --- Time elapsed: 5.155 secs
+Next block: DB0864A06666666666666666 (80/512) --- Time elapsed: 5.415 secs
+Next block: DB0864A87777777777777777 (84/512) --- Time elapsed: 5.665 secs
+Next block: DB0864B08888888888888888 (88/512) --- Time elapsed: 5.934 secs
+Next block: DB0864B89999999999999999 (92/512) --- Time elapsed: 6.185 secs
+Next block: DB0864C0AAAAAAAAAAAAAAAA (96/512) --- Time elapsed: 6.444 secs
+Next block: DB0864C8BBBBBBBBBBBBBBBB (100/512) --- Time elapsed: 6.696 secs
+Next block: DB0864D0CCCCCCCCCCCCCCCC (104/512) --- Time elapsed: 6.965 secs
+Next block: DB0864D8DDDDDDDDDDDDDDDD (108/512) --- Time elapsed: 7.227 secs
+Next block: DB0864E0EEEEEEEEEEEEEEEE (112/512) --- Time elapsed: 7.485 secs
+Next block: DB0864E8FFFFFFFFFFFFFFFF (116/512) --- Time elapsed: 7.735 secs
+Next block: DB0864F01111111111111111 (120/512) --- Time elapsed: 7.995 secs
+Next block: DB0864F82222222222222222 (124/512) --- Time elapsed: 8.245 secs
+Next block: DB0865003333333333333333 (128/512) --- Time elapsed: 8.515 secs
+Next block: DB0865084444444444444444 (132/512) --- Time elapsed: 8.766 secs
+Next block: DB0865105555555555555555 (136/512) --- Time elapsed: 9.024 secs
+Next block: DB0865186666666666666666 (140/512) --- Time elapsed: 9.275 secs
+Next block: DB0865207777777777777777 (144/512) --- Time elapsed: 9.565 secs
+Next block: DB0865288888888888888888 (148/512) --- Time elapsed: 9.815 secs
+Next block: DB0865309999999999999999 (152/512) --- Time elapsed: 10.085 secs
+Next block: DB086538AAAAAAAAAAAAAAAA (156/512) --- Time elapsed: 10.335 secs
+Next block: DB086540BBBBBBBBBBBBBBBB (160/512) --- Time elapsed: 10.615 secs
+Next block: DB086548CCCCCCCCCCCCCCCC (164/512) --- Time elapsed: 10.866 secs
+Next block: DB086550DDDDDDDDDDDDDDDD (168/512) --- Time elapsed: 11.125 secs
+Next block: DB086558EEEEEEEEEEEEEEEE (172/512) --- Time elapsed: 11.375 secs
+Next block: DB086560FFFFFFFFFFFFFFFF (176/512) --- Time elapsed: 11.645 secs
+Next block: DB0865681111111111111111 (180/512) --- Time elapsed: 11.895 secs
+Next block: DB0865702222222222222222 (184/512) --- Time elapsed: 12.165 secs
+Next block: DB0865783333333333333333 (188/512) --- Time elapsed: 12.415 secs
+Next block: DB0865804444444444444444 (192/512) --- Time elapsed: 12.685 secs
+Next block: DB0865885555555555555555 (196/512) --- Time elapsed: 12.935 secs
+Next block: DB0865906666666666666666 (200/512) --- Time elapsed: 13.215 secs
+Next block: DB0865987777777777777777 (204/512) --- Time elapsed: 13.465 secs
+Next block: DB0865A08888888888888888 (208/512) --- Time elapsed: 13.735 secs
+Next block: DB0865A89999999999999999 (212/512) --- Time elapsed: 13.992 secs
+Next block: DB0865B0AAAAAAAAAAAAAAAA (216/512) --- Time elapsed: 14.255 secs
+Next block: DB0865B8BBBBBBBBBBBBBBBB (220/512) --- Time elapsed: 14.505 secs
+Next block: DB0865C0CCCCCCCCCCCCCCCC (224/512) --- Time elapsed: 14.775 secs
+Next block: DB0865C8DDDDDDDDDDDDDDDD (228/512) --- Time elapsed: 15.025 secs
+Next block: DB0865D0EEEEEEEEEEEEEEEE (232/512) --- Time elapsed: 15.285 secs
+Next block: DB0865D8FFFFFFFFFFFFFFFF (236/512) --- Time elapsed: 15.535 secs
+Next block: DB0865E01111111111111111 (240/512) --- Time elapsed: 15.795 secs
+Next block: DB0865E82222222222222222 (244/512) --- Time elapsed: 16.046 secs
+Next block: DB0865F03333333333333333 (248/512) --- Time elapsed: 16.316 secs
+Next block: DB0865F84444444444444444 (252/512) --- Time elapsed: 16.555 secs
+Next block: DB0866005555555555555555 (256/512) --- Time elapsed: 16.825 secs
+Next block: DB0866086666666666666666 (260/512) --- Time elapsed: 17.075 secs
+Next block: DB0866107777777777777777 (264/512) --- Time elapsed: 17.345 secs
+Next block: DB0866188888888888888888 (268/512) --- Time elapsed: 17.595 secs
+Next block: DB0866209999999999999999 (272/512) --- Time elapsed: 17.881 secs
+Next block: DB086628AAAAAAAAAAAAAAAA (276/512) --- Time elapsed: 18.126 secs
+Next block: DB086630BBBBBBBBBBBBBBBB (280/512) --- Time elapsed: 18.385 secs
+Next block: DB086638CCCCCCCCCCCCCCCC (284/512) --- Time elapsed: 18.635 secs
+Next block: DB086640DDDDDDDDDDDDDDDD (288/512) --- Time elapsed: 18.915 secs
+Next block: DB086648EEEEEEEEEEEEEEEE (292/512) --- Time elapsed: 19.165 secs
+Next block: DB086650FFFFFFFFFFFFFFFF (296/512) --- Time elapsed: 19.425 secs
+Next block: DB0866581111111111111111 (300/512) --- Time elapsed: 19.676 secs
+Next block: DB0866602222222222222222 (304/512) --- Time elapsed: 19.935 secs
+Next block: DB0866683333333333333333 (308/512) --- Time elapsed: 20.185 secs
+Next block: DB0866704444444444444444 (312/512) --- Time elapsed: 20.475 secs
+Next block: DB0866785555555555555555 (316/512) --- Time elapsed: 20.731 secs
+Next block: DB0866806666666666666666 (320/512) --- Time elapsed: 20.985 secs
+Next block: DB0866887777777777777777 (324/512) --- Time elapsed: 21.235 secs
+Next block: DB0866908888888888888888 (328/512) --- Time elapsed: 21.505 secs
+Next block: DB0866989999999999999999 (332/512) --- Time elapsed: 21.755 secs
+Next block: DB0866A0AAAAAAAAAAAAAAAA (336/512) --- Time elapsed: 22.025 secs
+Next block: DB0866A8BBBBBBBBBBBBBBBB (340/512) --- Time elapsed: 22.275 secs
+Next block: DB0866B0CCCCCCCCCCCCCCCC (344/512) --- Time elapsed: 22.535 secs
+Next block: DB0866B8DDDDDDDDDDDDDDDD (348/512) --- Time elapsed: 22.785 secs
+Next block: DB0866C0EEEEEEEEEEEEEEEE (352/512) --- Time elapsed: 23.055 secs
+Next block: DB0866C8FFFFFFFFFFFFFFFF (356/512) --- Time elapsed: 23.306 secs
+Next block: DB0866D01111111111111111 (360/512) --- Time elapsed: 23.565 secs
+Next block: DB0866D82222222222222222 (364/512) --- Time elapsed: 23.816 secs
+Next block: DB0866E03333333333333333 (368/512) --- Time elapsed: 24.085 secs
+Next block: DB0866E84444444444444444 (372/512) --- Time elapsed: 24.336 secs
+Next block: DB0866F05555555555555555 (376/512) --- Time elapsed: 24.611 secs
+Next block: DB0866F86666666666666666 (380/512) --- Time elapsed: 24.856 secs
+Next block: DB0867007777777777777777 (384/512) --- Time elapsed: 25.116 secs
+Next block: DB0867088888888888888888 (388/512) --- Time elapsed: 25.365 secs
+Next block: DB0867109999999999999999 (392/512) --- Time elapsed: 25.635 secs
+Next block: DB086718AAAAAAAAAAAAAAAA (396/512) --- Time elapsed: 25.885 secs
+Next block: DB086720BBBBBBBBBBBBBBBB (400/512) --- Time elapsed: 26.155 secs
+Next block: DB086728CCCCCCCCCCCCCCCC (404/512) --- Time elapsed: 26.405 secs
+Next block: DB086730DDDDDDDDDDDDDDDD (408/512) --- Time elapsed: 26.681 secs
+Next block: DB086738EEEEEEEEEEEEEEEE (412/512) --- Time elapsed: 26.926 secs
+Next block: DB086740FFFFFFFFFFFFFFFF (416/512) --- Time elapsed: 27.191 secs
+Next block: DB0867481111111111111111 (420/512) --- Time elapsed: 27.435 secs
+Next block: DB0867502222222222222222 (424/512) --- Time elapsed: 27.695 secs
+Next block: DB0867583333333333333333 (428/512) --- Time elapsed: 27.946 secs
+Next block: DB0867604444444444444444 (432/512) --- Time elapsed: 28.205 secs
+Next block: DB0867685555555555555555 (436/512) --- Time elapsed: 28.455 secs
+Next block: DB0867706666666666666666 (440/512) --- Time elapsed: 28.715 secs
+Next block: DB0867787777777777777777 (444/512) --- Time elapsed: 28.967 secs
+Next block: DB0867808888888888888888 (448/512) --- Time elapsed: 29.235 secs
+Next block: DB0867889999999999999999 (452/512) --- Time elapsed: 29.485 secs
+Next block: DB086790AAAAAAAAAAAAAAAA (456/512) --- Time elapsed: 29.766 secs
+Next block: DB086798BBBBBBBBBBBBBBBB (460/512) --- Time elapsed: 30.016 secs
+Next block: DB0867A0CCCCCCCCCCCCCCCC (464/512) --- Time elapsed: 30.275 secs
+Next block: DB0867A8DDDDDDDDDDDDDDDD (468/512) --- Time elapsed: 30.527 secs
+Next block: DB0867B0EEEEEEEEEEEEEEEE (472/512) --- Time elapsed: 30.795 secs
+Next block: DB0867B8FFFFFFFFFFFFFFFF (476/512) --- Time elapsed: 31.045 secs
+Next block: DB0867C01111111111111111 (480/512) --- Time elapsed: 31.316 secs
+Next block: DB0867C82222222222222222 (484/512) --- Time elapsed: 31.566 secs
+Next block: DB0867D03333333333333333 (488/512) --- Time elapsed: 31.825 secs
+Next block: DB0867D84444444444444444 (492/512) --- Time elapsed: 32.075 secs
+Next block: DB0867E05555555555555555 (496/512) --- Time elapsed: 32.355 secs
+Next block: DB0867E86666666666666666 (500/512) --- Time elapsed: 32.605 secs
+Next block: DB0867F07777777777777777 (504/512) --- Time elapsed: 32.875 secs
+Next block: DB0867F88888888888888888 (508/512) --- Time elapsed: 33.136 secs
+(512/512) --- Time elapsed: 33.406 secs EOF reached. Booting into new firmware...
+stopping politely
+will disconnect when stopped
+reader finished inventory
+lost connection: Connection to the other side was lost in a non-clean fashion: Connection lost.
+total # of tags seen: 2158
+disconnecting
