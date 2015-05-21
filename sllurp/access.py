@@ -17,6 +17,7 @@ args = None
 current_line     = None
 remaining_length = None
 write_data       = None
+check_data       = None
 write_state      = None
 pckt_num         = ["00", "01", "02", "03", "04"]
 hexindex         = 0
@@ -95,10 +96,11 @@ def access (proto):
 	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
 	if (args.write_content == 45317):
 		global write_data
+		global check_data
 		global start_time
 		
-		write_data = "b1050000000000000000"
-		write_state= 0
+		check_data = "b105000000"
+		write_state = 0
 		start_time = time.time()
 		
 		accessSpecStopParam = {
@@ -126,6 +128,7 @@ def doFirmwareFlashing (seen_tags):
 	global current_line
 	global lines
 	global index
+	global check_data
 	global write_data
 	global write_state
 	global pckt_num
@@ -140,7 +143,7 @@ def doFirmwareFlashing (seen_tags):
 	#window_time = window_time + 1
 	
 	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
-	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:20] == write_data[0:20].lower())):
+	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:10] == check_data.lower())):
 	#if (write_state >= 0 and window_time == 10):
 	#	window_time = 0
 		current_time = time.time()
@@ -191,12 +194,28 @@ def doFirmwareFlashing (seen_tags):
 			if ((data_length % 4) == 0):
 				num_words = data_length / 4
 				
-				write_data = "DB" + current_line[1:7]
+				header = "{:02x}".format(2+num_words)
+				#header = str(2+num_words)
 				
+				# Header + Address
+				write_data = header + current_line[1:7]
+				
+				# Data
 				for x in range(0, num_words):
 					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
 				
-				logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
+				# Checksum
+				checksum = 0
+				for i in range(0, len(write_data)/2):
+					checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+				checksum = checksum % 256
+				checksum = "{:02x}".format(checksum)
+				checksum += "00"
+				
+				write_data += checksum
+				
+				#logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
+				logger.info("Next block: " + str(header + current_line[1:7] + checksum[0:2])  + progress_string)
 				
 				# Construct the AccessSpec.
 				try:
@@ -205,12 +224,13 @@ def doFirmwareFlashing (seen_tags):
 						'MB': 3,
 						'WordPtr': 0,
 						'AccessPassword': 0,
-						'WriteDataWordCount': int(2+num_words),
+						'WriteDataWordCount': int(3+num_words),
 						'WriteData': write_data.decode("hex"),
 					}
 					
 					# Pad write_data with zeroes for comparison against EPC.
-					write_data = write_data + ("0000"*(4-num_words))
+					check_data = header + current_line[1:7] + checksum[0:2]
+					logger.info(check_data)
 					words_sent += num_words
 					
 					# Proceed to next line.
@@ -234,7 +254,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:20]))
+		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:10]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
@@ -332,12 +352,13 @@ def main ():
 		for i in range(0,len(lines)-1):
 			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
 		
-		for line in lines:
-			sum = 0
-			for i in range(0,(len(line)-3)/2):
-				sum += int("0x"+line[2*i+1:2*i+3], 0)
-			sum = sum % 256
-			logger.info(hex(256-sum))
+		
+		#for line in lines:
+		#	sum = 0
+		#	for i in range(0,(len(line)-3)/2):
+		#		sum += int("0x"+line[2*i+1:2*i+3], 0)
+		#	sum = sum % 256
+		#	logger.info(hex(256-sum))
 		
 		logger.info('Words to send: ' + str(total_words_to_send))
 	
