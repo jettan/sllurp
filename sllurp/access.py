@@ -4,14 +4,32 @@ import logging
 import pprint
 import time
 import os
+import sys
 from twisted.internet import reactor, defer
 
 import sllurp.llrp as llrp
 
+# General sllurp stuff.
 tagReport = 0
 logger = logging.getLogger('sllurp')
 fac = None
 args = None
+
+#################### SYSTEM PARAMETERS ###############################################################
+
+# Number of NACKs before resend.
+TIMEOUT_VALUE = 20
+
+# Maximum number of resends.
+MAX_RESEND_VALUE = 3
+
+# Number of times a single ACCESSSPEC is performed by the reader before the reader disables it.
+OPERATION_COUNT_VALUE = 15
+
+# The maximum value of WordCount used in a BlockWrite command (4 - )
+MAX_WORD_COUNT = 20
+
+######################################################################################################
 
 # Stuff needed for changing access_specs.
 current_line     = None
@@ -21,8 +39,9 @@ check_data       = None
 write_state      = None
 pckt_num         = ["00", "01", "02", "03", "04"]
 hexindex         = 0
-correct_count    = 0
-window_time      = 0
+resend_count     = 0
+timeout          = 0
+
 
 # Line index of hexfile.
 index = 0
@@ -55,11 +74,6 @@ class hexact(argparse.Action):
 		return
 	pass
 
-# Convert a single character to hex.
-def char_to_hex (c):
-	return chr(int(c,16))
-
-
 # Stop the twisted reactor at the end of the program.
 def finish (_):
 	logger.info('total # of tags seen: {}'.format(tagReport))
@@ -90,7 +104,6 @@ def access (proto):
 			'AccessPassword': 0,
 			'WriteDataWordCount': args.write_words,
 			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
-			#'WriteData': ('\x13\x37'*args.write_words),
 		}
 	
 	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
@@ -137,26 +150,58 @@ def doFirmwareFlashing (seen_tags):
 	global start_time
 	global words_sent
 	global total_words_to_send
-	#global window_time
+	global timeout
+	global resend_count
+	
+	# Timeout/Resend mechanism.
+	if (write_state >= 0):
+		if (timeout < TIMEOUT_VALUE):
+			timeout += 1
+		elif (timeout == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
+			logger.info("Timeout reached. Resending...")
+			resend_count += 1
+			timeout = 0
+			
+			# Construct the AccessSpec.
+			try:
+				accessSpecStopParam = {
+					'AccessSpecStopTriggerType': 1,
+					'OperationCountValue': int(OPERATION_COUNT_VALUE),
+				}
+				
+				writeSpecParam = {
+					'OpSpecID': 0,
+					'MB': 3,
+					'WordPtr': 0,
+					'AccessPassword': 0,
+					'WriteDataWordCount': int(len(write_data)/4),
+					'WriteData': write_data.decode("hex"),
+				}
+				
+				# Call factory to do the next access.
+				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+			except:
+				logger.info("Error when trying to construct next AccessSpec on new line.")
+		else:
+			logger.info("Maximum resends reached... aborting.")
+			write_state = -1
 	
 	
-	#window_time = window_time + 1
 	
 	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
 	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:10] == check_data.lower())):
-	#if (write_state >= 0 and window_time == 10):
-	#	window_time = 0
+		timeout      = 0
+		resend_count = 0
 		current_time = time.time()
 		progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
 		
 		accessSpecStopParam = {
 			'AccessSpecStopTriggerType': 1,
-			'OperationCountValue': 15,
+			'OperationCountValue': int(OPERATION_COUNT_VALUE),
 		}
 		
 		# Start of a new line.
 		if (write_state == 0):
-			
 			# Update current line.
 			current_line = lines[index]
 			
@@ -183,9 +228,7 @@ def doFirmwareFlashing (seen_tags):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 				except:
 					logger.info("Error when trying to send boot command.")
-				
 				return
-			
 			
 			# Check what the length of the data is before doing anything.
 			data_length = len(current_line) - 12
@@ -195,7 +238,6 @@ def doFirmwareFlashing (seen_tags):
 				num_words = data_length / 4
 				
 				header = "{:02x}".format(2+num_words)
-				#header = str(2+num_words)
 				
 				# Header + Address
 				write_data = header + current_line[1:7]
@@ -213,8 +255,6 @@ def doFirmwareFlashing (seen_tags):
 				checksum += "00"
 				
 				write_data += checksum
-				
-				#logger.info("Next block: " + str(write_data) + ("    "*(4-num_words)) + " " + progress_string)
 				logger.info("Next block: " + str(header + current_line[1:7] + checksum[0:2])  + progress_string)
 				
 				# Construct the AccessSpec.
@@ -230,7 +270,6 @@ def doFirmwareFlashing (seen_tags):
 					
 					# Pad write_data with zeroes for comparison against EPC.
 					check_data = header + current_line[1:7] + checksum[0:2]
-					logger.info(check_data)
 					words_sent += num_words
 					
 					# Proceed to next line.
@@ -254,7 +293,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:10]))
+		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:12]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
@@ -266,11 +305,11 @@ def tagReportCallback (llrpMsg):
 			doFirmwareFlashing(tags)
 		
 	else:
-		if (write_state > -1):
+		if (write_state >= 0):
 			logger.info('no tags seen')
 		return
 	for tag in tags:
-		if (write_state > -1):
+		if (write_state >= 0):
 			tagReport += tag['TagSeenCount'][0]
 		#tagReport += tag['TagSeenCount'][0]
 
