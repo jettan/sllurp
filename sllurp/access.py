@@ -33,21 +33,15 @@ MAX_WORD_COUNT = 20
 
 # Stuff needed for changing access_specs.
 current_line     = None
-remaining_length = None
 write_data       = None
 check_data       = None
 write_state      = None
-pckt_num         = ["00", "01", "02", "03", "04"]
-hexindex         = 0
 resend_count     = 0
 timeout          = 0
 
 
 # Line index of hexfile.
 index = 0
-
-# Start and end indices of block in current line.
-strindex  = [9,25]
 
 # The Intel hexfile.
 hexfile   = None
@@ -136,18 +130,11 @@ def politeShutdown (factory):
 
 
 def doFirmwareFlashing (seen_tags):
-	global tagReport
-	global strindex
 	global current_line
-	global lines
 	global index
 	global check_data
 	global write_data
 	global write_state
-	global pckt_num
-	global hexindex
-	global remaining_length
-	global start_time
 	global words_sent
 	global total_words_to_send
 	global timeout
