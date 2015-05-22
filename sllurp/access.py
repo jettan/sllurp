@@ -308,11 +308,48 @@ def tagReportCallback (llrpMsg):
 	else:
 		if (write_state >= 0):
 			logger.info('no tags seen')
+			
+			global timeout
+			global resend_count
+			global write_data
+			
+			# Handle timeout.
+			if (timeout < TIMEOUT_VALUE):
+				timeout += 1
+			elif (timeout == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
+				logger.info("Timeout reached. Resending...")
+				resend_count += 1
+				timeout = 0
+				
+				# Construct the AccessSpec.
+				try:
+					accessSpecStopParam = {
+						'AccessSpecStopTriggerType': 1,
+						'OperationCountValue': int(OPERATION_COUNT_VALUE),
+					}
+					
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(len(write_data)/4),
+						'WriteData': write_data.decode("hex"),
+					}
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
+			else:
+				logger.info("Maximum resends reached... aborting.")
+				write_state = -1
+			
+			
 		return
 	for tag in tags:
 		if (write_state >= 0):
 			tagReport += tag['TagSeenCount'][0]
-		#tagReport += tag['TagSeenCount'][0]
 
 
 def parse_args ():
