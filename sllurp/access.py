@@ -233,7 +233,7 @@ def doFirmwareFlashing (seen_tags):
 			# Check what the length of the data is before doing anything.
 			data_length = len(current_line) - 12
 			
-			# If data length = 4, 8 or 12, we write the whole line with 1 BlockWrite.
+			# Construct whole line in BlockWrite.
 			if ((data_length % 4) == 0):
 				num_words = data_length / 4
 				
@@ -279,7 +279,8 @@ def doFirmwareFlashing (seen_tags):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 				except:
 					logger.info("Error when trying to construct next AccessSpec on new line.")
-				
+			else:
+				logger.info("Line " + str(index) + " of hex file has odd number of Bytes!")
 		
 
 def tagReportCallback (llrpMsg):
@@ -293,7 +294,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:12]))
+		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:12]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
@@ -390,14 +391,6 @@ def main ():
 		
 		for i in range(0,len(lines)-1):
 			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
-		
-		
-		#for line in lines:
-		#	sum = 0
-		#	for i in range(0,(len(line)-3)/2):
-		#		sum += int("0x"+line[2*i+1:2*i+3], 0)
-		#	sum = sum % 256
-		#	logger.info(hex(256-sum))
 		
 		logger.info('Words to send: ' + str(total_words_to_send))
 	
