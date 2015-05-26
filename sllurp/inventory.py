@@ -122,7 +122,7 @@ def main ():
             modulation=args.modulation,
             tari=args.tari,
             session=args.session,
-            tag_population=args.population,
+            tag_population= int(32),
             start_inventory=True,
             disconnect_when_done=(args.time > 0),
             reconnect=args.reconnect,

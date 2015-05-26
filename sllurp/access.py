@@ -194,9 +194,13 @@ def doFirmwareFlashing (seen_tags):
 			
 			# Check if EOF reached.
 			if (index == len(lines)-1):
-				logger.info(progress_string + " EOF reached. Booting into new firmware...")
+				#logger.info(progress_string + " EOF reached. Booting into new firmware...")
+				logger.info(progress_string + " EOF reached. Stopping sllurp...")
 				write_state = -1
+				
+				politeShutdown(fac)
 				# Construct the AccessSpec.
+				'''
 				try:
 					accessSpecStopParam = {
 						'AccessSpecStopTriggerType': 0,
@@ -215,6 +219,7 @@ def doFirmwareFlashing (seen_tags):
 					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
 				except:
 					logger.info("Error when trying to send boot command.")
+				'''
 				return
 			
 			# Check what the length of the data is before doing anything.
@@ -428,7 +433,7 @@ def main ():
 	        modulation=args.modulation,
 	        tari=args.tari,
 	        session=args.session,
-	        tag_population=args.population,
+	        tag_population=int(32),
 	        start_inventory=True,
 	        tx_power=args.tx_power,
 	        report_every_n_tags=args.every_n,
