@@ -174,106 +174,111 @@ def doFirmwareFlashing (seen_tags):
 			write_state = -1
 	
 	
-	
-	# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
-	if (write_state >= 0 and (seen_tags[0]['EPC-96'][0:10] == check_data.lower())):
-		timeout      = 0
-		resend_count = 0
-		current_time = time.time()
-		progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
-		
-		accessSpecStopParam = {
-			'AccessSpecStopTriggerType': 1,
-			'OperationCountValue': int(OPERATION_COUNT_VALUE),
-		}
-		
-		# Start of a new line.
-		if (write_state == 0):
-			# Update current line.
-			current_line = lines[index]
-			
-			# Check if EOF reached.
-			if (index == len(lines)-1):
-				#logger.info(progress_string + " EOF reached. Booting into new firmware...")
-				logger.info(progress_string + " EOF reached. Stopping sllurp...")
-				write_state = -1
+	# Check if the tag we want to talk to is in the list.
+	for tag in seen_tags:
+		try:
+			if (tag['EPC-96'][0:4] == "1337"):
 				
-				politeShutdown(fac)
-				# Construct the AccessSpec.
-				'''
-				try:
+				# Proceed to next AccessSpec iff read EPC matches with data sent with BlockWrite.
+				if (write_state >= 0 and (seen_tags[0]['EPC-96'][4:14] == check_data.lower())):
+					timeout      = 0
+					resend_count = 0
+					current_time = time.time()
+					progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
+					
 					accessSpecStopParam = {
-						'AccessSpecStopTriggerType': 0,
-						'OperationCountValue': 1,
-					}
-					writeSpecParam = {
-						'OpSpecID': 0,
-						'MB': 3,
-						'WordPtr': 0,
-						'AccessPassword': 0,
-						'WriteDataWordCount': int(1),
-						'WriteData': '\xb0\x07',
+						'AccessSpecStopTriggerType': 1,
+						'OperationCountValue': int(OPERATION_COUNT_VALUE),
 					}
 					
-					# Call factory to do the next access.
-					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-				except:
-					logger.info("Error when trying to send boot command.")
-				'''
-				return
-			
-			# Check what the length of the data is before doing anything.
-			data_length = len(current_line) - 12
-			
-			# Construct whole line in BlockWrite.
-			if ((data_length % 4) == 0):
-				num_words = data_length / 4
-				
-				header = "{:02x}".format(2+num_words)
-				
-				# Header + Address
-				write_data = header + current_line[1:7]
-				
-				# Data
-				for x in range(0, num_words):
-					write_data = write_data + current_line[9+4*x:9+4*(x+1)]
-				
-				# Checksum
-				checksum = 0
-				for i in range(0, len(write_data)/2):
-					checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-				checksum = checksum % 256
-				checksum = "{:02x}".format(checksum)
-				checksum += "00"
-				
-				write_data += checksum
-				logger.info("Next block: " + str(header + current_line[1:7] + checksum[0:2])  + progress_string)
-				
-				# Construct the AccessSpec.
-				try:
-					writeSpecParam = {
-						'OpSpecID': 0,
-						'MB': 3,
-						'WordPtr': 0,
-						'AccessPassword': 0,
-						'WriteDataWordCount': int(3+num_words),
-						'WriteData': write_data.decode("hex"),
-					}
-					
-					# Pad write_data with zeroes for comparison against EPC.
-					check_data = header + current_line[1:7] + checksum[0:2]
-					words_sent += num_words
-					
-					# Proceed to next line.
-					index = index + 1
-					
-					# Call factory to do the next access.
-					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-				except:
-					logger.info("Error when trying to construct next AccessSpec on new line.")
-			else:
-				logger.info("Line " + str(index) + " of hex file has odd number of Bytes!")
-		
+					# Start of a new line.
+					if (write_state == 0):
+						# Update current line.
+						current_line = lines[index]
+						
+						# Check if EOF reached.
+						if (index == len(lines)-1):
+							#logger.info(progress_string + " EOF reached. Booting into new firmware...")
+							logger.info(progress_string + " EOF reached.")
+							write_state = -1
+							
+							#politeShutdown(fac)
+							# Construct the AccessSpec.
+							
+							try:
+								accessSpecStopParam = {
+									'AccessSpecStopTriggerType': 0,
+									'OperationCountValue': 1,
+								}
+								writeSpecParam = {
+									'OpSpecID': 0,
+									'MB': 3,
+									'WordPtr': 0,
+									'AccessPassword': 0,
+									'WriteDataWordCount': int(1),
+									'WriteData': '\xb0\x07',
+								}
+								
+								# Call factory to do the next access.
+								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+							except:
+								logger.info("Error when trying to send boot command.")
+							
+							return
+						
+						# Check what the length of the data is before doing anything.
+						data_length = len(current_line) - 12
+						
+						# Construct whole line in BlockWrite.
+						if ((data_length % 4) == 0):
+							num_words = data_length / 4
+							
+							header = "{:02x}".format(2+num_words)
+							
+							# Header + Address
+							write_data = header + current_line[1:7]
+							
+							# Data
+							for x in range(0, num_words):
+								write_data = write_data + current_line[9+4*x:9+4*(x+1)]
+							
+							# Checksum
+							checksum = 0
+							for i in range(0, len(write_data)/2):
+								checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+							checksum = checksum % 256
+							checksum = "{:02x}".format(checksum)
+							checksum += "00"
+							
+							write_data += checksum
+							logger.info("Next block: " + str(header + current_line[1:7] + checksum[0:2])  + progress_string)
+							
+							# Construct the AccessSpec.
+							try:
+								writeSpecParam = {
+									'OpSpecID': 0,
+									'MB': 3,
+									'WordPtr': 0,
+									'AccessPassword': 0,
+									'WriteDataWordCount': int(3+num_words),
+									'WriteData': write_data.decode("hex"),
+								}
+								
+								# Pad write_data with zeroes for comparison against EPC.
+								check_data = header + current_line[1:7] + checksum[0:2]
+								words_sent += num_words
+								
+								# Proceed to next line.
+								index = index + 1
+								
+								# Call factory to do the next access.
+								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+							except:
+								logger.info("Error when trying to construct next AccessSpec on new line.")
+						else:
+							logger.info("Line " + str(index) + " of hex file has odd number of Bytes!")
+		except:
+			continue
 
 def tagReportCallback (llrpMsg):
 	"""Function to run each time the reader reports seeing tags."""
@@ -286,7 +291,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:12]))
+		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:15]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
