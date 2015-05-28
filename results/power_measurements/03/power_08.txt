@@ -1,0 +1,85 @@
+log level: INFO
+Words to send: 512
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Next block: 0a1064008e(0/512) --- Time elapsed: 0.265 secs
+Next block: 0a106410ae(8/512) --- Time elapsed: 0.521 secs
+Next block: 0a106420ce(16/512) --- Time elapsed: 0.791 secs
+Next block: 0a106430ee(24/512) --- Time elapsed: 1.305 secs
+Next block: 0a1064400e(32/512) --- Time elapsed: 1.554 secs
+no tags seen
+Next block: 0a1064502e(40/512) --- Time elapsed: 1.824 secs
+Next block: 0a1064604e(48/512) --- Time elapsed: 2.081 secs
+Next block: 0a1064706e(56/512) --- Time elapsed: 2.344 secs
+Next block: 0a1064800e(64/512) --- Time elapsed: 2.595 secs
+Next block: 0a1064902e(72/512) --- Time elapsed: 2.864 secs
+Next block: 0a1064A04e(80/512) --- Time elapsed: 3.131 secs
+Next block: 0a1064B06e(88/512) --- Time elapsed: 3.394 secs
+Next block: 0a1064C08e(96/512) --- Time elapsed: 3.659 secs
+Next block: 0a1064D0ae(104/512) --- Time elapsed: 3.914 secs
+Next block: 0a1064E0ce(112/512) --- Time elapsed: 4.178 secs
+Next block: 0a1064F0ee(120/512) --- Time elapsed: 4.430 secs
+Next block: 0a1065008f(128/512) --- Time elapsed: 4.675 secs
+Next block: 0a106510af(136/512) --- Time elapsed: 4.944 secs
+Next block: 0a106520cf(144/512) --- Time elapsed: 5.195 secs
+Next block: 0a106530ef(152/512) --- Time elapsed: 5.474 secs
+Next block: 0a1065400f(160/512) --- Time elapsed: 5.726 secs
+Next block: 0a1065502f(168/512) --- Time elapsed: 5.985 secs
+Next block: 0a1065604f(176/512) --- Time elapsed: 6.235 secs
+Next block: 0a1065706f(184/512) --- Time elapsed: 6.505 secs
+Next block: 0a1065800f(192/512) --- Time elapsed: 6.755 secs
+Next block: 0a1065902f(200/512) --- Time elapsed: 7.035 secs
+Next block: 0a1065A04f(208/512) --- Time elapsed: 7.291 secs
+Next block: 0a1065B06f(216/512) --- Time elapsed: 7.805 secs
+no tags seen
+Next block: 0a1065C08f(224/512) --- Time elapsed: 8.075 secs
+Next block: 0a1065D0af(232/512) --- Time elapsed: 8.315 secs
+Next block: 0a1065E0cf(240/512) --- Time elapsed: 8.585 secs
+Next block: 0a1065F0ef(248/512) --- Time elapsed: 8.835 secs
+Next block: 0a10660090(256/512) --- Time elapsed: 9.115 secs
+Next block: 0a106610b0(264/512) --- Time elapsed: 9.365 secs
+Next block: 0a106620d0(272/512) --- Time elapsed: 9.635 secs
+Next block: 0a106630f0(280/512) --- Time elapsed: 9.897 secs
+Next block: 0a10664010(288/512) --- Time elapsed: 10.175 secs
+Next block: 0a10665030(296/512) --- Time elapsed: 10.425 secs
+Next block: 0a10666050(304/512) --- Time elapsed: 10.705 secs
+Next block: 0a10667070(312/512) --- Time elapsed: 10.955 secs
+Next block: 0a10668010(320/512) --- Time elapsed: 11.225 secs
+Next block: 0a10669030(328/512) --- Time elapsed: 11.485 secs
+Next block: 0a1066A050(336/512) --- Time elapsed: 11.762 secs
+Next block: 0a1066B070(344/512) --- Time elapsed: 11.996 secs
+Next block: 0a1066C090(352/512) --- Time elapsed: 12.265 secs
+Next block: 0a1066D0b0(360/512) --- Time elapsed: 12.522 secs
+Next block: 0a1066E0d0(368/512) --- Time elapsed: 12.805 secs
+Next block: 0a1066F0f0(376/512) --- Time elapsed: 13.055 secs
+Next block: 0a10670091(384/512) --- Time elapsed: 13.340 secs
+Next block: 0a106710b1(392/512) --- Time elapsed: 13.831 secs
+Next block: 0a106720d1(400/512) --- Time elapsed: 14.091 secs
+Next block: 0a106730f1(408/512) --- Time elapsed: 14.355 secs
+Next block: 0a10674011(416/512) --- Time elapsed: 14.605 secs
+Next block: 0a10675031(424/512) --- Time elapsed: 14.875 secs
+Next block: 0a10676051(432/512) --- Time elapsed: 15.125 secs
+Next block: 0a10677071(440/512) --- Time elapsed: 15.401 secs
+Next block: 0a10678011(448/512) --- Time elapsed: 15.657 secs
+Next block: 0a10679031(456/512) --- Time elapsed: 15.905 secs
+Next block: 0a1067A051(464/512) --- Time elapsed: 16.155 secs
+Next block: 0a1067B071(472/512) --- Time elapsed: 16.437 secs
+Next block: 0a1067C091(480/512) --- Time elapsed: 16.681 secs
+Next block: 0a1067D0b1(488/512) --- Time elapsed: 16.945 secs
+Next block: 0a1067E0d1(496/512) --- Time elapsed: 17.201 secs
+Next block: 0a1067F0f1(504/512) --- Time elapsed: 17.484 secs
+(512/512) --- Time elapsed: 18.015 secs EOF reached.
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+total # of tags seen: 2228
