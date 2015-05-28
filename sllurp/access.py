@@ -26,8 +26,8 @@ MAX_RESEND_VALUE = 3
 # Number of times a single ACCESSSPEC is performed by the reader before the reader disables it.
 OPERATION_COUNT_VALUE = 15
 
-# The maximum value of WordCount used in a BlockWrite command (4 - )
-MAX_WORD_COUNT = 20
+# The maximum amount of DATA WORDS included in a single BlockWrite command.
+MAX_WORD_COUNT = 16
 
 ######################################################################################################
 
@@ -38,7 +38,7 @@ check_data       = None
 write_state      = None
 resend_count     = 0
 timeout          = 0
-
+remaining_length = 0
 
 # Line index of hexfile.
 index = 0
@@ -139,6 +139,7 @@ def doFirmwareFlashing (seen_tags):
 	global total_words_to_send
 	global timeout
 	global resend_count
+	global remaining_length
 	
 	# Timeout/Resend mechanism.
 	if (write_state >= 0):
@@ -226,55 +227,104 @@ def doFirmwareFlashing (seen_tags):
 							
 							return
 						
-						# Check what the length of the data is before doing anything.
-						data_length = len(current_line) - 12
+						# Reset remaining length on new line.
+						if (remaining_length == 0):
+							remaining_length = len(current_line) - 12
 						
-						# Construct whole line in BlockWrite.
-						if ((data_length % 4) == 0):
-							num_words = data_length / 4
+						if ((remaining_length % 4) == 0):
+							num_words = remaining_length / 4
 							
-							header = "{:02x}".format(2+num_words)
-							
-							# Header + Address
-							write_data = header + current_line[1:7]
-							
-							# Data
-							for x in range(0, num_words):
-								write_data = write_data + current_line[9+4*x:9+4*(x+1)]
-							
-							# Checksum
-							checksum = 0
-							for i in range(0, len(write_data)/2):
-								checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-							checksum = checksum % 256
-							checksum = "{:02x}".format(checksum)
-							checksum += "00"
-							
-							write_data += checksum
-							logger.info("Next block: " + str(header + current_line[1:7] + checksum[0:2])  + progress_string)
-							
-							# Construct the AccessSpec.
-							try:
-								writeSpecParam = {
-									'OpSpecID': 0,
-									'MB': 3,
-									'WordPtr': 0,
-									'AccessPassword': 0,
-									'WriteDataWordCount': int(3+num_words),
-									'WriteData': write_data.decode("hex"),
-								}
+							# Remaining data can be send in one go.
+							if (num_words <= MAX_WORD_COUNT):
+								header  = "{:02x}".format(2+num_words)
+								size    = "{:02x}".format(num_words*2)
+								offset  = ((len(current_line)-12)-remaining_length)/4
+								address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+								write_data = header + size + address
 								
-								# Pad write_data with zeroes for comparison against EPC.
-								check_data = header + current_line[1:7] + checksum[0:2]
-								words_sent += num_words
+								# Data
+								for x in range(0, num_words):
+									write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 								
-								# Proceed to next line.
-								index = index + 1
+								# Checksum
+								checksum = 0
+								for i in range(0, len(write_data)/2):
+									checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+								checksum = checksum % 256
+								checksum = "{:02x}".format(checksum)
+								checksum += "00"
 								
-								# Call factory to do the next access.
-								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-							except:
-								logger.info("Error when trying to construct next AccessSpec on new line.")
+								write_data += checksum
+								logger.info("Next block: " + str(header + size + address + checksum[0:2])  + progress_string)
+								
+								# Construct the AccessSpec.
+								try:
+									writeSpecParam = {
+										'OpSpecID': 0,
+										'MB': 3,
+										'WordPtr': 0,
+										'AccessPassword': 0,
+										'WriteDataWordCount': int(3+num_words),
+										'WriteData': write_data.decode("hex"),
+									}
+									
+									# Pad write_data with zeroes for comparison against EPC.
+									check_data = header + size + address + checksum[0:2]
+									words_sent += num_words
+									remaining_length -= num_words*4
+									
+									# Proceed to next line.
+									index = index + 1
+									
+									# Call factory to do the next access.
+									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+								except:
+									logger.info("Error when trying to construct next AccessSpec on new line.")
+									
+							# Remaining data capped by MAX_WORD_COUNT.
+							else:
+								header  = "{:02x}".format(2+MAX_WORD_COUNT)
+								size    = "{:02x}".format(MAX_WORD_COUNT*2)
+								offset  = ((len(current_line)-12)-remaining_length)/4
+								address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+								write_data = header + size + address
+								
+								# Data
+								for x in range(0, MAX_WORD_COUNT):
+									write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
+								
+								# Checksum
+								checksum = 0
+								for i in range(0, len(write_data)/2):
+									checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+								checksum = checksum % 256
+								checksum = "{:02x}".format(checksum)
+								checksum += "00"
+								
+								write_data += checksum
+								logger.info("Next block: " + str(header + size + address + checksum[0:2])  + progress_string)
+								
+								# Construct the AccessSpec.
+								try:
+									writeSpecParam = {
+										'OpSpecID': 0,
+										'MB': 3,
+										'WordPtr': 0,
+										'AccessPassword': 0,
+										'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+										'WriteData': write_data.decode("hex"),
+									}
+									
+									# Pad write_data with zeroes for comparison against EPC.
+									check_data = header + size + address + checksum[0:2]
+									words_sent += MAX_WORD_COUNT
+									remaining_length -= MAX_WORD_COUNT*4
+									
+									# Call factory to do the next access.
+									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+								except:
+									logger.info("Error when trying to construct next AccessSpec on new line.")
+								
 						else:
 							logger.info("Line " + str(index) + " of hex file has odd number of Bytes!")
 		except:
@@ -385,6 +435,7 @@ def parse_args ():
 	        help='Content to write when using -w, example: 0xaabb, 0x1234')
 	parser.add_argument('-f', '--filename', type=str,
 	        help='The intel hexfile to flash when using -w', dest='filename')
+	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='maximum number of data words to send using BlockWrite', dest='MAX_WORD_COUNT')
 	
 	args = parser.parse_args()
 
@@ -417,9 +468,11 @@ def main ():
 		global lines
 		global total_words_to_send
 		global words_sent
+		global MAX_WORD_COUNT
 		
 		hexfile    = open(args.filename, 'r')
 		lines      = hexfile.readlines()
+		MAX_WORD_COUNT = args.MAX_WORD_COUNT
 		
 		words_sent = 0
 		
