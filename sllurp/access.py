@@ -173,7 +173,8 @@ def doFirmwareFlashing (seen_tags):
 			remaining_length = len(current_line) - 12
 			
 			# Throttle speed.
-			MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
+			if (MAX_WORD_COUNT > 1):
+				MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
 			num_words = remaining_length / 4
 			
 			accessSpecStopParam = {
@@ -487,7 +488,8 @@ def tagReportCallback (llrpMsg):
 				remaining_length = len(current_line) - 12
 				
 				# Throttle speed.
-				MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
+				if (MAX_WORD_COUNT > 1):
+					MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
 				num_words = remaining_length / 4
 				
 				accessSpecStopParam = {
