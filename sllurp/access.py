@@ -36,7 +36,7 @@ THROTTLE_DOWN = 2
 THROTTLE_UP = 2
 
 # Throttle speed up after this number of succeeded lines.
-THROTTLE_UP_AFTER_N_SUCCESS = 2
+THROTTLE_UP_AFTER_N_SUCCESS = 5
 
 ######################################################################################################
 
@@ -165,7 +165,7 @@ def doFirmwareFlashing (seen_tags):
 			timeout = 0
 			
 			# Undo progress.
-			words_sent -=  (len(write_data)/4) - 3
+			words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
 			
 			if (remaining_length == 0):
 				index -= 1
@@ -292,8 +292,7 @@ def doFirmwareFlashing (seen_tags):
 					
 					success_count += 1
 					
-					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS):
-						logger.info("Throttling speed up!")
+					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS and MAX_WORD_COUNT < 16):
 						success_count = 0
 						MAX_WORD_COUNT = min(16, MAX_WORD_COUNT+THROTTLE_UP)
 					
@@ -481,7 +480,7 @@ def tagReportCallback (llrpMsg):
 				success_count = 0
 				
 				# Undo progress.
-				words_sent -=  (len(write_data)/4) - 3
+				words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
 				
 				if (remaining_length == 0):
 					index -= 1
