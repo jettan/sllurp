@@ -295,7 +295,7 @@ def doFirmwareFlashing (seen_tags):
 					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS):
 						logger.info("Throttling speed up!")
 						success_count = 0
-						MAX_WORD_COUNT = min(16, MAX_WORD_COUNT+2)
+						MAX_WORD_COUNT = min(16, MAX_WORD_COUNT+THROTTLE_UP)
 					
 					# Start of a new line.
 					if (write_state == 0):
