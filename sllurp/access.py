@@ -29,6 +29,15 @@ OPERATION_COUNT_VALUE = 15
 # The maximum amount of DATA WORDS included in a single BlockWrite command.
 MAX_WORD_COUNT = 16
 
+# Max word count will be DIVIDED by this number when shit happens.
+THROTTLE_DOWN = 2
+
+# Max word count will be INCREMENTED by this number when all is well.
+THROTTLE_UP = 2
+
+# Throttle speed up after this number of succeeded lines.
+THROTTLE_UP_AFTER_N_SUCCESS = 2
+
 ######################################################################################################
 
 # Stuff needed for changing access_specs.
@@ -39,6 +48,7 @@ write_state      = None
 resend_count     = 0
 timeout          = 0
 remaining_length = 0
+success_count    = 0
 
 # Line index of hexfile.
 index = 0
@@ -140,6 +150,9 @@ def doFirmwareFlashing (seen_tags):
 	global timeout
 	global resend_count
 	global remaining_length
+	global MAX_WORD_COUNT
+	global success_count
+	
 	
 	# Timeout/Resend mechanism.
 	if (write_state >= 0):
@@ -148,34 +161,119 @@ def doFirmwareFlashing (seen_tags):
 		elif (timeout == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
 			logger.info("Timeout reached. Resending...")
 			resend_count += 1
+			success_count = 0
 			timeout = 0
 			
-			# Construct the AccessSpec.
-			try:
-				accessSpecStopParam = {
-					'AccessSpecStopTriggerType': 1,
-					'OperationCountValue': int(OPERATION_COUNT_VALUE),
-				}
+			# Undo progress.
+			words_sent -=  (len(write_data)/4) - 3
+			
+			if (remaining_length == 0):
+				index -= 1
+			
+			remaining_length = len(current_line) - 12
+			
+			# Throttle speed.
+			MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
+			num_words = remaining_length / 4
+			
+			accessSpecStopParam = {
+				'AccessSpecStopTriggerType': 1,
+				'OperationCountValue': int(OPERATION_COUNT_VALUE),
+			}
+			
+			# Remaining data can be send in one go.
+			if (num_words <= MAX_WORD_COUNT):
+				header  = "{:02x}".format(2+num_words)
+				size    = "{:02x}".format(num_words*2)
+				offset  = ((len(current_line)-12)-remaining_length)/4
+				address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+				write_data = header + size + address
 				
-				writeSpecParam = {
-					'OpSpecID': 0,
-					'MB': 3,
-					'WordPtr': 0,
-					'AccessPassword': 0,
-					'WriteDataWordCount': int(len(write_data)/4),
-					'WriteData': write_data.decode("hex"),
-				}
+				# Data
+				for x in range(0, num_words):
+					write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 				
-				# Call factory to do the next access.
-				fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-			except:
-				logger.info("Error when trying to construct next AccessSpec on new line.")
+				# Checksum
+				checksum = 0
+				for i in range(0, len(write_data)/2):
+					checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+				checksum = checksum % 256
+				checksum = "{:02x}".format(checksum)
+				checksum += "00"
+				
+				write_data += checksum
+				
+				# Construct the AccessSpec.
+				try:
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(3+num_words),
+						'WriteData': write_data.decode("hex"),
+					}
+					
+					# Pad write_data with zeroes for comparison against EPC.
+					check_data = header + size + address + checksum[0:2]
+					words_sent += num_words
+					remaining_length -= num_words*4
+					
+					# Proceed to next line.
+					index += 1
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
+					
+			# Remaining data capped by MAX_WORD_COUNT.
+			else:
+				header  = "{:02x}".format(2+MAX_WORD_COUNT)
+				size    = "{:02x}".format(MAX_WORD_COUNT*2)
+				offset  = ((len(current_line)-12)-remaining_length)/4
+				address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+				write_data = header + size + address
+				
+				# Data
+				for x in range(0, MAX_WORD_COUNT):
+					write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
+				
+				# Checksum
+				checksum = 0
+				for i in range(0, len(write_data)/2):
+					checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+				checksum = checksum % 256
+				checksum = "{:02x}".format(checksum)
+				checksum += "00"
+				
+				write_data += checksum
+				
+				# Construct the AccessSpec.
+				try:
+					writeSpecParam = {
+						'OpSpecID': 0,
+						'MB': 3,
+						'WordPtr': 0,
+						'AccessPassword': 0,
+						'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+						'WriteData': write_data.decode("hex"),
+					}
+					
+					# Pad write_data with zeroes for comparison against EPC.
+					check_data = header + size + address + checksum[0:2]
+					words_sent += MAX_WORD_COUNT
+					remaining_length -= MAX_WORD_COUNT*4
+					
+					# Call factory to do the next access.
+					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
 		else:
 			logger.info("Maximum resends reached... aborting.")
 			write_state = -1
 	
-	
-	# Check if the tag we want to talk to is in the list.
+	# Normal scenario: check if the tag we want to talk to is in the list.
 	for tag in seen_tags:
 		try:
 			if (tag['EPC-96'][0:4] == "1337"):
@@ -191,6 +289,13 @@ def doFirmwareFlashing (seen_tags):
 						'AccessSpecStopTriggerType': 1,
 						'OperationCountValue': int(OPERATION_COUNT_VALUE),
 					}
+					
+					success_count += 1
+					
+					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS):
+						logger.info("Throttling speed up!")
+						success_count = 0
+						MAX_WORD_COUNT = min(16, MAX_WORD_COUNT+2)
 					
 					# Start of a new line.
 					if (write_state == 0):
@@ -274,7 +379,7 @@ def doFirmwareFlashing (seen_tags):
 									remaining_length -= num_words*4
 									
 									# Proceed to next line.
-									index = index + 1
+									index += 1
 									
 									# Call factory to do the next access.
 									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
@@ -359,6 +464,12 @@ def tagReportCallback (llrpMsg):
 			global timeout
 			global resend_count
 			global write_data
+			global words_sent
+			global remaining_length
+			global current_line
+			global MAX_WORD_COUNT
+			global success_count
+			global index
 			
 			# Handle timeout.
 			if (timeout < TIMEOUT_VALUE):
@@ -367,32 +478,115 @@ def tagReportCallback (llrpMsg):
 				logger.info("Timeout reached. Resending...")
 				resend_count += 1
 				timeout = 0
+				success_count = 0
 				
-				# Construct the AccessSpec.
-				try:
-					accessSpecStopParam = {
-						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': int(OPERATION_COUNT_VALUE),
-					}
+				# Undo progress.
+				words_sent -=  (len(write_data)/4) - 3
+				
+				if (remaining_length == 0):
+					index -= 1
+				remaining_length = len(current_line) - 12
+				
+				# Throttle speed.
+				MAX_WORD_COUNT = max(1, MAX_WORD_COUNT / THROTTLE_DOWN)
+				num_words = remaining_length / 4
+				
+				accessSpecStopParam = {
+					'AccessSpecStopTriggerType': 1,
+					'OperationCountValue': int(OPERATION_COUNT_VALUE),
+				}
+				
+				# Remaining data can be send in one go.
+				if (num_words <= MAX_WORD_COUNT):
+					header  = "{:02x}".format(2+num_words)
+					size    = "{:02x}".format(num_words*2)
+					offset  = ((len(current_line)-12)-remaining_length)/4
+					address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+					write_data = header + size + address
 					
-					writeSpecParam = {
-						'OpSpecID': 0,
-						'MB': 3,
-						'WordPtr': 0,
-						'AccessPassword': 0,
-						'WriteDataWordCount': int(len(write_data)/4),
-						'WriteData': write_data.decode("hex"),
-					}
+					# Data
+					for x in range(0, num_words):
+						write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 					
-					# Call factory to do the next access.
-					fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
-				except:
-					logger.info("Error when trying to construct next AccessSpec on new line.")
+					# Checksum
+					checksum = 0
+					for i in range(0, len(write_data)/2):
+						checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+					checksum = checksum % 256
+					checksum = "{:02x}".format(checksum)
+					checksum += "00"
+					
+					write_data += checksum
+					
+					# Construct the AccessSpec.
+					try:
+						writeSpecParam = {
+							'OpSpecID': 0,
+							'MB': 3,
+							'WordPtr': 0,
+							'AccessPassword': 0,
+							'WriteDataWordCount': int(3+num_words),
+							'WriteData': write_data.decode("hex"),
+						}
+						
+						# Pad write_data with zeroes for comparison against EPC.
+						check_data = header + size + address + checksum[0:2]
+						words_sent += num_words
+						remaining_length -= num_words*4
+						
+						# Proceed to next line.
+						index += 1
+						
+						# Call factory to do the next access.
+						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+					except:
+						logger.info("Error when trying to construct next AccessSpec on new line.")
+						
+				# Remaining data capped by MAX_WORD_COUNT.
+				else:
+					header  = "{:02x}".format(2+MAX_WORD_COUNT)
+					size    = "{:02x}".format(MAX_WORD_COUNT*2)
+					offset  = ((len(current_line)-12)-remaining_length)/4
+					address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
+					write_data = header + size + address
+					
+					# Data
+					for x in range(0, MAX_WORD_COUNT):
+						write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
+					
+					# Checksum
+					checksum = 0
+					for i in range(0, len(write_data)/2):
+						checksum += int("0x"+ write_data[2*i:2*i+2], 0)
+					checksum = checksum % 256
+					checksum = "{:02x}".format(checksum)
+					checksum += "00"
+					
+					write_data += checksum
+					
+					# Construct the AccessSpec.
+					try:
+						writeSpecParam = {
+							'OpSpecID': 0,
+							'MB': 3,
+							'WordPtr': 0,
+							'AccessPassword': 0,
+							'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+							'WriteData': write_data.decode("hex"),
+						}
+						
+						# Pad write_data with zeroes for comparison against EPC.
+						check_data = header + size + address + checksum[0:2]
+						words_sent += MAX_WORD_COUNT
+						remaining_length -= MAX_WORD_COUNT*4
+						
+						# Call factory to do the next access.
+						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+					except:
+						logger.info("Error when trying to construct next AccessSpec on new line.")
 			else:
 				logger.info("Maximum resends reached... aborting.")
 				write_state = -1
-			
-			
 		return
 	for tag in tags:
 		if (write_state >= 0):
