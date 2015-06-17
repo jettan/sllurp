@@ -161,8 +161,13 @@ def doFirmwareFlashing (seen_tags):
 	
 	# Normal scenario: check if the tag we want to talk to is in the list.
 	for tag in seen_tags:
+		if (write_state == -1):
+			write_state = -2
+			fac.politeShutdown()
+		
 		try:
-			if (tag['EPC-96'][0:4] == "1337"):
+			if (tag['EPC-96'][0:4] == "1337" and len(tag['OpSpecResult']) > 0):
+				logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 				
 				# Timeout/Resend mechanism.
 				if (write_state >= 0):
@@ -469,7 +474,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
 		
 		# Print EPC-96.
-		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:15]))
+		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 		
 		try:
 			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
@@ -482,7 +487,7 @@ def tagReportCallback (llrpMsg):
 		
 	else:
 		if (write_state >= 0):
-			#logger.info('no tags seen')
+			logger.info('no tags seen')
 			
 			global timeout
 			global resend_count
