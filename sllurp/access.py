@@ -34,10 +34,10 @@ MAX_SPEED = 16
 MIN_SPEED = 1
 
 # Max word count will be DIVIDED by this number when shit happens.
-THROTTLE_DOWN = 2
+THROTTLE_DOWN = 1
 
 # Max word count will be INCREMENTED by this number when all is well.
-THROTTLE_UP = 2
+THROTTLE_UP = 0
 
 # Throttle speed up after this number of succeeded lines.
 THROTTLE_UP_AFTER_N_SUCCESS = 5
@@ -166,8 +166,7 @@ def doFirmwareFlashing (seen_tags):
 			fac.politeShutdown()
 		
 		try:
-			if (tag['EPC-96'][0:4] == "1337" and len(tag['OpSpecResult']) > 0):
-				logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
+			if (tag['EPC-96'][0:4] == "1337"):
 				
 				# Timeout/Resend mechanism.
 				if (write_state >= 0):
@@ -477,7 +476,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 		
 		try:
-			logger.debug(str(tags[0]['OpSpecResult']['NumWordsWritten']) + ", " + str(tags[0]['OpSpecResult']['Result']))
+			logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]) + ", " +  str(tags[0]['OpSpecResult']['NumWordsWritten']))
 		except:
 			logger.debug("")
 		
