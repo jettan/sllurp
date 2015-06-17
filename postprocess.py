@@ -23,8 +23,9 @@ else:
 	
 	s = 0
 	for i in range(0,len(diffs)):
-		print diffs[i]
+		#print diffs[i]
 		s += diffs[i]
 	
 	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
+	print "Average EPC needed before next message: " + str((0.0 + s)/len(diffs))
 
