@@ -11,10 +11,14 @@ else:
 	indices = []
 	diffs   = []
 	
+	r = 0
+	
 	# Get indices
 	for i in range(0,len(lines)):
 		if "elapsed" in lines[i]:
 			indices.append(i)
+		elif "Resend" in lines[i]:
+			r += 1
 		else:
 			continue
 	
@@ -27,5 +31,6 @@ else:
 		s += diffs[i]
 	
 	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
+	print "Total messages resent: " + str(r) + "/" + str(len(diffs))
 	print "Average EPC needed before next message: " + str((0.0 + s)/len(diffs))
 
