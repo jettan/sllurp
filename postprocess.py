@@ -32,5 +32,14 @@ else:
 	
 	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
 	print "Total messages resent: " + str(r) + "/" + str(len(diffs))
-	print "Average EPC needed before next message: " + str((0.0 + s)/len(diffs))
+	print "Average operations needed before next message: " + str((0.0 + s)/len(diffs))
 
+	s = 0
+	for i in range(0,len(lines)):
+		if "Result=0" in lines[i]:
+			s += 1
+		else:
+			continue
+	
+	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
+	print "Average operations needed before next message (pure successful): " + str((0.0 + s)/len(diffs))

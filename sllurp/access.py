@@ -476,7 +476,7 @@ def tagReportCallback (llrpMsg):
 		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 		
 		try:
-			logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]) + ", " +  str(tags[0]['OpSpecResult']['NumWordsWritten']))
+			logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]) + ", " +  str(tags[0]['OpSpecResult']['NumWordsWritten']) + " , Result=" + str(tags[0]['OpSpecResult']['Result']))
 		except:
 			logger.debug("")
 		
