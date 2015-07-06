@@ -8,38 +8,37 @@ else:
 	f     = open(str(sys.argv[1]),'r')
 	lines = f.readlines()
 	
-	indices = []
-	diffs   = []
-	
+	success = 0
+	total = 0
+	m = 0
 	r = 0
-	
-	# Get indices
+	eof_line = "EOF was not reached!"
 	for i in range(0,len(lines)):
-		if "elapsed" in lines[i]:
-			indices.append(i)
-		elif "Resend" in lines[i]:
+		if "Resending" in lines[i]:
 			r += 1
-		else:
-			continue
-	
-	for i in range(1,len(indices)):
-		diffs.append(indices[i] - indices[i-1]-1)
-	
-	s = 0
-	for i in range(0,len(diffs)):
-		#print diffs[i]
-		s += diffs[i]
-	
-	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
-	print "Total messages resent: " + str(r) + "/" + str(len(diffs))
-	print "Average operations needed before next message: " + str((0.0 + s)/len(diffs))
-
-	s = 0
-	for i in range(0,len(lines)):
+		if "elapsed" in lines[i]:
+			m += 1
+		if "Result" in lines[i]:
+			total += 1
 		if "Result=0" in lines[i]:
-			s += 1
+			success += 1
+		if "EOF reached" in lines[i]:
+			eof_line = lines[i]
 		else:
 			continue
 	
-	print str(s) + "/ (OCV * " + str(len(diffs)) + ")"
-	print "Average operations needed before next message (pure successful): " + str((0.0 + s)/len(diffs))
+	runtime = float(str.split(eof_line)[4])
+	num_words =  int(str.split(lines[1])[3])
+	
+	print "Total number of words in transfer: " + str(num_words)
+	print "Total runtime: " + str(runtime) + " sec"
+	print "Messages sent (excluding resend): " + str(m)
+	print "Number of resends: " + str(r) + "/" + str(r + m) + " = " + str(float(r)/(r+m))
+	print "Message efficiency of transfer: " + str(success) + "/" + str(total) + " = " + str(float(success)/total)
+	print "Average OPM (success only/total): " + str(float(success)/(r+m)) + "/" + str(float(total)/(r+m))
+	print "Average time per message: " + str(runtime/(r+m)) + " sec"
+	print "Time used for resends (based on avg): " + str((runtime/(r+m))*(r)) + " sec"
+	print "Average time per operation: " + str(runtime/total) + " sec"
+	print "Average OPS: " + str((float(success)/(r+m))*(1/(runtime/(r+m)))) + "/" + str((float(total)/(r+m))*4)
+	print "Average transfer speed: " + str((num_words*2)/runtime) + " bytes/sec"
+	
