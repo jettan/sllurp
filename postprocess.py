@@ -27,21 +27,25 @@ else:
 		else:
 			continue
 	
-	runtime = float(str.split(eof_line)[4])
 	num_words =  int(str.split(lines[1])[3])
 	
 	print "-------------------------------------------------------"
 	print "Filename: " + sys.argv[1]
 	print "Total number of words in transfer: " + str(num_words)
-	print "Total runtime: " + str(runtime) + " sec"
 	print "Messages sent (excluding resend): " + str(m)
 	print "Number of resends: " + str(r) + "/" + str(r + m) + " = " + str(float(r)/(r+m))
-	print "Message efficiency of transfer: " + str(success) + "/" + str(total) + " = " + str(float(success)/total)
+	print "Message reports efficiency of transfer: " + str(success) + "/" + str(total) + " = " + str(float(success)/total)
 	print "Average OPM (success only/total): " + str(float(success)/(r+m)) + "/" + str(float(total)/(r+m))
-	print "Average time per message: " + str(runtime/(r+m)) + " sec"
-	print "Time used for resends (based on avg): " + str((runtime/(r+m))*(r)) + " sec"
-	print "Average time per operation: " + str(runtime/total) + " sec"
-	print "Average OPS: " + str((float(success)/(r+m))*(1/(runtime/(r+m)))) + "/" + str((float(total)/(r+m))*4)
-	print "Average transfer speed: " + str((num_words*2)/runtime) + " bytes/sec"
+	
+	if len(str.split(eof_line)) > 4:
+		runtime = float(str.split(eof_line)[4])
+		
+		print "Total runtime: " + str(runtime) + " sec"
+		print "Average time per message: " + str(runtime/(r+m)) + " sec = " + str(1/(runtime/(r+m))) + " messages/sec"
+		print "Time used for resends (based on avg): " + str((runtime/(r+m))*(r)) + " sec"
+		print "Average time per operation: " + str(runtime/total) + " sec"
+		print "Average OPS: " + str((float(success)/(r+m))*(1/(runtime/(r+m)))) + "/" + str((float(total)/(r+m))*4)
+		print "Transfer goodput: " + str((num_words*2)/runtime) + " bytes/sec"
+		print "Transfer throughput: " + str((num_words*2)/runtime + (m*2*2)/runtime) + " bytes/sec"
 	print "-------------------------------------------------------"
 	
