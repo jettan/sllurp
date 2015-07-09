@@ -164,7 +164,6 @@ def doFirmwareFlashing (seen_tags):
 		if (write_state == -1):
 			write_state = -2
 			fac.politeShutdown()
-		
 		try:
 			if (tag['EPC-96'][0:4] == "1337" and write_state >= 0):
 				# ACK
@@ -481,6 +480,7 @@ def tagReportCallback (llrpMsg):
 		try:
 			logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]) + ", " +  str(tags[0]['OpSpecResult']['NumWordsWritten']) + " , Result=" + str(tags[0]['OpSpecResult']['Result']))
 		except:
+			#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 			logger.debug("")
 		
 		# Call protocol.
