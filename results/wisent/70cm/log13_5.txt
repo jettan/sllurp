@@ -1,0 +1,94 @@
+log level: INFO
+Words to send: 2689
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Next block: 0b126400af(0/2689) --- Time elapsed: 0.265 secs
+Read EPC: 1337b105000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=6
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Timeout reached. Resending... 3
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+no tags seen
+Maximum resends reached... aborting.
+Read EPC: 13370000000000, 7 , Result=5
+stopping politely
+will disconnect when stopped
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 11 , Result=5
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+total # of tags seen: 820

@@ -1,0 +1,935 @@
+log level: INFO
+Words to send: 2689
+connecting...
+will reset reader state on connect
+will start inventory on connect
+using antennas: (1,)
+connected to ('192.168.10.102', 5084)
+requested modulation: WISP5
+using reader mode: {'C': 0, 'MaxTari': 6250, 'M': 2, 'PIE': 1500, 'StepTari': 0, 'R': 1, 'FLM': 2, 'MinTari': 6250, 'ModeIdentifier': 0, 'BDR': 640000, 'Mod': 0}
+stopping politely
+reader finished inventory
+starting inventory
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Next block: 090e64008d(0/2689) --- Time elapsed: 0.265 secs
+Read EPC: 1337b105000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 13370000000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 1337b105000000, 1 , Result=0
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64008d, 2 , Result=5
+Next block: 0404640e96(7/2689) --- Time elapsed: 1.302 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64008d, 0 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404640e96, 0 , Result=5
+Next block: 090e641292(9/2689) --- Time elapsed: 1.564 secs
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e641292, 0 , Result=5
+Next block: 090e642007(16/2689) --- Time elapsed: 2.074 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e641292, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e641292, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e642007, 1 , Result=5
+Next block: 0404642e29(23/2689) --- Time elapsed: 2.601 secs
+no tags seen
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404642e29, 4 , Result=5
+Next block: 090e643261(25/2689) --- Time elapsed: 2.845 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404642e29, 1 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=6
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e643261, 3 , Result=5
+Next block: 090e644074(32/2689) --- Time elapsed: 7.228 secs
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e643261, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e643261, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+no tags seen
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e644074, 1 , Result=5
+Next block: 0404644e6d(39/2689) --- Time elapsed: 7.481 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e644074, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404644e6d, 0 , Result=5
+Next block: 090e645270(41/2689) --- Time elapsed: 7.731 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404644e6d, 1 , Result=6
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404644e6d, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 1 , Result=5
+Next block: 090e6460a5(48/2689) --- Time elapsed: 7.986 secs
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 2 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 1 , Result=5
+Next block: 090e6460a5(48/2689) --- Time elapsed: 9.294 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 0 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e645270, 2 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6460a5, 1 , Result=5
+Next block: 0404646ead(55/2689) --- Time elapsed: 9.545 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6460a5, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6460a5, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404646ead, 4 , Result=5
+Next block: 090e6472ff(57/2689) --- Time elapsed: 9.802 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404646ead, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404646ead, 1 , Result=6
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+no tags seen
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+no tags seen
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 0 , Result=5
+Next block: 090e648052(64/2689) --- Time elapsed: 13.935 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+no tags seen
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 5 , Result=6
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 2 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+no tags seen
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 2 , Result=5
+Next block: 090e648052(64/2689) --- Time elapsed: 17.292 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6472ff, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e648052, 1 , Result=5
+Next block: 0404648ef1(71/2689) --- Time elapsed: 17.542 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e648052, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e648052, 1 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404648ef1, 3 , Result=6
+Next block: 090e64924e(73/2689) --- Time elapsed: 17.805 secs
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64924e, 1 , Result=5
+Next block: 090e64a0c3(80/2689) --- Time elapsed: 18.062 secs
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64a0c3, 0 , Result=5
+Next block: 040464aeb1(87/2689) --- Time elapsed: 18.622 secs
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464aeb1, 2 , Result=5
+Next block: 090e64b21d(89/2689) --- Time elapsed: 19.109 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464aeb1, 2 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464aeb1, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464aeb1, 2 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64b21d, 1 , Result=5
+Next block: 090e64c030(96/2689) --- Time elapsed: 19.355 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64b21d, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64b21d, 2 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64c030, 0 , Result=6
+Next block: 040464cef5(103/2689) --- Time elapsed: 19.606 secs
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64c030, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464cef5, 0 , Result=5
+Next block: 090e64d2ac(105/2689) --- Time elapsed: 19.891 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464cef5, 4 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464cef5, 4 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64d2ac, 0 , Result=5
+Next block: 090e64e0e1(112/2689) --- Time elapsed: 20.148 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64d2ac, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64d2ac, 0 , Result=5
+Next block: 090e64e0e1(112/2689) --- Time elapsed: 21.698 secs
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64d2ac, 1 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=6
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64e0e1, 0 , Result=5
+Next block: 040464ee35(119/2689) --- Time elapsed: 22.472 secs
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64e0e1, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464ee35, 2 , Result=5
+Next block: 090e64f23b(121/2689) --- Time elapsed: 22.716 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 1337040464ee35, 4 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64f23b, 0 , Result=5
+Next block: 090e65008f(128/2689) --- Time elapsed: 22.988 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64f23b, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64f23b, 1 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=6
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64f23b, 0 , Result=5
+Next block: 090e65008f(128/2689) --- Time elapsed: 24.024 secs
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e64f23b, 2 , Result=5
+Next block: 090e65008f(128/2689) --- Time elapsed: 29.446 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e65008f, 1 , Result=5
+Next block: 0404650e7a(135/2689) --- Time elapsed: 29.686 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e65008f, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e65008f, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e65008f, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e65008f, 1 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404650e7a, 1 , Result=5
+Next block: 090e6512e2(137/2689) --- Time elapsed: 29.942 secs
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404650e7a, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=0
+Read EPC: 13370404650e7a, 0 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 7 , Result=6
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 34.093 secs
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+no tags seen
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 8 , Result=6
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 39.716 secs
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 2 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 3 , Result=6
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=6
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+no tags seen
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 43.327 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 44.383 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 45.939 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+no tags seen
+Read EPC: 13370000000000, 7 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Timeout reached. Resending... 3
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 51.893 secs
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 2 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 1 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 53.454 secs
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=5
+Next block: 090e6520cb(144/2689) --- Time elapsed: 55.257 secs
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 1337090e6512e2, 0 , Result=6
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 8 , Result=6
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Timeout reached. Resending... 1
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 5 , Result=6
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 6 , Result=6
+Read EPC: 13370000000000, 7 , Result=6
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+no tags seen
+Timeout reached. Resending... 2
+Read EPC: 13370000000000, 10 , Result=0
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=6
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+no tags seen
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Timeout reached. Resending... 3
+Read EPC: 13370000000000, 6 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 9 , Result=5
+Read EPC: 13370000000000, 4 , Result=5
+Read EPC: 13370000000000, 2 , Result=5
+Read EPC: 13370000000000, 3 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 0 , Result=5
+Read EPC: 13370000000000, 7 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 8 , Result=5
+Read EPC: 13370000000000, 1 , Result=5
+Read EPC: 13370000000000, 5 , Result=5
+Maximum resends reached... aborting.
+stopping politely
+will disconnect when stopped
+reader finished inventory
+disconnecting
+lost connection: Connection was closed cleanly.
+total # of tags seen: 8705
