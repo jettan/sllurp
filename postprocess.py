@@ -74,8 +74,8 @@ else:
 		print "%d, %d, %d, %f, %d, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f" % ( payload, messages_sent, messages_resent, resend_ratio, success_reports, total_reports, efficiency, 
 		success_opm, total_opm, runtime, time_per_message, messages_per_second, time_per_op, success_ops, total_ops, goodput, throughput)
 	except:
-		finger = len(sys.argv[1].split('_')) - 1
-		payload = int(sys.argv[1].split('_')[finger][0:len(sys.argv[1].split('_')[finger])-4])
+		finger = len(sys.argv[1].split('_')) - 2
+		payload = int(sys.argv[1].split('_')[finger])
 		success_reports = s
 		total_reports = total
 		efficiency = float(s)/total
