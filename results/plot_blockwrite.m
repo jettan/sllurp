@@ -1,6 +1,9 @@
 clear
 close all;
 
+% Time of experiments (seconds).
+t = 10;
+
 % Read CSV files.
 xdata = [1:32];
 d2 = csvread('blockwrite/20cm/result.csv',1);
@@ -121,6 +124,7 @@ scatter (xdata,d6(:,:,s),'*')
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,-inf,inf]);
 set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+set(gca,'ylim', [0 inf]);
 box on;
 
 h = xlabel('WordCount');
@@ -132,113 +136,73 @@ set(h,'FontSize',fontSize);
 set(h,'fontweight', fontWeight);
 hold off;
 
-% Efficiency curve fitting shenanigans.
+
+%%%%%%%%%%%%%%%%%
+
+% Plot total operations
+hFig = figure;
+set(hFig, 'Position', figurePosition)
+set(gcf,'Renderer','painters');
+
+hold on
+s = 2; % Throughput
+yLabelName = 'Total OPS';
+
+tot2 = d2(:,:,s)./t;
+tot3 = d3(:,:,s)./t;
+tot4 = d4(:,:,s)./t;
+tot5 = d5(:,:,s)./t;
+tot6 = d6(:,:,s)./t;
+
+scatter (xdata,tot2,'x');
+scatter (xdata,tot3,'+')
+scatter (xdata,tot4,'filled','s')
+scatter (xdata,tot5,'filled','v')
+scatter (xdata,tot6,'*')
+
+legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
+axis([0,32,-inf,inf]);
+set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+set(gca,'ylim',[0 inf]);
+box on;
+
+h = xlabel('WordCount');
+set(h,'FontSize',fontSize);
+set(h,'fontweight', fontWeight);
+
+h = ylabel(yLabelName);
+set(h,'FontSize',fontSize);
+set(h,'fontweight', fontWeight);
+hold off;
+
+% Curve fitting shenanigans.
 cFig = figure;
 set(cFig, 'Position', figurePosition)
 set(gcf,'Renderer','painters');
-s = 4;
-yLabelName = 'Efficiency';
+yLabelName = 'Fitted total OPS';
 
 x0 = [0, 1];
 hold on
 
-ydata = d2(:,:,s);
-F2 = @(x,xdata)-x(1)*xdata+x(2);
-[x2,resnorm] = lsqcurvefit(F2,x0,xdata,ydata)
+F2 = @(x,xdata)x(1)./(1+xdata)+x(2);
+[x2,resnorm] = lsqcurvefit(F2,x0,xdata,tot2)
 plot(xdata,F2(x2,xdata))
 
-ydata = d3(:,:,s);
-F3 = @(x,xdata)-x(1)*xdata+x(2);
-[x3,resnorm] = lsqcurvefit(F3,x0,xdata,ydata)
+F3 = @(x,xdata)x(1)./(1+xdata)+x(2);
+[x3,resnorm] = lsqcurvefit(F3,x0,xdata,tot3)
 plot(xdata,F3(x3,xdata))
 
-ydata = d4(:,:,s);
-F4 = @(x,xdata)-x(1)*xdata+x(2);
-[x4,resnorm] = lsqcurvefit(F4,x0,xdata,ydata)
+F4 = @(x,xdata)x(1)./(1+xdata)+x(2);
+[x4,resnorm] = lsqcurvefit(F4,x0,xdata,tot4)
 plot(xdata,F4(x4,xdata))
 
-ydata = d5(:,:,s);
-F5 = @(x,xdata)-x(1)*xdata+x(2);
-[x5,resnorm] = lsqcurvefit(F5,x0,xdata,ydata)
+F5 = @(x,xdata)x(1)./(1+xdata)+x(2);
+[x5,resnorm] = lsqcurvefit(F5,x0,xdata,tot5)
 plot(xdata,F5(x5,xdata))
 
-ydata = d6(:,:,s);
-F6 = @(x,xdata)-x(1)*xdata+x(2);
-[x6,resnorm] = lsqcurvefit(F6,x0,[1:18],ydata(1:18))
-plot([1:18],F6(x6,[1:18]))
-
-legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
-axis([0,32,-inf,inf]);
-set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
-grid minor;
-box on;
-
-h = xlabel('WordCount');
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-
-h = ylabel(yLabelName);
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-
-hold off;
-
-% Now use found parameters to plot OPS as double check.
-cFig = figure;
-set(cFig, 'Position', figurePosition)
-set(gcf,'Renderer','painters');
-s = 2; % Total operations.
-yLabelName = 'Number of OPS';
-hold on;
-
-O2 = d2(:,:,s).*((-x2(1)*xdata+x2(2))./10);
-O3 = d3(:,:,s).*((-x3(1)*xdata+x3(2))./10);
-O4 = d4(:,:,s).*((-x4(1)*xdata+x4(2))./10);
-O5 = d5(:,:,s).*((-x5(1)*xdata+x5(2))./10);
-O6 = d6(:,:,s).*((-x6(1)*xdata+x6(2))./10);
-
-plot(xdata,O2);
-plot(xdata,O3);
-plot(xdata,O4);
-plot(xdata,O5);
-plot(xdata,O6);
-
-legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
-axis([0,32,-inf,inf]);
-set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
-set(gca,'ylim',[0 140]);
-grid minor;
-box on;
-
-h = xlabel('WordCount');
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-
-h = ylabel(yLabelName);
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-hold off;
-
-% And plot throughput as triple check.
-
-cFig = figure;
-set(cFig, 'Position', figurePosition)
-set(gcf,'Renderer','painters');
-s = 2; % Total operations.
-yLabelName = 'Throughput';
-hold on;
-
-T2 = d2(:,:,s).*((-x2(1)*xdata.^2+x2(2)*xdata)./10);
-T3 = d3(:,:,s).*((-x3(1)*xdata.^2+x3(2)*xdata)./10);
-T4 = d4(:,:,s).*((-x4(1)*xdata.^2+x4(2)*xdata)./10);
-T5 = d5(:,:,s).*((-x5(1)*xdata.^2+x5(2)*xdata)./10);
-T6 = d6(:,:,s).*((-x6(1)*xdata.^2+x6(2)*xdata)./10);
-
-plot(xdata,T2);
-plot(xdata,T3);
-plot(xdata,T4);
-plot(xdata,T5);
-plot(xdata,T6);
+F6 = @(x,xdata)x(1)./(1+xdata)+x(2);
+[x6,resnorm] = lsqcurvefit(F6,x0,xdata,tot6)
+plot(xdata,F6(x6,xdata))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,-inf,inf]);
@@ -254,10 +218,136 @@ set(h,'fontweight', fontWeight);
 h = ylabel(yLabelName);
 set(h,'FontSize',fontSize);
 set(h,'fontweight', fontWeight);
+
 hold off;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Efficiency curve fitting shenanigans.
+% cFig = figure;
+% set(cFig, 'Position', figurePosition)
+% set(gcf,'Renderer','painters');
+% s = 4;
+% yLabelName = 'Efficiency';
+% 
+% x0 = [0, 1];
+% hold on
+% 
+% ydata = d2(:,:,s);
+% F2 = @(x,xdata)-x(1)*xdata+x(2);
+% [x2,resnorm] = lsqcurvefit(F2,x0,xdata,ydata)
+% plot(xdata,F2(x2,xdata))
+% 
+% ydata = d3(:,:,s);
+% F3 = @(x,xdata)-x(1)*xdata+x(2);
+% [x3,resnorm] = lsqcurvefit(F3,x0,xdata,ydata)
+% plot(xdata,F3(x3,xdata))
+% 
+% ydata = d4(:,:,s);
+% F4 = @(x,xdata)-x(1)*xdata+x(2);
+% [x4,resnorm] = lsqcurvefit(F4,x0,xdata,ydata)
+% plot(xdata,F4(x4,xdata))
+% 
+% ydata = d5(:,:,s);
+% F5 = @(x,xdata)-x(1)*xdata+x(2);
+% [x5,resnorm] = lsqcurvefit(F5,x0,xdata,ydata)
+% plot(xdata,F5(x5,xdata))
+% 
+% ydata = d6(:,:,s);
+% F6 = @(x,xdata)-x(1)*xdata+x(2);
+% [x6,resnorm] = lsqcurvefit(F6,x0,[1:18],ydata(1:18))
+% plot([1:18],F6(x6,[1:18]))
+% 
+% legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
+% axis([0,32,-inf,inf]);
+% set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+% grid minor;
+% box on;
+% 
+% h = xlabel('WordCount');
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% 
+% h = ylabel(yLabelName);
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% 
+% hold off;
+% 
+% % Now use found parameters to plot OPS as double check.
+% cFig = figure;
+% set(cFig, 'Position', figurePosition)
+% set(gcf,'Renderer','painters');
+% s = 2; % Total operations.
+% yLabelName = 'Number of OPS';
+% hold on;
+% 
+% O2 = d2(:,:,s).*((-x2(1)*xdata+x2(2))./10);
+% O3 = d3(:,:,s).*((-x3(1)*xdata+x3(2))./10);
+% O4 = d4(:,:,s).*((-x4(1)*xdata+x4(2))./10);
+% O5 = d5(:,:,s).*((-x5(1)*xdata+x5(2))./10);
+% O6 = d6(:,:,s).*((-x6(1)*xdata+x6(2))./10);
+% 
+% plot(xdata,O2);
+% plot(xdata,O3);
+% plot(xdata,O4);
+% plot(xdata,O5);
+% plot(xdata,O6);
+% 
+% legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
+% axis([0,32,-inf,inf]);
+% set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+% set(gca,'ylim',[0 140]);
+% grid minor;
+% box on;
+% 
+% h = xlabel('WordCount');
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% 
+% h = ylabel(yLabelName);
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% hold off;
+% 
+% % And plot throughput as triple check.
+% 
+% cFig = figure;
+% set(cFig, 'Position', figurePosition)
+% set(gcf,'Renderer','painters');
+% s = 2; % Total operations.
+% yLabelName = 'Throughput';
+% hold on;
+% 
+% T2 = d2(:,:,s).*((-x2(1)*xdata.^2+x2(2)*xdata)./10);
+% T3 = d3(:,:,s).*((-x3(1)*xdata.^2+x3(2)*xdata)./10);
+% T4 = d4(:,:,s).*((-x4(1)*xdata.^2+x4(2)*xdata)./10);
+% T5 = d5(:,:,s).*((-x5(1)*xdata.^2+x5(2)*xdata)./10);
+% T6 = d6(:,:,s).*((-x6(1)*xdata.^2+x6(2)*xdata)./10);
+% 
+% plot(xdata,T2);
+% plot(xdata,T3);
+% plot(xdata,T4);
+% plot(xdata,T5);
+% plot(xdata,T6);
+% 
+% legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
+% axis([0,32,-inf,inf]);
+% set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+% set(gca,'ylim',[0 inf]);
+% grid minor;
+% box on;
+% 
+% h = xlabel('WordCount');
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% 
+% h = ylabel(yLabelName);
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% hold off;
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 % OPS curve fitting shenanigans.
 cFig = figure;
 set(cFig, 'Position', figurePosition)
@@ -265,7 +355,7 @@ set(gcf,'Renderer','painters');
 s = 6;
 yLabelName = 'Number of OPS';
 
-x0 = [0, 140];
+x0 = [0, 1];
 hold on
 
 ydata = d2(:,:,s);
@@ -290,8 +380,8 @@ plot(xdata,F5(x5,xdata))
 
 ydata = d6(:,:,s);
 F6 = @(x,xdata)x(1)./(xdata+1)+x(2);
-[x6,resnorm] = lsqcurvefit(F6,x0,[1:18],ydata(1:18))
-plot([1:18],F6(x6,[1:18]))
+[x6,resnorm] = lsqcurvefit(F6,x0,xdata,ydata)
+plot(xdata,F6(x6,xdata))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,-inf,inf]);
@@ -308,39 +398,39 @@ set(h,'FontSize',fontSize);
 set(h,'fontweight', fontWeight);
 
 hold off;
-
-% Now use found parameters to plot efficiency as double check.
-cFig = figure;
-set(cFig, 'Position', figurePosition)
-set(gcf,'Renderer','painters');
-s = 2; % Total operations.
-yLabelName = 'Efficiency';
-hold on;
-
-E2 = (10*(x2(1)./(xdata+1)+x2(2)))./d2(:,:,s);
-E3 = (10*(x3(1)./(xdata+1)+x3(2)))./d3(:,:,s);
-E4 = (10*(x4(1)./(xdata+1)+x4(2)))./d4(:,:,s);
-E5 = (10*(x5(1)./(xdata+1)+x5(2)))./d5(:,:,s);
-E6 = (10*(x6(1)./(xdata+1)+x6(2)))./d6(:,:,s);
-
-scatter (xdata,E2,'x');
-scatter (xdata,E3,'+')
-scatter (xdata,E4,'filled','s')
-scatter (xdata,E5,'filled','v')
-scatter (xdata,E6,'*')
-
-legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
-axis([0,32,-inf,inf]);
-set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
-set(gca,'ylim',[0 inf]);
-grid minor;
-box on;
-
-h = xlabel('WordCount');
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-
-h = ylabel(yLabelName);
-set(h,'FontSize',fontSize);
-set(h,'fontweight', fontWeight);
-hold off;
+% 
+% % Now use found parameters to plot efficiency as double check.
+% cFig = figure;
+% set(cFig, 'Position', figurePosition)
+% set(gcf,'Renderer','painters');
+% s = 2; % Total operations.
+% yLabelName = 'Efficiency';
+% hold on;
+% 
+% E2 = (10*(x2(1)./(xdata+1)+x2(2)))./d2(:,:,s);
+% E3 = (10*(x3(1)./(xdata+1)+x3(2)))./d3(:,:,s);
+% E4 = (10*(x4(1)./(xdata+1)+x4(2)))./d4(:,:,s);
+% E5 = (10*(x5(1)./(xdata+1)+x5(2)))./d5(:,:,s);
+% E6 = (10*(x6(1)./(xdata+1)+x6(2)))./d6(:,:,s);
+% 
+% scatter (xdata,E2,'x');
+% scatter (xdata,E3,'+')
+% scatter (xdata,E4,'filled','s')
+% scatter (xdata,E5,'filled','v')
+% scatter (xdata,E6,'*')
+% 
+% legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
+% axis([0,32,-inf,inf]);
+% set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+% set(gca,'ylim',[0 inf]);
+% grid minor;
+% box on;
+% 
+% h = xlabel('WordCount');
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% 
+% h = ylabel(yLabelName);
+% set(h,'FontSize',fontSize);
+% set(h,'fontweight', fontWeight);
+% hold off;
