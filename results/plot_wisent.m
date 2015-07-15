@@ -1,4 +1,5 @@
 clear
+close all;
 
 % Uncomment the parameter to plot.
 %s = 1; %payload,
