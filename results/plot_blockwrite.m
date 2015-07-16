@@ -189,11 +189,20 @@ hold on
 
 optimoptions(@lsqcurvefit,'Algorithm','levenberg-marquardt','MaxFunEvals',1500);
 
-[X2,resnorm] = lsqcurvefit(f2,x0,xdata,tot2)
-[X3,resnorm] = lsqcurvefit(f2,x0,xdata,tot3)
-[X4,resnorm] = lsqcurvefit(f2,x0,xdata,tot4)
-[X5,resnorm] = lsqcurvefit(f2,x0,xdata,tot5)
-[X6,resnorm] = lsqcurvefit(f2,x0,xdata,tot6)
+[X2,resnorm2] = lsqcurvefit(f2,x0,xdata,tot2);
+[X3,resnorm3] = lsqcurvefit(f2,x0,xdata,tot3);
+[X4,resnorm4] = lsqcurvefit(f2,x0,xdata,tot4);
+[X5,resnorm5] = lsqcurvefit(f2,x0,xdata,tot5);
+[X6,resnorm6] = lsqcurvefit(f2,x0,xdata,tot6);
+
+[r22 rmse] = rsquare(tot2, f2(X2,xdata));
+[r23 rmse] = rsquare(tot3, f2(X3,xdata));
+[r24 rmse] = rsquare(tot4, f2(X4,xdata));
+[r25 rmse] = rsquare(tot5, f2(X5,xdata));
+[r26 rmse] = rsquare(tot6, f2(X6,xdata));
+
+% R-square
+R2_f2 = [r22; r23; r24; r25; r26]
 
 plot(xdata,f2(X2,xdata))
 plot(xdata,f2(X3,xdata))
@@ -230,11 +239,20 @@ G = @(x,xdata)-x(1)*xdata+x(2);
 
 hold on
 
-[x2,resnorm] = lsqcurvefit(G,x0,xdata,d2(:,:,s))
-[x3,resnorm] = lsqcurvefit(G,x0,xdata,d3(:,:,s))
-[x4,resnorm] = lsqcurvefit(G,x0,xdata,d4(:,:,s))
-[x5,resnorm] = lsqcurvefit(G,x0,xdata,d5(:,:,s))
-[x6,resnorm] = lsqcurvefit(G,x0,xdata(1:19),d6(:,1:19,s))
+[x2,resnorm2] = lsqcurvefit(G,x0,xdata,d2(:,:,s));
+[x3,resnorm3] = lsqcurvefit(G,x0,xdata,d3(:,:,s));
+[x4,resnorm4] = lsqcurvefit(G,x0,xdata,d4(:,:,s));
+[x5,resnorm5] = lsqcurvefit(G,x0,xdata,d5(:,:,s));
+[x6,resnorm6] = lsqcurvefit(G,x0,xdata(1:19),d6(:,1:19,s));
+
+[r22 rmse] = rsquare(d2(:,:,s), G(x2,xdata));
+[r23 rmse] = rsquare(d3(:,:,s), G(x3,xdata));
+[r24 rmse] = rsquare(d4(:,:,s), G(x4,xdata));
+[r25 rmse] = rsquare(d5(:,:,s), G(x5,xdata));
+[r26 rmse] = rsquare(d6(:,1:19,s), G(x6,xdata(1:19)));
+
+% R-square
+R2_g = [r22; r23; r24; r25; r26]
 
 plot(xdata,G(x2,xdata))
 plot(xdata,G(x3,xdata))
@@ -267,6 +285,15 @@ hold on
 
 f1 = @(e,t,xdata)(-e(1)*xdata+e(2)).*(t(1)./(xdata.^t(2))+t(3));
 
+[r22 rmse] = rsquare(d2(:,:,6), f1(x2,X2,xdata));
+[r23 rmse] = rsquare(d3(:,:,6), f1(x3,X3,xdata));
+[r24 rmse] = rsquare(d4(:,:,6), f1(x4,X4,xdata));
+[r25 rmse] = rsquare(d5(:,:,6), f1(x5,X5,xdata));
+[r26 rmse] = rsquare(d6(:,:,6), f1(x6,X6,xdata));
+
+% R-square
+R2_f1 = [r22; r23; r24; r25; r26]
+
 plot(xdata,f1(x2,X2,xdata))
 plot(xdata,f1(x3,X3,xdata))
 plot(xdata,f1(x4,X4,xdata))
@@ -298,6 +325,15 @@ yLabelName = 'h(x)';
 hold on
 
 T = @(e,t,xdata)((-e(1)*xdata+e(2)).*(t(1)./(xdata.^t(2))+t(3))).*xdata*2;
+
+[r22 rmse] = rsquare(d2(:,:,5), T(x2,X2,xdata));
+[r23 rmse] = rsquare(d3(:,:,5), T(x3,X3,xdata));
+[r24 rmse] = rsquare(d4(:,:,5), T(x4,X4,xdata));
+[r25 rmse] = rsquare(d5(:,:,5), T(x5,X5,xdata));
+[r26 rmse] = rsquare(d6(:,1:19,5), T(x6,X6,xdata(1:19)));
+
+% R-square
+R2_T = [r22; r23; r24; r25; r26]
 
 plot(xdata,T(x2,X2,xdata))
 plot(xdata,T(x3,X3,xdata))
