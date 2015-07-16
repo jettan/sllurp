@@ -1,3 +1,5 @@
+!synclient HorizTwoFingerScroll=0
+
 clear
 close all;
 
@@ -174,40 +176,34 @@ hold off;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Now try to get some analytical solutions running.
-% Use least square approach to get f2(x) = b2 + a2/x and g(x) = ax+b
+% f2(x) = b2 + a2/x^c
 
-% f2(x)
 cFig = figure;
 set(cFig, 'Position', figurePosition)
 set(gcf,'Renderer','painters');
 yLabelName = 'f2(x)';
 
-x0 = [0, 1];
+x0 = [170, 0,-30];
+f2 = @(x,xdata)x(1)./(xdata.^x(2))+x(3);
 hold on
 
-F2 = @(x,xdata)x(1)./(xdata)+x(2);
-[X2,resnorm] = lsqcurvefit(F2,x0,xdata,tot2)
-plot(xdata,F2(X2,xdata))
+optimoptions(@lsqcurvefit,'Algorithm','levenberg-marquardt','MaxFunEvals',1500);
 
-F3 = @(x,xdata)x(1)./(xdata)+x(2);
-[X3,resnorm] = lsqcurvefit(F3,x0,xdata,tot3)
-plot(xdata,F3(X3,xdata))
+[X2,resnorm] = lsqcurvefit(f2,x0,xdata,tot2)
+[X3,resnorm] = lsqcurvefit(f2,x0,xdata,tot3)
+[X4,resnorm] = lsqcurvefit(f2,x0,xdata,tot4)
+[X5,resnorm] = lsqcurvefit(f2,x0,xdata,tot5)
+[X6,resnorm] = lsqcurvefit(f2,x0,xdata,tot6)
 
-F4 = @(x,xdata)x(1)./(xdata)+x(2);
-[X4,resnorm] = lsqcurvefit(F4,x0,xdata,tot4)
-plot(xdata,F4(X4,xdata))
-
-F5 = @(x,xdata)x(1)./(xdata)+x(2);
-[X5,resnorm] = lsqcurvefit(F5,x0,xdata,tot5)
-plot(xdata,F5(X5,xdata))
-
-F6 = @(x,xdata)x(1)./(xdata)+x(2);
-[X6,resnorm] = lsqcurvefit(F6,x0,xdata,tot6)
-plot(xdata,F6(X6,xdata))
+plot(xdata,f2(X2,xdata))
+plot(xdata,f2(X3,xdata))
+plot(xdata,f2(X4,xdata))
+plot(xdata,f2(X5,xdata))
+plot(xdata,f2(X6,xdata))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
-axis([0,32,0,inf]);
 set(gca, 'xtick',[1,4,8,12,16,20,24,28,32]);
+set(gca, 'xlim',[0 32]);
 grid minor;
 box on;
 
@@ -230,32 +226,21 @@ s = 4;
 yLabelName = 'g(x)';
 
 x0 = [0, 1];
+G = @(x,xdata)-x(1)*xdata+x(2);
+
 hold on
 
-ydata = d2(:,:,s);
-F2 = @(x,xdata)-x(1)*xdata+x(2);
-[x2,resnorm] = lsqcurvefit(F2,x0,xdata,ydata)
-plot(xdata,F2(x2,xdata))
+[x2,resnorm] = lsqcurvefit(G,x0,xdata,d2(:,:,s))
+[x3,resnorm] = lsqcurvefit(G,x0,xdata,d3(:,:,s))
+[x4,resnorm] = lsqcurvefit(G,x0,xdata,d4(:,:,s))
+[x5,resnorm] = lsqcurvefit(G,x0,xdata,d5(:,:,s))
+[x6,resnorm] = lsqcurvefit(G,x0,xdata(1:19),d6(:,1:19,s))
 
-ydata = d3(:,:,s);
-F3 = @(x,xdata)-x(1)*xdata+x(2);
-[x3,resnorm] = lsqcurvefit(F3,x0,xdata,ydata)
-plot(xdata,F3(x3,xdata))
-
-ydata = d4(:,:,s);
-F4 = @(x,xdata)-x(1)*xdata+x(2);
-[x4,resnorm] = lsqcurvefit(F4,x0,xdata,ydata)
-plot(xdata,F4(x4,xdata))
-
-ydata = d5(:,:,s);
-F5 = @(x,xdata)-x(1)*xdata+x(2);
-[x5,resnorm] = lsqcurvefit(F5,x0,xdata,ydata)
-plot(xdata,F5(x5,xdata))
-
-ydata = d6(:,:,s);
-F6 = @(x,xdata)-x(1)*xdata+x(2);
-[x6,resnorm] = lsqcurvefit(F6,x0,[1:18],ydata(1:18))
-plot([1:18],F6(x6,[1:18]))
+plot(xdata,G(x2,xdata))
+plot(xdata,G(x3,xdata))
+plot(xdata,G(x4,xdata))
+plot(xdata,G(x5,xdata))
+plot(xdata(1:19),G(x6,xdata(1:19)))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,-inf,inf]);
@@ -274,24 +259,19 @@ set(h,'fontweight', fontWeight);
 hold off;
 
 % Now plot f1(x) based on the found values.
-
 cFig = figure;
 set(cFig, 'Position', figurePosition)
 set(gcf,'Renderer','painters');
 yLabelName = 'f1(x)';
 hold on
 
-f12 = ((-x2(1)*xdata + x2(2)).*(X2(2)*xdata + X2(1)))./xdata;
-f13 = ((-x3(1)*xdata + x3(2)).*(X3(2)*xdata + X3(1)))./xdata;
-f14 = ((-x4(1)*xdata + x4(2)).*(X4(2)*xdata + X4(1)))./xdata;
-f15 = ((-x5(1)*xdata + x5(2)).*(X5(2)*xdata + X5(1)))./xdata;
-f16 = ((-x6(1)*xdata + x6(2)).*(X6(2)*xdata + X6(1)))./xdata;
+f1 = @(e,t,xdata)(-e(1)*xdata+e(2)).*(t(1)./(xdata.^t(2))+t(3));
 
-plot(xdata, f12);
-plot(xdata, f13);
-plot(xdata, f14);
-plot(xdata, f15);
-plot(xdata, f16);
+plot(xdata,f1(x2,X2,xdata))
+plot(xdata,f1(x3,X3,xdata))
+plot(xdata,f1(x4,X4,xdata))
+plot(xdata,f1(x5,X5,xdata))
+plot(xdata,f1(x6,X6,xdata))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,0,inf]);
@@ -309,7 +289,7 @@ set(h,'fontweight', fontWeight);
 
 hold off;
 
-% And finally plot throughput: h(x) = f1(x)*x
+% Plot h(x).
 
 cFig = figure;
 set(cFig, 'Position', figurePosition)
@@ -317,17 +297,13 @@ set(gcf,'Renderer','painters');
 yLabelName = 'h(x)';
 hold on
 
-T2 = ((-x2(1)*xdata + x2(2)).*(X2(2)*xdata + X2(1)));
-T3 = ((-x3(1)*xdata + x3(2)).*(X3(2)*xdata + X3(1)));
-T4 = ((-x4(1)*xdata + x4(2)).*(X4(2)*xdata + X4(1)));
-T5 = ((-x5(1)*xdata + x5(2)).*(X5(2)*xdata + X5(1)));
-T6 = ((-x6(1)*xdata + x6(2)).*(X6(2)*xdata + X6(1)));
+T = @(e,t,xdata)((-e(1)*xdata+e(2)).*(t(1)./(xdata.^t(2))+t(3))).*xdata*2;
 
-plot(xdata, T2);
-plot(xdata, T3);
-plot(xdata, T4);
-plot(xdata, T5);
-plot(xdata, T6);
+plot(xdata,T(x2,X2,xdata))
+plot(xdata,T(x3,X3,xdata))
+plot(xdata,T(x4,X4,xdata))
+plot(xdata,T(x5,X5,xdata))
+plot(xdata,T(x6,X6,xdata))
 
 legend('20 cm','30 cm','40 cm','50 cm','60 cm','FontSize',fontSize,'FontWeight',fontWeight);
 axis([0,32,0,inf]);
