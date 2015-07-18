@@ -12,7 +12,7 @@ import sys
 import math
 
 # Generate Intel Hex file with this many bytes of data.
-SIZE = 1024
+SIZE = 5*1024
 
 # Start address for data of the Intel Hex file.
 START = "6400"
@@ -32,18 +32,18 @@ else:
 	remaining_bytes = SIZE
 	
 	for i in range(0, num_records):
-		if (remaining_bytes > num_bytes):
-			remaining_bytes -= num_bytes
-		else:
-			num_bytes = remaining_bytes
-			remaining_bytes -= num_bytes
-		
 		# Construct bytefield.
 		bytefield = "{:02X}".format(num_bytes)
 		
 		# Construct address field.
 		current_address = address + num_bytes * i
 		address_field = "{:04X}".format(current_address)
+		
+		if (remaining_bytes > num_bytes):
+			remaining_bytes -= num_bytes
+		else:
+			num_bytes = remaining_bytes
+			remaining_bytes -= num_bytes
 		
 		# Construct random data field.
 		data = ""
