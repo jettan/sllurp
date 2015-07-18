@@ -60,6 +60,8 @@ else:
 			checksum += int("0x"+ record[2*j:2*j+2], 0)
 		checksum = 256 - (checksum % 256)
 		checksum = "{:02X}".format(checksum)
+		if (checksum == "100"):
+			checksum = "00"
 		
 		# Assemble the whole record and print.
 		record = ":" + record + checksum
