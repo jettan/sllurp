@@ -19,6 +19,7 @@ else:
 			r += 1
 		if "elapsed" in lines[i]:
 			m += 1
+			eof_line = lines[i]
 		if "Result" in lines[i]:
 			total += 1
 		if "Result=0" in lines[i]:
@@ -42,8 +43,10 @@ else:
 #	print "Message reports efficiency of transfer: " + str(success) + "/" + str(total) + " = " + str(float(success)/total)
 #	print "Average OPM (success only/total): " + str(float(success)/(r+m)) + "/" + str(float(total)/(r+m))
 	
-	if len(str.split(eof_line)) > 4:
+	if "EOF reached" in eof_line:
 		runtime = float(str.split(eof_line)[4])
+	else:
+		runtime = float(1)
 		
 #		print "Total runtime: " + str(runtime) + " sec"
 #		print "Average time per message: " + str(runtime/(r+m)) + " sec = " + str(1/(runtime/(r+m))) + " messages/sec"
@@ -71,6 +74,11 @@ else:
 		total_ops = total_opm*messages_per_second
 		goodput = (num_words*2)/runtime
 		throughput = goodput + (m*2*2)/runtime
+		
+		if (runtime == float(1)):
+			goodput = 0
+			throughput = 0
+		
 		print "%d, %d, %d, %f, %d, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f" % ( payload, messages_sent, messages_resent, resend_ratio, success_reports, total_reports, efficiency, 
 		success_opm, total_opm, runtime, time_per_message, messages_per_second, time_per_op, success_ops, total_ops, goodput, throughput)
 	except:
