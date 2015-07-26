@@ -17,7 +17,6 @@ SIZE = 5*1024
 # Start address for data of the Intel Hex file.
 START = "6400"
 
-
 if (len(sys.argv) < 2):
 	print "Please specify the number of data words for each record as argument!"
 else:
@@ -69,4 +68,6 @@ else:
 		
 	# End of File.
 	print ":00000001FF"
+
+
 

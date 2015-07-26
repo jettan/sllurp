@@ -42,6 +42,9 @@ THROTTLE_UP = 0
 # Throttle speed up after this number of succeeded lines.
 THROTTLE_UP_AFTER_N_SUCCESS = 5
 
+# CRC16 seed.
+CRC_SEED = 0xFFFF
+
 ######################################################################################################
 
 # Stuff needed for changing access_specs.
@@ -71,6 +74,8 @@ words_sent          = 0
 start_time = None
 current_time = None
 
+# CRC16 that is the seed and calculated on file read.
+crc_update = None
 
 # Parse hex argument.
 class hexact(argparse.Action):
@@ -156,7 +161,7 @@ def doFirmwareFlashing (seen_tags):
 	global remaining_length
 	global MAX_WORD_COUNT
 	global success_count
-	
+	global crc_update
 	
 	
 	# Normal scenario: check if the tag we want to talk to is in the list.
@@ -209,7 +214,7 @@ def doFirmwareFlashing (seen_tags):
 									'WordPtr': 0,
 									'AccessPassword': 0,
 									'WriteDataWordCount': int(1),
-									'WriteData': '\xb0\x07',
+									'WriteData': crc_update.decode('hex'),
 								}
 								
 								# Call factory to do the next access.
@@ -708,6 +713,20 @@ def init_logging ():
 	
 	logger.log(logLevel, 'log level: {}'.format(logging.getLevelName(logLevel)))
 
+# CRC16-CCITT, poly = 0x1021
+# Input: int, hex character.
+def crc16_ccitt(crc, data):
+	data = int("0x"+data, 0)
+	x = (crc >> 8) ^ data
+	x ^= x >> 4
+	crc = (crc << 8) ^ (x << 12) ^ (x << 5) ^ (x)
+	return crc & 0xffff
+
+
+#crc_update = CRC_START
+
+#print hex(crc_update)
+
 def main ():
 	parse_args()
 	init_logging()
@@ -719,6 +738,7 @@ def main ():
 		global words_sent
 		global MAX_SPEED
 		global MAX_WORD_COUNT
+		global crc_update
 		
 		hexfile    = open(args.filename, 'r')
 		lines      = hexfile.readlines()
@@ -727,10 +747,20 @@ def main ():
 		
 		words_sent = 0
 		
+		crc_update = CRC_SEED
 		for i in range(0,len(lines)-1):
+			
+			# Calculate CRC16 of the data.
+			s = lines[i][9:len(lines[i])-3]
+			for j in range (0, len(s)/2):
+				crc_update = crc16_ccitt(crc_update, s[2*j:2*j+2])
+			
 			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
 		
 		logger.info('Words to send: ' + str(total_words_to_send))
+		
+		crc_update = "{:04x}".format(crc_update)
+		logger.info('CRC16: ' + crc_update)
 	
 	# will be called when all connections have terminated normally
 	onFinish = defer.Deferred()
