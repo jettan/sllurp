@@ -32,7 +32,7 @@ d6 = mean(r6);
 fontSize = 10;
 fontSizeAxes = 8;
 fontWeight = 'normal';
-figurePosition = [440 378 370 300];   % [x y width height]
+figurePosition = [440 378 370 220];   % [x y width height]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ set(gcf,'Renderer','painters');
 
 
 s = 6; % Number of OPS.
-yLabelName = 'Number of OPS (\psi)';
+yLabelName = 'SOPS (\psi)';
 
 
 hold on;
