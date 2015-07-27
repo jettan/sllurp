@@ -371,20 +371,16 @@ def main ():
 	
 	if (args.filename):
 		global fac
-		global hexfile
-		global lines
+		global hexfile, lines, crc_update
+		global message_payload, throttle_index
 		global total_words_to_send
-		global words_sent
-		global message_payload
-		global crc_update
-		global throttle_index
 		
-		throttle_index  = args.throttle_index
-		message_payload = T[throttle_index]
 		hexfile         = open(args.filename, 'r')
 		lines           = hexfile.readlines()
 		crc_update      = CRC_SEED
-		words_sent      = 0
+		
+		throttle_index  = args.throttle_index
+		message_payload = T[throttle_index]
 		
 		# Calculate CRC16 of the data and amount of words/bytes to send.
 		for i in range(0,len(lines)-1):
@@ -442,7 +438,7 @@ def main ():
 		reactor.run()
 		
 	else:
-		logger.info("File not specified.")
+		logger.info("File not specified!")
 
 if __name__ == '__main__':
 	main()
