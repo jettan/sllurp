@@ -61,7 +61,7 @@ resend_count        = 0
 timeout             = 0
 remaining_length    = 0
 success_count       = 0
-message_payload      = 16     # Maximum message payload size in words.       (S_p)
+message_payload     = 16     # Maximum message payload size in words.       (S_p)
 
 # Wisent transfer statistics.
 start_time          = None
@@ -71,16 +71,6 @@ words_sent          = 0
 
 ######################################################################################################
 
-# Parse hex argument.
-class hexact(argparse.Action):
-	'An argparse.Action that handles hex string input'
-	def __call__(self,parser, namespace, values, option_string=None):
-		base = 10
-		if '0x' in values: base = 16
-		setattr(namespace, self.dest, int(values,base))
-		return
-	pass
-
 # Stop the twisted reactor at the end of the program.
 def finish (_):
 	logger.info('total # of tags seen: {}'.format(tagReport))
@@ -88,54 +78,33 @@ def finish (_):
 	if reactor.running:
 		reactor.stop()
 
-# The first access command.
+# The first Write to initialize transfer.
 def access (proto):
 	global write_state
-	write_state = -1
-	readSpecParam = None
-	if args.read_words:
-		readSpecParam = {
-			'OpSpecID': 0,
-			'MB': 3,
-			'WordPtr': 0,
-			'AccessPassword': 0,
-			'WordCount': args.read_words
-		}
+	global write_data
+	global check_data
+	global start_time
 	
-	writeSpecParam = None
-	if args.write_words:
-		writeSpecParam = {
-			'OpSpecID': 0,
-			'MB': 3,
-			'WordPtr': 0,
-			'AccessPassword': 0,
-			'WriteDataWordCount': args.write_words,
-			'WriteData': chr(args.write_content >> 8) + chr(args.write_content & 0xff),
-		}
+	write_state = 0
 	
-	# If command to write a firmware is issued (0xb105), make AccessSpec finite.
-	if (args.write_content == 45317):
-		global write_data
-		global check_data
-		global start_time
-		
-		check_data = "b105000000"
-		write_state = 0
-		start_time = time.time()
-		
-		accessSpecStopParam = {
-			'AccessSpecStopTriggerType': 1,
-			'OperationCountValue': 10,
-		}
+	accessSpecStopParam = {
+		'AccessSpecStopTriggerType': 1,
+		'OperationCountValue': 10,
+	}
 	
-	# Otherwise, use default behavior and keep AccessSpec alive.
-	else:
-		accessSpecStopParam = {
-			'AccessSpecStopTriggerType': 0,
-			'OperationCountValue': 1,
-		}
+	writeSpecParam = {
+		'OpSpecID': 0,
+		'MB': 3,
+		'WordPtr': 0,
+		'AccessPassword': 0,
+		'WriteDataWordCount': int(1),
+		'WriteData': '\xb1\x05',
+	}
 	
-	return proto.startAccess(readWords=readSpecParam, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
+	check_data = "b105000000"
+	start_time = time.time()
+	
+	return proto.startAccess(readWords=None, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
 
 
 def politeShutdown (factory):
@@ -660,26 +629,19 @@ def parse_args ():
 	parser.add_argument('-T', '--tari', default=0, type=int, help='Tari value (default 0=auto)')
 	parser.add_argument('-s', '--session', default=2, type=int, help='Gen2 session (default 2)')
 	parser.add_argument('-P', '--tag-population', default=32, type=int, dest='population', help="Tag Population value (default 32)")
-	
-	# read or write
-	op = parser.add_mutually_exclusive_group(required=True)
-	op.add_argument('-r', '--read-words', type=int, help='Number of words to read from MB 0 WordPtr 0')
-	op.add_argument('-w', '--write-words', type=int, help='Number of words to write to MB 0 WordPtr 0')
 	parser.add_argument('-l', '--logfile')
 	
-	# specify content to write
-	parser.add_argument('-c', '--write_content', action=hexact, help='Content to write when using -w, example: 0xaabb, 0x1234')
-	parser.add_argument('-f', '--filename', type=str, help='The intel hexfile to flash when using -w', dest='filename')
-	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='maximum number of data words to send using BlockWrite', dest='message_payload')
+	parser.add_argument('-f', '--filename', type=str, help='the Intel Hex file to transfer', dest='filename')
+	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='start size of message payload in words', dest='message_payload')
 	
 	args = parser.parse_args()
 
 
 def init_logging ():
-	logLevel = (args.debug and logging.DEBUG or logging.INFO)
-	#logFormat = '%(asctime)s %(name)s: %(levelname)s: %(message)s'
+	logLevel  = (args.debug and logging.DEBUG or logging.INFO)
 	logFormat = '%(message)s'
 	formatter = logging.Formatter(logFormat)
+	
 	stderr = logging.StreamHandler()
 	stderr.setFormatter(formatter)
 	
