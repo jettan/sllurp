@@ -126,26 +126,23 @@ def constructWisentMessage(payload_size):
 
 def sendWisentMessage(n, p = ""):
 	global fac, words_sent, remaining_length, index, write_data, check_data
-	# Remaining data can be sent in 1 message, so proceed to next line afterwards.
 	
-	if (n <= message_payload):
-		wisent_message    = constructWisentMessage(n)
-		message           = toLLRPMessage(3+n, wisent_message[0])
-		words_sent       += n
-		remaining_length -= n*4
-		index += 1
-	# Remaining data has to be split in multiple messages because of payload size.
-	else:
-		wisent_message    = constructWisentMessage(message_payload)
-		message           = toLLRPMessage(3+message_payload, wisent_message[0])
-		words_sent       += message_payload
-		remaining_length -= message_payload * 4
+	# Decide whether whole line can be sent with 1 message or has to be split.
+	n                 = n if (n <= message_payload) else message_payload
+	index             = (index + 1) if (n <= message_payload) else index
 	
-	write_data     = wisent_message[0]
-	check_data     = wisent_message[1]
+	wisent_message    = constructWisentMessage(n)
+	message           = toLLRPMessage(3+n, wisent_message[0])
+	words_sent       += n
+	remaining_length -= n*4
+	
+	write_data        = wisent_message[0]
+	check_data        = wisent_message[1]
 	
 	if (len(p) > 0):
 		logger.info("Next block: " + check_data + p)
+	else:
+		logger.info("Resent: " + check_data)
 	
 	# Send the message to the reader.
 	try:
@@ -171,15 +168,8 @@ def politeShutdown (factory):
 
 
 def wisentTransfer (seen_tags):
-	global write_state, current_line, index
-	global write_data, check_data
-	global words_sent
-	global nack_counter
-	global resend_count
-	global remaining_length
-	global message_payload
-	global consecutive_messages_count
-	global throttle_index
+	global write_state, current_line, index, remaining_length, words_sent
+	global resend_count, nack_counter, consecutive_messages_count, message_payload, throttle_index
 	
 	# Normal scenario: check if the tag we want to talk to is in the list.
 	for tag in seen_tags:
@@ -200,9 +190,9 @@ def wisentTransfer (seen_tags):
 					consecutive_messages_count += 1
 					
 					# Throttle up.
-					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD and throttle_index < len(T)-1):
+					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD):
 						consecutive_messages_count = 0
-						throttle_index += 1
+						throttle_index = min(len(T)-1, throttle_index+1)
 						message_payload = T[throttle_index]
 					
 					# Start of a new line.
@@ -256,7 +246,7 @@ def wisentTransfer (seen_tags):
 						
 						remaining_length += len(sent_data)
 						throttle_index = max(0,throttle_index - 1)
-						message_payload = max(0, T[throttle_index])
+						message_payload = T[throttle_index]
 							
 						num_words = remaining_length / 4
 						sendWisentMessage(num_words)
@@ -285,17 +275,8 @@ def tagReportCallback (llrpMsg):
 	else:
 		if (write_state >= 0):
 			logger.info('no tags seen')
-			
-			global nack_counter
-			global resend_count
-			global write_data
-			global words_sent
-			global remaining_length
-			global current_line
-			global message_payload
-			global consecutive_messages_count
-			global index
-			global throttle_index
+			global current_line, index, remaining_length, words_sent
+			global resend_count, nack_counter, consecutive_messages_count, message_payload, throttle_index
 			
 			# Quit.
 			if (resend_count == MAX_RESEND_VALUE):
@@ -320,7 +301,7 @@ def tagReportCallback (llrpMsg):
 				
 				remaining_length += len(sent_data)
 				throttle_index = max(0,throttle_index - 1)
-				message_payload = max(0, T[throttle_index])
+				message_payload = T[throttle_index]
 				
 				num_words = remaining_length / 4
 				sendWisentMessage(num_words)
