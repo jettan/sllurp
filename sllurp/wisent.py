@@ -26,15 +26,12 @@ import sllurp.llrp as llrp
 ######################################################################################################
 
 ## Wisent system constants.
-CRC_SEED                       = 0xFFFF # CRC16 CCITT seed. Must be the same as the CRFID side.
-OCV                            = 15     # Number of operations per command in operation frame.
-TIMEOUT_VALUE                  = 20     # Number of NACKs before timeout.              (N_threshold)
-MAX_RESEND_VALUE               = 3      # Maximum number of resends.                   (R_max)
-MAX_PAYLOAD                    = 16     # Maximum message payload size after throttle. (S_r)
-MIN_PAYLOAD                    = 1      # Minimum message payload size after throttle.
-THROTTLE_DOWN                  = 1      # Temporary throttle down mechanic. (S_p+1 = S_p/T_down)
-THROTTLE_UP                    = 0      # Temporaty throttle up mechanic.   (S_p+1 = S_p + T_up)
-CONSECUTIVE_MESSAGES_THRESHOLD = 5      # Consecutive successful messages before throttle up. (M_threshold)
+CRC_SEED                       = 0xFFFF            # CRC16 CCITT seed. Must be the same as the CRFID side.
+OCV                            = 15                # Number of operations per command in operation frame.
+TIMEOUT_VALUE                  = 20                # Number of NACKs before timeout.              (N_threshold)
+MAX_RESEND_VALUE               = 3                 # Maximum number of resends.                   (R_max)
+CONSECUTIVE_MESSAGES_THRESHOLD = 5                 # Consecutive successful messages before throttle up. (M_threshold)
+T                              = [1,2,3,4,6,7,16]  # Set of values allowed for message payload size after throttle.
 
 ######################################################################################################
 
@@ -62,7 +59,8 @@ resend_count               = 0
 nack_counter               = 0
 remaining_length           = 0
 consecutive_messages_count = 0
-message_payload            = 16     # Maximum message payload size in words.       (S_p)
+throttle_index             = 0
+message_payload            = T[throttle_index]     # Maximum message payload size in words.       (S_p)
 
 # Wisent transfer statistics.
 start_time          = None
@@ -169,6 +167,7 @@ def wisentTransfer (seen_tags):
 	global remaining_length
 	global message_payload
 	global consecutive_messages_count
+	global throttle_index
 	
 	# Normal scenario: check if the tag we want to talk to is in the list.
 	for tag in seen_tags:
@@ -189,9 +188,10 @@ def wisentTransfer (seen_tags):
 					consecutive_messages_count += 1
 					
 					# Throttle up.
-					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD and message_payload < MAX_PAYLOAD):
+					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD and throttle_index < len(T)-1):
 						consecutive_messages_count = 0
-						message_payload = min(MAX_PAYLOAD, message_payload+THROTTLE_UP)
+						throttle_index += 1
+						message_payload = T[throttle_index]
 					
 					# Start of a new line.
 					if (write_state == 0):
@@ -243,7 +243,8 @@ def wisentTransfer (seen_tags):
 							index -= 1
 						
 						remaining_length += len(sent_data)
-						message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
+						throttle_index = max(0,throttle_index - 1)
+						message_payload = max(0, T[throttle_index])
 							
 						num_words = remaining_length / 4
 						sendWisentMessage(num_words)
@@ -282,6 +283,7 @@ def tagReportCallback (llrpMsg):
 			global message_payload
 			global consecutive_messages_count
 			global index
+			global throttle_index
 			
 			# Quit.
 			if (resend_count == MAX_RESEND_VALUE):
@@ -305,7 +307,8 @@ def tagReportCallback (llrpMsg):
 					index -= 1
 				
 				remaining_length += len(sent_data)
-				message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
+				throttle_index = max(0,throttle_index - 1)
+				message_payload = max(0, T[throttle_index])
 				
 				num_words = remaining_length / 4
 				sendWisentMessage(num_words)
@@ -381,8 +384,10 @@ def main ():
 		global words_sent
 		global message_payload
 		global crc_update
+		global throttle_index
 		
-		message_payload = args.message_payload
+		throttle_index  = args.message_payload
+		message_payload = T[throttle_index]
 		hexfile         = open(args.filename, 'r')
 		lines           = hexfile.readlines()
 		crc_update      = CRC_SEED
