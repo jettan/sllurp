@@ -1,3 +1,17 @@
+#######################################################################
+#                                                                     #
+#  ___       __   ___  ________  _______   ________   _________       #
+# |\  \     |\  \|\  \|\   ____\|\  ___ \ |\   ___  \|\___   ___\     #
+# \ \  \    \ \  \ \  \ \  \___|\ \   __/|\ \  \\ \  \|___ \  \_|     #
+#  \ \  \  __\ \  \ \  \ \_____  \ \  \_|/_\ \  \\ \  \   \ \  \      #
+#   \ \  \|\__\_\  \ \  \|____|\  \ \  \_|\ \ \  \\ \  \   \ \  \     #
+#    \ \____________\ \__\____\_\  \ \_______\ \__\\ \__\   \ \__\    #
+#     \|____________|\|__|\_________\|_______|\|__| \|__|    \|__|    #
+#                        \|_________|                                 #
+#                                                                     #
+#          Wisent - a robust downstream protocol for CRFIDs           #
+#######################################################################
+
 from __future__ import print_function
 import argparse
 import logging
@@ -9,73 +23,53 @@ from twisted.internet import reactor, defer
 
 import sllurp.llrp as llrp
 
-# General sllurp stuff.
-tagReport = 0
-logger = logging.getLogger('sllurp')
-fac = None
-args = None
+######################################################################################################
 
-#################### SYSTEM PARAMETERS ###############################################################
-
-# Number of NACKs before resend.
-TIMEOUT_VALUE = 20
-
-# Maximum number of resends.
-MAX_RESEND_VALUE = 3
-
-# Number of times a single ACCESSSPEC is performed by the reader before the reader disables it.
-OPERATION_COUNT_VALUE = 15
-
-# The maximum amount of DATA WORDS included in a single BlockWrite command.
-MAX_WORD_COUNT = 16
-
-MAX_SPEED = 16
-
-MIN_SPEED = 1
-
-# Max word count will be DIVIDED by this number when shit happens.
-THROTTLE_DOWN = 1
-
-# Max word count will be INCREMENTED by this number when all is well.
-THROTTLE_UP = 0
-
-# Throttle speed up after this number of succeeded lines.
-THROTTLE_UP_AFTER_N_SUCCESS = 5
-
-# CRC16 seed.
-CRC_SEED = 0xFFFF
+## Wisent system constants.
+CRC_SEED                    = 0xFFFF # CRC16 CCITT seed. Must be the same as the CRFID side.
+OCV                         = 15     # Number of operations per command in operation frame.
+TIMEOUT_VALUE               = 20     # Number of NACKs before timeout.              (N_threshold)
+MAX_RESEND_VALUE            = 3      # Maximum number of resends.                   (R_max)
+MAX_SPEED                   = 16     # Maximum message payload size after throttle. (S_r)
+MIN_SPEED                   = 1      # Minimum message payload size after throttle.
+THROTTLE_DOWN               = 1      # Temporary throttle down mechanic. (S_p+1 = S_p/T_down)
+THROTTLE_UP                 = 0      # Temporaty throttle up mechanic.   (S_p+1 = S_p + T_up)
+THROTTLE_UP_AFTER_N_SUCCESS = 5      # Consecutive successful messages before throttle up. (M_threshold)
 
 ######################################################################################################
 
-# Stuff needed for changing access_specs.
-current_line     = None
-write_data       = None
-check_data       = None
-write_state      = None
-resend_count     = 0
-timeout          = 0
-remaining_length = 0
-success_count    = 0
+# Sllurp global variables.
+fac                 = None
+args                = None
+logger              = logging.getLogger('sllurp')
+tagReport           = 0
 
-# Line index of hexfile.
-index = 0
+# The Intel Hex file.
+hexfile             = None
+lines               = None
+current_line        = None
+index               = 0
 
-# The Intel hexfile.
-hexfile   = None
+# CRC16 CCITT over the data in the Intel Hex file.
+crc_update          = None
 
-# List with all the lines in the hexfile.
-lines     = None
+# Wisent Global variables needed to change/construct messages.
+write_data          = None
+check_data          = None
+write_state         = None
+resend_count        = 0
+timeout             = 0
+remaining_length    = 0
+success_count       = 0
+message_payload      = 16     # Maximum message payload size in words.       (S_p)
 
-# Transmission stats.
+# Wisent transfer statistics.
+start_time          = None
+current_time        = None
 total_words_to_send = 0
 words_sent          = 0
 
-# Time related vars.
-start_time = None
-current_time = None
-
-# CRC16 that is the seed and calculated on file read.
-crc_update = None
+######################################################################################################
 
 # Parse hex argument.
 class hexact(argparse.Action):
@@ -159,7 +153,7 @@ def doFirmwareFlashing (seen_tags):
 	global timeout
 	global resend_count
 	global remaining_length
-	global MAX_WORD_COUNT
+	global message_payload
 	global success_count
 	global crc_update
 	
@@ -180,14 +174,14 @@ def doFirmwareFlashing (seen_tags):
 					
 					accessSpecStopParam = {
 						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': int(OPERATION_COUNT_VALUE),
+						'OperationCountValue': int(OCV),
 					}
 					
 					success_count += 1
 					
-					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS and MAX_WORD_COUNT < 16):
+					if (success_count >= THROTTLE_UP_AFTER_N_SUCCESS and message_payload < 16):
 						success_count = 0
-						MAX_WORD_COUNT = min(MAX_SPEED, MAX_WORD_COUNT+THROTTLE_UP)
+						message_payload = min(MAX_SPEED, message_payload+THROTTLE_UP)
 					
 					# Start of a new line.
 					if (write_state == 0):
@@ -232,7 +226,7 @@ def doFirmwareFlashing (seen_tags):
 							num_words = remaining_length / 4
 							
 							# Remaining data can be send in one go.
-							if (num_words <= MAX_WORD_COUNT):
+							if (num_words <= message_payload):
 								header  = "{:02x}".format(2+num_words)
 								size    = "{:02x}".format(num_words*2)
 								offset  = ((len(current_line)-12)-remaining_length)/4
@@ -278,16 +272,16 @@ def doFirmwareFlashing (seen_tags):
 								except:
 									logger.info("Error when trying to construct next AccessSpec on new line.")
 									
-							# Remaining data capped by MAX_WORD_COUNT.
+							# Remaining data capped by message_payload.
 							else:
-								header  = "{:02x}".format(2+MAX_WORD_COUNT)
-								size    = "{:02x}".format(MAX_WORD_COUNT*2)
+								header  = "{:02x}".format(2+message_payload)
+								size    = "{:02x}".format(message_payload*2)
 								offset  = ((len(current_line)-12)-remaining_length)/4
 								address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
 								write_data = header + size + address
 								
 								# Data
-								for x in range(0, MAX_WORD_COUNT):
+								for x in range(0, message_payload):
 									write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 								
 								# Checksum
@@ -308,14 +302,14 @@ def doFirmwareFlashing (seen_tags):
 										'MB': 3,
 										'WordPtr': 0,
 										'AccessPassword': 0,
-										'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+										'WriteDataWordCount': int(3+message_payload),
 										'WriteData': write_data.decode("hex"),
 									}
 									
 									# Pad write_data with zeroes for comparison against EPC.
 									check_data = header + size + address + checksum[0:2]
-									words_sent += MAX_WORD_COUNT
-									remaining_length -= MAX_WORD_COUNT*4
+									words_sent += message_payload
+									remaining_length -= message_payload*4
 									
 									# Call factory to do the next access.
 									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
@@ -340,11 +334,11 @@ def doFirmwareFlashing (seen_tags):
 						
 						accessSpecStopParam = {
 							'AccessSpecStopTriggerType': 1,
-							'OperationCountValue': int(OPERATION_COUNT_VALUE),
+							'OperationCountValue': int(OCV),
 						}
 						
 						# Throttle speed.
-						if (MAX_WORD_COUNT > MIN_SPEED):
+						if (message_payload > MIN_SPEED):
 							# Undo progress.
 							words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
 						
@@ -352,7 +346,7 @@ def doFirmwareFlashing (seen_tags):
 								index -= 1
 						
 							remaining_length = len(current_line) - 12
-							MAX_WORD_COUNT = max(MIN_SPEED, MAX_WORD_COUNT / THROTTLE_DOWN)
+							message_payload = max(MIN_SPEED, message_payload / THROTTLE_DOWN)
 							
 						# Can't be throttled further, just resend the current message.
 						else:
@@ -375,7 +369,7 @@ def doFirmwareFlashing (seen_tags):
 						num_words = remaining_length / 4
 						
 						# Remaining data can be send in one go.
-						if (num_words <= MAX_WORD_COUNT):
+						if (num_words <= message_payload):
 								header  = "{:02x}".format(2+num_words)
 								size    = "{:02x}".format(num_words*2)
 								offset  = ((len(current_line)-12)-remaining_length)/4
@@ -420,16 +414,16 @@ def doFirmwareFlashing (seen_tags):
 								except:
 									logger.info("Error when trying to construct next AccessSpec on new line.")
 									
-							# Remaining data capped by MAX_WORD_COUNT.
+							# Remaining data capped by message_payload.
 						else:
-							header  = "{:02x}".format(2+MAX_WORD_COUNT)
-							size    = "{:02x}".format(MAX_WORD_COUNT*2)
+							header  = "{:02x}".format(2+message_payload)
+							size    = "{:02x}".format(message_payload*2)
 							offset  = ((len(current_line)-12)-remaining_length)/4
 							address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
 							write_data = header + size + address
 							
 							# Data
-							for x in range(0, MAX_WORD_COUNT):
+							for x in range(0, message_payload):
 								write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 							
 							# Checksum
@@ -449,14 +443,14 @@ def doFirmwareFlashing (seen_tags):
 									'MB': 3,
 									'WordPtr': 0,
 									'AccessPassword': 0,
-									'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+									'WriteDataWordCount': int(3+message_payload),
 									'WriteData': write_data.decode("hex"),
 								}
 								
 								# Pad write_data with zeroes for comparison against EPC.
 								check_data = header + size + address + checksum[0:2]
-								words_sent += MAX_WORD_COUNT
-								remaining_length -= MAX_WORD_COUNT*4
+								words_sent += message_payload
+								remaining_length -= message_payload*4
 								
 								# Call factory to do the next access.
 								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
@@ -502,7 +496,7 @@ def tagReportCallback (llrpMsg):
 			global words_sent
 			global remaining_length
 			global current_line
-			global MAX_WORD_COUNT
+			global message_payload
 			global success_count
 			global index
 			
@@ -522,11 +516,11 @@ def tagReportCallback (llrpMsg):
 						
 				accessSpecStopParam = {
 					'AccessSpecStopTriggerType': 1,
-					'OperationCountValue': int(OPERATION_COUNT_VALUE),
+					'OperationCountValue': int(OCV),
 				}
 				
 				# Throttle speed.
-				if (MAX_WORD_COUNT > MIN_SPEED):
+				if (message_payload > MIN_SPEED):
 					# Undo progress.
 					words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
 				
@@ -534,7 +528,7 @@ def tagReportCallback (llrpMsg):
 						index -= 1
 				
 					remaining_length = len(current_line) - 12
-					MAX_WORD_COUNT = max(MIN_SPEED, MAX_WORD_COUNT / THROTTLE_DOWN)
+					message_payload = max(MIN_SPEED, message_payload / THROTTLE_DOWN)
 					
 				# Can't be throttled further, just resend the current message.
 				else:
@@ -557,7 +551,7 @@ def tagReportCallback (llrpMsg):
 				num_words = remaining_length / 4
 				
 				# Remaining data can be send in one go.
-				if (num_words <= MAX_WORD_COUNT):
+				if (num_words <= message_payload):
 					header  = "{:02x}".format(2+num_words)
 					size    = "{:02x}".format(num_words*2)
 					offset  = ((len(current_line)-12)-remaining_length)/4
@@ -602,16 +596,16 @@ def tagReportCallback (llrpMsg):
 					except:
 						logger.info("Error when trying to construct next AccessSpec on new line.")
 						
-				# Remaining data capped by MAX_WORD_COUNT.
+				# Remaining data capped by message_payload.
 				else:
-					header  = "{:02x}".format(2+MAX_WORD_COUNT)
-					size    = "{:02x}".format(MAX_WORD_COUNT*2)
+					header  = "{:02x}".format(2+message_payload)
+					size    = "{:02x}".format(message_payload*2)
 					offset  = ((len(current_line)-12)-remaining_length)/4
 					address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
 					write_data = header + size + address
 					
 					# Data
-					for x in range(0, MAX_WORD_COUNT):
+					for x in range(0, message_payload):
 						write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
 					
 					# Checksum
@@ -631,14 +625,14 @@ def tagReportCallback (llrpMsg):
 							'MB': 3,
 							'WordPtr': 0,
 							'AccessPassword': 0,
-							'WriteDataWordCount': int(3+MAX_WORD_COUNT),
+							'WriteDataWordCount': int(3+message_payload),
 							'WriteData': write_data.decode("hex"),
 						}
 						
 						# Pad write_data with zeroes for comparison against EPC.
 						check_data = header + size + address + checksum[0:2]
-						words_sent += MAX_WORD_COUNT
-						remaining_length -= MAX_WORD_COUNT*4
+						words_sent += message_payload
+						remaining_length -= message_payload*4
 						
 						# Call factory to do the next access.
 						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
@@ -689,7 +683,7 @@ def parse_args ():
 	        help='Content to write when using -w, example: 0xaabb, 0x1234')
 	parser.add_argument('-f', '--filename', type=str,
 	        help='The intel hexfile to flash when using -w', dest='filename')
-	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='maximum number of data words to send using BlockWrite', dest='MAX_WORD_COUNT')
+	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='maximum number of data words to send using BlockWrite', dest='message_payload')
 	
 	args = parser.parse_args()
 
@@ -737,13 +731,13 @@ def main ():
 		global total_words_to_send
 		global words_sent
 		global MAX_SPEED
-		global MAX_WORD_COUNT
+		global message_payload
 		global crc_update
 		
 		hexfile    = open(args.filename, 'r')
 		lines      = hexfile.readlines()
-		MAX_SPEED = args.MAX_WORD_COUNT
-		MAX_WORD_COUNT = MAX_SPEED
+		MAX_SPEED = args.message_payload
+		message_payload = MAX_SPEED
 		
 		words_sent = 0
 		
