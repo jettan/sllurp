@@ -672,76 +672,78 @@ def main ():
 	init_logging()
 	
 	if (args.filename):
+		global fac
 		global hexfile
 		global lines
 		global total_words_to_send
 		global words_sent
-		global MAX_SPEED
 		global message_payload
 		global crc_update
 		
-		hexfile    = open(args.filename, 'r')
-		lines      = hexfile.readlines()
-		MAX_SPEED = args.message_payload
-		message_payload = MAX_SPEED
+		message_payload = args.message_payload
+		hexfile         = open(args.filename, 'r')
+		lines           = hexfile.readlines()
+		crc_update      = CRC_SEED
+		words_sent      = 0
 		
-		words_sent = 0
-		
-		crc_update = CRC_SEED
+		# Calculate CRC16 of the data and amount of words/bytes to send.
 		for i in range(0,len(lines)-1):
+			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
 			
-			# Calculate CRC16 of the data.
 			s = lines[i][9:len(lines[i])-3]
 			for j in range (0, len(s)/2):
 				crc_update = crc16_ccitt(crc_update, s[2*j:2*j+2])
-			
-			total_words_to_send = total_words_to_send + ((len(lines[i]) - 12)/4)
-		
-		logger.info('Words to send: ' + str(total_words_to_send))
 		
 		crc_update = "{:04x}".format(crc_update)
-		logger.info('CRC16: ' + crc_update)
-	
-	# will be called when all connections have terminated normally
-	onFinish = defer.Deferred()
-	onFinish.addCallback(finish)
-	
-	global fac
-	fac = llrp.LLRPClientFactory(onFinish=onFinish,
-	        disconnect_when_done=True,
-	        modulation=args.modulation,
-	        tari=args.tari,
-	        session=args.session,
-	        tag_population=int(32),
-	        start_inventory=True,
-	        tx_power=args.tx_power,
-	        report_every_n_tags=args.every_n,
-	        tag_content_selector={
-	            'EnableROSpecID': False,
-	            'EnableSpecIndex': False,
-	            'EnableInventoryParameterSpecID': False,
-	            'EnableAntennaID': True,
-	            'EnableChannelIndex': False,
-	            'EnablePeakRRSI': True,
-	            'EnableFirstSeenTimestamp': False,
-	            'EnableLastSeenTimestamp': True,
-	            'EnableTagSeenCount': True,
-	            'EnableAccessSpecID': True
-	        })
-	
-	# tagReportCallback will be called every time the reader sends a TagReport  message (i.e., when it has "seen" tags).
-	fac.addTagReportCallback(tagReportCallback)
-	
-	# start tag access once inventorying
-	fac.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, access)
-	
-	for host in args.host:
-		reactor.connectTCP(host, args.port, fac, timeout=3)
-	
-	# catch ctrl-C and stop inventory before disconnecting
-	reactor.addSystemEventTrigger('before', 'shutdown', politeShutdown, fac)
-	
-	reactor.run()
+		
+		logger.info('Bytes to send: ' + str(total_words_to_send*2))
+		logger.info('CRC16 of data: ' + crc_update)
+		
+		# Called when all connections have terminated normally.
+		onFinish = defer.Deferred()
+		onFinish.addCallback(finish)
+		
+		fac = llrp.LLRPClientFactory(onFinish=onFinish,
+		        disconnect_when_done=True,
+		        modulation=args.modulation,
+		        tari=args.tari,
+		        session=args.session,
+		        tag_population=int(32),
+		        start_inventory=True,
+		        tx_power=args.tx_power,
+		        report_every_n_tags=args.every_n,
+		        tag_content_selector={
+		            'EnableROSpecID': False,
+		            'EnableSpecIndex': False,
+		            'EnableInventoryParameterSpecID': False,
+		            'EnableAntennaID': True,
+		            'EnableChannelIndex': False,
+		            'EnablePeakRRSI': True,
+		            'EnableFirstSeenTimestamp': False,
+		            'EnableLastSeenTimestamp': True,
+		            'EnableTagSeenCount': True,
+		            'EnableAccessSpecID': True
+		        })
+		
+		# The 'main loop' for tags.
+		fac.addTagReportCallback(tagReportCallback)
+		
+		# Start Wisent transfer session.
+		fac.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, access)
+		
+		# Add timeout to reader connect attempt.
+		for host in args.host:
+			reactor.connectTCP(host, args.port, fac, timeout=3)
+		
+		# Catch Ctrl-C and to politely shut down system.
+		reactor.addSystemEventTrigger('before', 'shutdown', politeShutdown, fac)
+		
+		# Start the sllurp reactor.
+		reactor.run()
+		
+	else:
+		logger.info("File not specified.")
 
 if __name__ == '__main__':
 	main()
+
