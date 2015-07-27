@@ -337,7 +337,7 @@ def parse_args ():
 	parser.add_argument('-l', '--logfile')
 	
 	parser.add_argument('-f', '--filename', type=str, help='the Intel Hex file to transfer', dest='filename')
-	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='start size of message payload in words', dest='message_payload')
+	parser.add_argument('-m', '--throttleindex', default=6, type=int, help='start size of message payload in words according to set T', dest='throttle_index')
 	
 	args = parser.parse_args()
 
@@ -386,7 +386,7 @@ def main ():
 		global crc_update
 		global throttle_index
 		
-		throttle_index  = args.message_payload
+		throttle_index  = args.throttle_index
 		message_payload = T[throttle_index]
 		hexfile         = open(args.filename, 'r')
 		lines           = hexfile.readlines()
