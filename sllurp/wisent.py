@@ -41,8 +41,9 @@ THROTTLE_UP_AFTER_N_SUCCESS = 5      # Consecutive successful messages before th
 # Sllurp global variables.
 fac                 = None
 args                = None
-logger              = logging.getLogger('sllurp')
 tagReport           = 0
+logger              = logging.getLogger('sllurp')
+global_stop_param   =  {'AccessSpecStopTriggerType': 1, 'OperationCountValue': int(OCV),}
 
 # The Intel Hex file.
 hexfile             = None
@@ -73,45 +74,41 @@ words_sent          = 0
 
 # Stop the twisted reactor at the end of the program.
 def finish (_):
-	logger.info('total # of tags seen: {}'.format(tagReport))
+	logger.info('Total number of tags seen: {}'.format(tagReport))
 	
 	if reactor.running:
 		reactor.stop()
 
-# The first Write to initialize transfer.
-def access (proto):
-	global write_state
-	global write_data
-	global check_data
-	global start_time
-	
-	write_state = 0
-	
-	accessSpecStopParam = {
-		'AccessSpecStopTriggerType': 1,
-		'OperationCountValue': 10,
-	}
-	
-	writeSpecParam = {
+
+def constructWisentMessage(word_count, content):
+	wisent_message = {
 		'OpSpecID': 0,
 		'MB': 3,
 		'WordPtr': 0,
 		'AccessPassword': 0,
-		'WriteDataWordCount': int(1),
-		'WriteData': '\xb1\x05',
+		'WriteDataWordCount': int(word_count),
+		'WriteData': content.decode('hex'),
 	}
+	return wisent_message
+
+
+# Start Wisent transfer session with a Write command.
+def startWisentTransfer (proto):
+	global write_state, check_data, start_time
 	
-	check_data = "b105000000"
-	start_time = time.time()
+	write_state = 0
+	check_data  = "b105000000"
+	message     = constructWisentMessage(1, "b105")
+	start_time  = time.time()
 	
-	return proto.startAccess(readWords=None, writeWords=writeSpecParam, accessStopParam=accessSpecStopParam)
+	return proto.startAccess(readWords=None, writeWords=message, accessStopParam=global_stop_param)
 
 
 def politeShutdown (factory):
 	return factory.politeShutdown()
 
 
-def doFirmwareFlashing (seen_tags):
+def wisentTransfer (seen_tags):
 	global current_line
 	global index
 	global check_data
@@ -124,7 +121,6 @@ def doFirmwareFlashing (seen_tags):
 	global remaining_length
 	global message_payload
 	global success_count
-	global crc_update
 	
 	
 	# Normal scenario: check if the tag we want to talk to is in the list.
@@ -141,10 +137,6 @@ def doFirmwareFlashing (seen_tags):
 					current_time = time.time()
 					progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
 					
-					accessSpecStopParam = {
-						'AccessSpecStopTriggerType': 1,
-						'OperationCountValue': int(OCV),
-					}
 					
 					success_count += 1
 					
@@ -167,21 +159,9 @@ def doFirmwareFlashing (seen_tags):
 							# Construct the AccessSpec.
 							
 							try:
-								accessSpecStopParam = {
-									'AccessSpecStopTriggerType': 0,
-									'OperationCountValue': 1,
-								}
-								writeSpecParam = {
-									'OpSpecID': 0,
-									'MB': 3,
-									'WordPtr': 0,
-									'AccessPassword': 0,
-									'WriteDataWordCount': int(1),
-									'WriteData': crc_update.decode('hex'),
-								}
-								
-								# Call factory to do the next access.
-								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+								final_stop = {'AccessSpecStopTriggerType': 0, 'OperationCountValue': 1,}
+								message    = constructWisentMessage(1, crc_update)
+								fac.nextAccess(readParam=None, writeParam=message, stopParam=final_stop)
 							except:
 								logger.info("Error when trying to send boot command.")
 							
@@ -219,14 +199,7 @@ def doFirmwareFlashing (seen_tags):
 								
 								# Construct the AccessSpec.
 								try:
-									writeSpecParam = {
-										'OpSpecID': 0,
-										'MB': 3,
-										'WordPtr': 0,
-										'AccessPassword': 0,
-										'WriteDataWordCount': int(3+num_words),
-										'WriteData': write_data.decode("hex"),
-									}
+									message = constructWisentMessage(3+num_words, write_data)
 									
 									# Pad write_data with zeroes for comparison against EPC.
 									check_data = header + size + address + checksum[0:2]
@@ -237,7 +210,7 @@ def doFirmwareFlashing (seen_tags):
 									index += 1
 									
 									# Call factory to do the next access.
-									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+									fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 								except:
 									logger.info("Error when trying to construct next AccessSpec on new line.")
 									
@@ -266,25 +239,16 @@ def doFirmwareFlashing (seen_tags):
 								
 								# Construct the AccessSpec.
 								try:
-									writeSpecParam = {
-										'OpSpecID': 0,
-										'MB': 3,
-										'WordPtr': 0,
-										'AccessPassword': 0,
-										'WriteDataWordCount': int(3+message_payload),
-										'WriteData': write_data.decode("hex"),
-									}
+									message = constructWisentMessage(3+message_payload, write_data)
 									
 									# Pad write_data with zeroes for comparison against EPC.
 									check_data = header + size + address + checksum[0:2]
 									words_sent += message_payload
-									remaining_length -= message_payload*4
+									remaining_length -= message_payload * 4
 									
-									# Call factory to do the next access.
-									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+									fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 								except:
 									logger.info("Error when trying to construct next AccessSpec on new line.")
-								
 						else:
 							logger.info("Line " + str(index) + " of hex file has odd number of Bytes!")
 				
@@ -301,11 +265,6 @@ def doFirmwareFlashing (seen_tags):
 						success_count = 0
 						timeout = 0
 						
-						accessSpecStopParam = {
-							'AccessSpecStopTriggerType': 1,
-							'OperationCountValue': int(OCV),
-						}
-						
 						# Throttle speed.
 						if (message_payload > MIN_SPEED):
 							# Undo progress.
@@ -320,17 +279,8 @@ def doFirmwareFlashing (seen_tags):
 						# Can't be throttled further, just resend the current message.
 						else:
 							try:
-								writeSpecParam = {
-									'OpSpecID': 0,
-									'MB': 3,
-									'WordPtr': 0,
-									'AccessPassword': 0,
-									'WriteDataWordCount': int(4),
-									'WriteData': write_data.decode("hex"),
-								}
-								
-								# Call factory to do the next access.
-								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+								message = constructWisentMessage(4, write_data)
+								fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 								return
 							except:
 								logger.info("Error when trying to construct next AccessSpec on new line.")
@@ -361,14 +311,7 @@ def doFirmwareFlashing (seen_tags):
 								
 								# Construct the AccessSpec.
 								try:
-									writeSpecParam = {
-										'OpSpecID': 0,
-										'MB': 3,
-										'WordPtr': 0,
-										'AccessPassword': 0,
-										'WriteDataWordCount': int(3+num_words),
-										'WriteData': write_data.decode("hex"),
-									}
+									message = constructWisentMessage(3+num_words, write_data)
 									
 									# Pad write_data with zeroes for comparison against EPC.
 									check_data = header + size + address + checksum[0:2]
@@ -378,12 +321,11 @@ def doFirmwareFlashing (seen_tags):
 									# Proceed to next line.
 									index += 1
 									
-									# Call factory to do the next access.
-									fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+									fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 								except:
 									logger.info("Error when trying to construct next AccessSpec on new line.")
 									
-							# Remaining data capped by message_payload.
+						# Remaining data capped by message_payload.
 						else:
 							header  = "{:02x}".format(2+message_payload)
 							size    = "{:02x}".format(message_payload*2)
@@ -407,22 +349,14 @@ def doFirmwareFlashing (seen_tags):
 							
 							# Construct the AccessSpec.
 							try:
-								writeSpecParam = {
-									'OpSpecID': 0,
-									'MB': 3,
-									'WordPtr': 0,
-									'AccessPassword': 0,
-									'WriteDataWordCount': int(3+message_payload),
-									'WriteData': write_data.decode("hex"),
-								}
+								message = constructWisentMessage(3+message_payload, write_data)
 								
 								# Pad write_data with zeroes for comparison against EPC.
 								check_data = header + size + address + checksum[0:2]
 								words_sent += message_payload
 								remaining_length -= message_payload*4
 								
-								# Call factory to do the next access.
-								fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+								fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 							except:
 								logger.info("Error when trying to construct next AccessSpec on new line.")
 					else:
@@ -432,29 +366,22 @@ def doFirmwareFlashing (seen_tags):
 		except:
 			continue
 
+
 def tagReportCallback (llrpMsg):
-	"""Function to run each time the reader reports seeing tags."""
-	
-	global tagReport
-	global write_state
+	global tagReport, write_state
 	
 	tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
+	
+	# The reader has seen tags!
 	if len(tags):
-		#logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
-		
-		# Print EPC-96.
-		#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
-		
 		try:
 			logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]) + ", " +  str(tags[0]['OpSpecResult']['NumWordsWritten']) + " , Result=" + str(tags[0]['OpSpecResult']['Result']))
 		except:
-			#logger.info("Read EPC: " + str(tags[0]['EPC-96'][0:14]))
 			logger.debug("")
 		
-		# Call protocol.
-		if not(hexfile == None):
-			doFirmwareFlashing(tags)
-		
+		wisentTransfer(tags)
+	
+	# No tags were seen.
 	else:
 		if (write_state >= 0):
 			logger.info('no tags seen')
@@ -483,11 +410,6 @@ def tagReportCallback (llrpMsg):
 				timeout = 0
 				success_count = 0
 						
-				accessSpecStopParam = {
-					'AccessSpecStopTriggerType': 1,
-					'OperationCountValue': int(OCV),
-				}
-				
 				# Throttle speed.
 				if (message_payload > MIN_SPEED):
 					# Undo progress.
@@ -502,17 +424,8 @@ def tagReportCallback (llrpMsg):
 				# Can't be throttled further, just resend the current message.
 				else:
 					try:
-						writeSpecParam = {
-							'OpSpecID': 0,
-							'MB': 3,
-							'WordPtr': 0,
-							'AccessPassword': 0,
-							'WriteDataWordCount': int(4),
-							'WriteData': write_data.decode("hex"),
-						}
-						
-						# Call factory to do the next access.
-						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+						message = constructWisentMessage(4, write_data)
+						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 						return
 					except:
 						logger.info("Error when trying to construct next AccessSpec on new line.")
@@ -543,25 +456,15 @@ def tagReportCallback (llrpMsg):
 					
 					# Construct the AccessSpec.
 					try:
-						writeSpecParam = {
-							'OpSpecID': 0,
-							'MB': 3,
-							'WordPtr': 0,
-							'AccessPassword': 0,
-							'WriteDataWordCount': int(3+num_words),
-							'WriteData': write_data.decode("hex"),
-						}
-						
-						# Pad write_data with zeroes for comparison against EPC.
-						check_data = header + size + address + checksum[0:2]
-						words_sent += num_words
+						message          = constructWisentMessage(3+num_words, write_data)
+						check_data       = header + size + address + checksum[0:2]
+						words_sent       += num_words
 						remaining_length -= num_words*4
 						
 						# Proceed to next line.
-						index += 1
+						index            += 1
 						
-						# Call factory to do the next access.
-						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 					except:
 						logger.info("Error when trying to construct next AccessSpec on new line.")
 						
@@ -589,22 +492,14 @@ def tagReportCallback (llrpMsg):
 					
 					# Construct the AccessSpec.
 					try:
-						writeSpecParam = {
-							'OpSpecID': 0,
-							'MB': 3,
-							'WordPtr': 0,
-							'AccessPassword': 0,
-							'WriteDataWordCount': int(3+message_payload),
-							'WriteData': write_data.decode("hex"),
-						}
+						message = constructWisentMessage(3+message_payload, write_data)
 						
 						# Pad write_data with zeroes for comparison against EPC.
-						check_data = header + size + address + checksum[0:2]
-						words_sent += message_payload
+						check_data       = header + size + address + checksum[0:2]
+						words_sent       += message_payload
 						remaining_length -= message_payload*4
 						
-						# Call factory to do the next access.
-						fac.nextAccess(readParam=None, writeParam=writeSpecParam, stopParam=accessSpecStopParam)
+						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
 					except:
 						logger.info("Error when trying to construct next AccessSpec on new line.")
 			else:
@@ -729,7 +624,7 @@ def main ():
 		fac.addTagReportCallback(tagReportCallback)
 		
 		# Start Wisent transfer session.
-		fac.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, access)
+		fac.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, startWisentTransfer)
 		
 		# Add timeout to reader connect attempt.
 		for host in args.host:
