@@ -31,7 +31,7 @@ OCV                            = 15     # Number of operations per command in op
 TIMEOUT_VALUE                  = 20     # Number of NACKs before timeout.              (N_threshold)
 MAX_RESEND_VALUE               = 3      # Maximum number of resends.                   (R_max)
 MAX_PAYLOAD                    = 16     # Maximum message payload size after throttle. (S_r)
-MIN_PAYLOAD                      = 1      # Minimum message payload size after throttle.
+MIN_PAYLOAD                    = 1      # Minimum message payload size after throttle.
 THROTTLE_DOWN                  = 1      # Temporary throttle down mechanic. (S_p+1 = S_p/T_down)
 THROTTLE_UP                    = 0      # Temporaty throttle up mechanic.   (S_p+1 = S_p + T_up)
 CONSECUTIVE_MESSAGES_THRESHOLD = 5      # Consecutive successful messages before throttle up. (M_threshold)
@@ -59,7 +59,7 @@ write_data                 = None
 check_data                 = None
 write_state                = None
 resend_count               = 0
-timeout                    = 0
+nack_counter               = 0
 remaining_length           = 0
 consecutive_messages_count = 0
 message_payload            = 16     # Maximum message payload size in words.       (S_p)
@@ -134,7 +134,7 @@ def wisentTransfer (seen_tags):
 	global write_state, current_line, index
 	global write_data, check_data
 	global words_sent
-	global timeout
+	global nack_counter
 	global resend_count
 	global remaining_length
 	global message_payload
@@ -149,14 +149,15 @@ def wisentTransfer (seen_tags):
 			if (tag['EPC-96'][0:4] == "1337" and write_state >= 0):
 				# ACK
 				if (seen_tags[0]['EPC-96'][4:14] == check_data.lower()):
-					timeout      = 0
+					nack_counter = 0
 					resend_count = 0
 					current_time = time.time()
 					progress_string = "(" + str(words_sent) + "/" + str(total_words_to_send) + ") --- Time elapsed: %.3f secs" % (current_time - start_time)
 					
 					consecutive_messages_count += 1
 					
-					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD and message_payload < 16):
+					# Throttle up.
+					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD and message_payload < MAX_PAYLOAD):
 						consecutive_messages_count = 0
 						message_payload = min(MAX_PAYLOAD, message_payload+THROTTLE_UP)
 					
@@ -171,7 +172,8 @@ def wisentTransfer (seen_tags):
 							
 							try:
 								infinite_spec = {'AccessSpecStopTriggerType': 0, 'OperationCountValue': 1,}
-								message       = toLLRPMessage(1, crc_update)
+								#message       = toLLRPMessage(1, crc_update)
+								message       = toLLRPMessage(1, "b007")
 								fac.nextAccess(readParam=None, writeParam=message, stopParam=infinite_spec)
 							except:
 								logger.info("Error when trying to send boot command.")
@@ -181,17 +183,18 @@ def wisentTransfer (seen_tags):
 						if (remaining_length == 0):
 							remaining_length = len(current_line) - 12
 						
+						# Proceed only if current line has whole number of words of data.
 						if ((remaining_length % 4) == 0):
 							num_words = remaining_length / 4
 							
-							# Remaining data can be send in one go, so proceed to next line after this message.
+							# Remaining data can be sent in 1 message, so proceed to next line afterwards.
 							if (num_words <= message_payload):
 								wisent_message    = constructWisentMessage(num_words)
 								message           = toLLRPMessage(3+num_words, wisent_message[0])
 								words_sent       += num_words
 								remaining_length -= num_words*4
 								index += 1
-							# Remaining data capped by message payload, so stay on this line.
+							# Remaining data has to be split in multiple messages because of payload size.
 							else:
 								wisent_message    = constructWisentMessage(message_payload)
 								message           = toLLRPMessage(3+message_payload, wisent_message[0])
@@ -209,118 +212,57 @@ def wisentTransfer (seen_tags):
 								logger.info("Error when trying to construct next AccessSpec on new line.")
 								
 						else:
-							logger.info("Line " + str(index) + " of hex file has odd number of Bytes, which is not supported atm!")
+							logger.info("Line " + str(index) + " of hex file has odd number of bytes, which is not supported.")
 				# NACK
 				else:
-					# Generate timeout
-					if (timeout < TIMEOUT_VALUE):
-						timeout += 1
+					# Check if the nack counter has exceeded the threshold to raise timeout.
+					if (nack_counter < TIMEOUT_VALUE):
+						nack_counter += 1
 					
-					# Resend
-					elif (timeout == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
-						resend_count += 1
-						logger.info("Timeout reached. Resending... " + str(resend_count))
+					# Raise timeout.
+					elif (nack_counter == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
 						consecutive_messages_count = 0
-						timeout = 0
+						nack_counter               = 0
+						resend_count              += 1
+						logger.info("Timeout reached. Resending... " + str(resend_count))
 						
-						# Throttle speed.
+						# Throttle down and undo progress.
 						if (message_payload > MIN_PAYLOAD):
-							# Undo progress.
 							words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
-						
+							
 							if (remaining_length == 0):
 								index -= 1
-						
+							
 							remaining_length = len(current_line) - 12
 							message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
 							
-						# Can't be throttled further, just resend the current message.
-						else:
-							try:
-								message = toLLRPMessage(4, write_data)
-								fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-								return
-							except:
-								logger.info("Error when trying to construct next AccessSpec on new line.")
-							
 						num_words = remaining_length / 4
 						
-						# Remaining data can be send in one go.
+						# Remaining data can be sent in 1 message, so proceed to next line afterwards.
 						if (num_words <= message_payload):
-								header  = "{:02x}".format(2+num_words)
-								size    = "{:02x}".format(num_words*2)
-								offset  = ((len(current_line)-12)-remaining_length)/4
-								address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
-								write_data = header + size + address
-								
-								# Data
-								for x in range(0, num_words):
-									write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
-								
-								# Checksum
-								checksum = 0
-								for i in range(0, len(write_data)/2):
-									checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-								checksum = checksum % 256
-								checksum = "{:02x}".format(checksum)
-								checksum += "00"
-								
-								write_data += checksum
-								
-								# Construct the AccessSpec.
-								try:
-									message = toLLRPMessage(3+num_words, write_data)
-									
-									# Pad write_data with zeroes for comparison against EPC.
-									check_data = header + size + address + checksum[0:2]
-									words_sent += num_words
-									remaining_length -= num_words*4
-									
-									# Proceed to next line.
-									index += 1
-									
-									fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-								except:
-									logger.info("Error when trying to construct next AccessSpec on new line.")
-									
-						# Remaining data capped by message_payload.
+							wisent_message    = constructWisentMessage(num_words)
+							message           = toLLRPMessage(3+num_words, wisent_message[0])
+							words_sent       += num_words
+							remaining_length -= num_words*4
+							index += 1
+						# Remaining data has to be split in multiple messages because of payload size.
 						else:
-							header  = "{:02x}".format(2+message_payload)
-							size    = "{:02x}".format(message_payload*2)
-							offset  = ((len(current_line)-12)-remaining_length)/4
-							address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
-							write_data = header + size + address
+							wisent_message    = constructWisentMessage(message_payload)
+							message           = toLLRPMessage(3+message_payload, wisent_message[0])
+							words_sent       += message_payload
+							remaining_length -= message_payload * 4
+						
+						write_data     = wisent_message[0]
+						check_data     = wisent_message[1]
 							
-							# Data
-							for x in range(0, message_payload):
-								write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
-							
-							# Checksum
-							checksum = 0
-							for i in range(0, len(write_data)/2):
-								checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-							checksum = checksum % 256
-							checksum = "{:02x}".format(checksum)
-							checksum += "00"
-							
-							write_data += checksum
-							
-							# Construct the AccessSpec.
-							try:
-								message = toLLRPMessage(3+message_payload, write_data)
-								
-								# Pad write_data with zeroes for comparison against EPC.
-								check_data = header + size + address + checksum[0:2]
-								words_sent += message_payload
-								remaining_length -= message_payload*4
-								
-								fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-							except:
-								logger.info("Error when trying to construct next AccessSpec on new line.")
+						# Send the message to the reader.
+						try:
+							fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
+						except:
+							logger.info("Error when trying to construct next AccessSpec on new line.")
 					else:
 						logger.info("Maximum resends reached... aborting.")
 						write_state = -1
-				
 		except:
 			continue
 
@@ -344,7 +286,7 @@ def tagReportCallback (llrpMsg):
 		if (write_state >= 0):
 			logger.info('no tags seen')
 			
-			global timeout
+			global nack_counter
 			global resend_count
 			global write_data
 			global words_sent
@@ -359,107 +301,49 @@ def tagReportCallback (llrpMsg):
 				logger.info("Maximum resends reached... aborting.")
 				write_state = -1
 			
-			# Handle timeout.
-			if (timeout < TIMEOUT_VALUE):
-				timeout += 1
-			elif (timeout == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
+			# Handle nack_counter.
+			if (nack_counter < TIMEOUT_VALUE):
+				nack_counter += 1
+			elif (nack_counter == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
 				resend_count += 1
-				logger.info("Timeout reached. Resending... " + str(resend_count))
-				timeout = 0
+				logger.info("Timeout reached. Resending (line-of-sight)... " + str(resend_count))
+				nack_counter               = 0
 				consecutive_messages_count = 0
-						
+				
 				# Throttle speed.
 				if (message_payload > MIN_PAYLOAD):
-					# Undo progress.
 					words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
-				
+					
 					if (remaining_length == 0):
 						index -= 1
-				
+					
 					remaining_length = len(current_line) - 12
 					message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
 					
-				# Can't be throttled further, just resend the current message.
-				else:
-					try:
-						message = toLLRPMessage(4, write_data)
-						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-						return
-					except:
-						logger.info("Error when trying to construct next AccessSpec on new line.")
-							
 				num_words = remaining_length / 4
 				
-				# Remaining data can be send in one go.
+				# Remaining data can be sent in 1 message, so proceed to next line afterwards.
 				if (num_words <= message_payload):
-					header  = "{:02x}".format(2+num_words)
-					size    = "{:02x}".format(num_words*2)
-					offset  = ((len(current_line)-12)-remaining_length)/4
-					address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
-					write_data = header + size + address
-					
-					# Data
-					for x in range(0, num_words):
-						write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
-					
-					# Checksum
-					checksum = 0
-					for i in range(0, len(write_data)/2):
-						checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-					checksum = checksum % 256
-					checksum = "{:02x}".format(checksum)
-					checksum += "00"
-					
-					write_data += checksum
-					
-					# Construct the AccessSpec.
-					try:
-						message          = toLLRPMessage(3+num_words, write_data)
-						check_data       = header + size + address + checksum[0:2]
-						words_sent       += num_words
-						remaining_length -= num_words*4
-						
-						# Proceed to next line.
-						index            += 1
-						
-						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-					except:
-						logger.info("Error when trying to construct next AccessSpec on new line.")
-						
-				# Remaining data capped by message_payload.
+					wisent_message    = constructWisentMessage(num_words)
+					message           = toLLRPMessage(3+num_words, wisent_message[0])
+					words_sent       += num_words
+					remaining_length -= num_words*4
+					index += 1
+				# Remaining data has to be split in multiple messages because of payload size.
 				else:
-					header  = "{:02x}".format(2+message_payload)
-					size    = "{:02x}".format(message_payload*2)
-					offset  = ((len(current_line)-12)-remaining_length)/4
-					address = "{:04x}".format(int("0x"+current_line[3:7],0) + 2*offset)
-					write_data = header + size + address
+					wisent_message    = constructWisentMessage(message_payload)
+					message           = toLLRPMessage(3+message_payload, wisent_message[0])
+					words_sent       += message_payload
+					remaining_length -= message_payload * 4
+				
+				write_data     = wisent_message[0]
+				check_data     = wisent_message[1]
 					
-					# Data
-					for x in range(0, message_payload):
-						write_data += current_line[9+4*(x+offset):9+4*(x+offset+1)]
-					
-					# Checksum
-					checksum = 0
-					for i in range(0, len(write_data)/2):
-						checksum += int("0x"+ write_data[2*i:2*i+2], 0)
-					checksum = checksum % 256
-					checksum = "{:02x}".format(checksum)
-					checksum += "00"
-					
-					write_data += checksum
-					
-					# Construct the AccessSpec.
-					try:
-						message = toLLRPMessage(3+message_payload, write_data)
-						
-						# Pad write_data with zeroes for comparison against EPC.
-						check_data       = header + size + address + checksum[0:2]
-						words_sent       += message_payload
-						remaining_length -= message_payload*4
-						
-						fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-					except:
-						logger.info("Error when trying to construct next AccessSpec on new line.")
+				# Send the message to the reader.
+				try:
+					fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
+				except:
+					logger.info("Error when trying to construct next AccessSpec on new line.")
 			else:
 				logger.info("Maximum resends reached... aborting.")
 				write_state = -1
@@ -584,7 +468,7 @@ def main ():
 		# Start Wisent transfer session.
 		fac.addStateCallback(llrp.LLRPClient.STATE_INVENTORYING, startWisentTransfer)
 		
-		# Add timeout to reader connect attempt.
+		# Add nack_counter to reader connect attempt.
 		for host in args.host:
 			reactor.connectTCP(host, args.port, fac, timeout=3)
 		
