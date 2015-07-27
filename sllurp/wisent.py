@@ -1,16 +1,28 @@
-#######################################################################
-#                                                                     #
-#  ___       __   ___  ________  _______   ________   _________       #
-# |\  \     |\  \|\  \|\   ____\|\  ___ \ |\   ___  \|\___   ___\     #
-# \ \  \    \ \  \ \  \ \  \___|\ \   __/|\ \  \\ \  \|___ \  \_|     #
-#  \ \  \  __\ \  \ \  \ \_____  \ \  \_|/_\ \  \\ \  \   \ \  \      #
-#   \ \  \|\__\_\  \ \  \|____|\  \ \  \_|\ \ \  \\ \  \   \ \  \     #
-#    \ \____________\ \__\____\_\  \ \_______\ \__\\ \__\   \ \__\    #
-#     \|____________|\|__|\_________\|_______|\|__| \|__|    \|__|    #
-#                        \|_________|                                 #
-#                                                                     #
-#          Wisent - a robust downstream protocol for CRFIDs           #
-#######################################################################
+#####################################################################################################
+#                                                                                                   #
+#  ___       __   ___  ________  _______   ________   _________                                     #
+# |\  \     |\  \|\  \|\   ____\|\  ___ \ |\   ___  \|\___   ___\                                   #
+# \ \  \    \ \  \ \  \ \  \___|\ \   __/|\ \  \\ \  \|___ \  \_|                                   #
+#  \ \  \  __\ \  \ \  \ \_____  \ \  \_|/_\ \  \\ \  \   \ \  \                                    #
+#   \ \  \|\__\_\  \ \  \|____|\  \ \  \_|\ \ \  \\ \  \   \ \  \                                   #
+#    \ \____________\ \__\____\_\  \ \_______\ \__\\ \__\   \ \__\                                  #
+#     \|____________|\|__|\_________\|_______|\|__| \|__|    \|__|                                  #
+#                        \|_________|                                                               #
+#                                                                                                   #
+#          Wisent - a robust downstream protocol for CRFIDs                                         #
+#####################################################################################################
+#                                                                                                   #
+# ## Wisent has been tested and reportedly working on the following readers:                        #
+#    - Impinj Speedway R420 (FCC)                                                                   #
+#    - Impinj Speedway R1000                                                                        #
+#                                                                                                   #
+# ## Example usage:                                                                                 #
+#   bin/wisent -f <Intel Hex file> <reader IP address>                                              #
+#                                                                                                   #
+#  # Some extra options can be specied e.g. for setting the starting throttle index:                #
+#   bin/wisent -m <throttle index> -f <Intel Hex file> <reader IP address>                          #
+#                                                                                                   #
+#####################################################################################################
 
 from __future__ import print_function
 import argparse
@@ -26,12 +38,12 @@ import sllurp.llrp as llrp
 ######################################################################################################
 
 ## Wisent system constants.
-CRC_SEED                       = 0xFFFF            # CRC16 CCITT seed. Must be the same as the CRFID side.
-OCV                            = 15                # Number of operations per command in operation frame.
-TIMEOUT_VALUE                  = 20                # Number of NACKs before timeout.              (N_threshold)
-MAX_RESEND_VALUE               = 3                 # Maximum number of resends.                   (R_max)
-CONSECUTIVE_MESSAGES_THRESHOLD = 5                 # Consecutive successful messages before throttle up. (M_threshold)
-T                              = [1,2,3,4,6,7,16]  # Set of values allowed for message payload size after throttle.
+CRC_SEED                       = 0xFFFF            # CRC16 CCITT seed. Same as on CRFID side.
+OCV                            = 15                # Number of operations/command in operation frame.
+TIMEOUT_VALUE                  = 20                # Number of NACKs before timeout.  (N_threshold)
+MAX_RESEND_VALUE               = 3                 # Maximum number of resends. (R_max)
+CONSECUTIVE_MESSAGES_THRESHOLD = 5                 # Messages before throttle up. (M_threshold)
+T                              = [1,2,3,4,6,7,16]  # Set of allowed values for S_p after throttle.
 
 ######################################################################################################
 
@@ -60,7 +72,7 @@ nack_counter               = 0
 remaining_length           = 0
 consecutive_messages_count = 0
 throttle_index             = 0
-message_payload            = T[throttle_index]     # Maximum message payload size in words.       (S_p)
+message_payload            = T[throttle_index]     # Maximum message payload size in words.     (S_p)
 
 # Wisent transfer statistics.
 start_time          = None
