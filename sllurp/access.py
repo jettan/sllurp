@@ -31,13 +31,14 @@ def access (proto):
     writeSpecParam = None
     if args.write_words:
         if args.write_words > 1:
+            write_data = '\xde\xad'*args.write_words
             writeSpecParam = {
                 'OpSpecID': 0,
                 'MB': 3,
                 'WordPtr': 0,
                 'AccessPassword': 0,
                 'WriteDataWordCount': args.write_words,
-                'WriteData': '\xde\xad\xbe\xef', # XXX allow user-defined pattern
+                'WriteData': write_data, # XXX allow user-defined pattern
             }
         else:
             writeSpecParam = {
@@ -46,7 +47,7 @@ def access (proto):
                 'WordPtr': 0,
                 'AccessPassword': 0,
                 'WriteDataWordCount': args.write_words,
-                'WriteData': '\xbe\xef', # XXX allow user-defined pattern
+                'WriteData': '\x00\x00', # XXX allow user-defined pattern
             }
 
     return proto.startAccess(readWords=readSpecParam,
@@ -128,6 +129,7 @@ def main ():
     onFinish.addCallback(finish)
 
     fac = llrp.LLRPClientFactory(onFinish=onFinish,
+            duration=10.0,
             disconnect_when_done=True,
             modulation=args.modulation,
             tari=args.tari,
