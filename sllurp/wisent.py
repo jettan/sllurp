@@ -225,30 +225,26 @@ def wisentTransfer (seen_tags):
 							logger.info("Line " + str(index) + " of hex file has odd number of bytes, which is not supported.")
 				# NACK
 				else:
-					# Check if the nack counter has exceeded the threshold to raise timeout.
+					# NACK and resend mechanism.
 					if (nack_counter < TIMEOUT_VALUE):
 						nack_counter += 1
-					
-					# Raise timeout.
 					elif (nack_counter == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
-						consecutive_messages_count = 0
-						nack_counter               = 0
 						resend_count              += 1
-						logger.info("Timeout reached. Resending... " + str(resend_count))
+						nack_counter               = 0
+						consecutive_messages_count = 0
 						
-						# Throttle down and undo progress.
+						logger.info("Timeout reached. Resending (line-of-sight)... " + str(resend_count))
+						
+						# Undo progress.
+						index       = (index -1) if (remaining_length == 0) else index
 						sent_data   =  write_data[8:len(write_data)-4]
 						words_sent -=  len(sent_data)/4
-						
-						
-						if (remaining_length == 0):
-							index -= 1
-						
 						remaining_length += len(sent_data)
-						throttle_index = max(0,throttle_index - 1)
-						message_payload = T[throttle_index]
-							
-						num_words = remaining_length / 4
+						num_words         = remaining_length / 4
+						
+						# Throttle down.
+						throttle_index    = max(0,throttle_index - 1)
+						message_payload   = T[throttle_index]
 						sendWisentMessage(num_words)
 					else:
 						logger.info("Maximum resends reached... aborting.")
@@ -283,27 +279,26 @@ def tagReportCallback (llrpMsg):
 				logger.info("Maximum resends reached... aborting.")
 				write_state = -1
 			
-			# Handle nack_counter.
+			# NACK and resend mechanism.
 			if (nack_counter < TIMEOUT_VALUE):
 				nack_counter += 1
 			elif (nack_counter == TIMEOUT_VALUE and resend_count < MAX_RESEND_VALUE):
-				resend_count += 1
-				logger.info("Timeout reached. Resending (line-of-sight)... " + str(resend_count))
+				resend_count              += 1
 				nack_counter               = 0
 				consecutive_messages_count = 0
 				
-				# Throttle speed.
+				logger.info("Timeout reached. Resending (line-of-sight)... " + str(resend_count))
+				
+				# Undo progress.
+				index       = (index -1) if (remaining_length == 0) else index
 				sent_data   =  write_data[8:len(write_data)-4]
 				words_sent -=  len(sent_data)/4
-				
-				if (remaining_length == 0):
-					index -= 1
-				
 				remaining_length += len(sent_data)
-				throttle_index = max(0,throttle_index - 1)
-				message_payload = T[throttle_index]
+				num_words         = remaining_length / 4
 				
-				num_words = remaining_length / 4
+				# Throttle down.
+				throttle_index    = max(0,throttle_index - 1)
+				message_payload   = T[throttle_index]
 				sendWisentMessage(num_words)
 			else:
 				logger.info("Maximum resends reached... aborting.")
