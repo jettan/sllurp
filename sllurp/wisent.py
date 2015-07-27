@@ -235,14 +235,15 @@ def wisentTransfer (seen_tags):
 						logger.info("Timeout reached. Resending... " + str(resend_count))
 						
 						# Throttle down and undo progress.
-						if (message_payload > MIN_PAYLOAD):
-							words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
-							
-							if (remaining_length == 0):
-								index -= 1
-							
-							remaining_length = len(current_line) - 12
-							message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
+						sent_data   =  write_data[8:len(write_data)-4]
+						words_sent -=  len(sent_data)/4
+						
+						
+						if (remaining_length == 0):
+							index -= 1
+						
+						remaining_length += len(sent_data)
+						message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
 							
 						num_words = remaining_length / 4
 						sendWisentMessage(num_words)
@@ -297,15 +298,15 @@ def tagReportCallback (llrpMsg):
 				consecutive_messages_count = 0
 				
 				# Throttle speed.
-				if (message_payload > MIN_PAYLOAD):
-					words_sent -=  ((len(current_line) - 12) - (remaining_length))/4
-					
-					if (remaining_length == 0):
-						index -= 1
-					
-					remaining_length = len(current_line) - 12
-					message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
-					
+				sent_data   =  write_data[8:len(write_data)-4]
+				words_sent -=  len(sent_data)/4
+				
+				if (remaining_length == 0):
+					index -= 1
+				
+				remaining_length += len(sent_data)
+				message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
+				
 				num_words = remaining_length / 4
 				sendWisentMessage(num_words)
 			else:
