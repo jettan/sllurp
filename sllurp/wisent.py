@@ -649,40 +649,27 @@ def tagReportCallback (llrpMsg):
 
 def parse_args ():
 	global args
-	parser = argparse.ArgumentParser(description='Simple RFID Reader Inventory')
-	parser.add_argument('host', help='hostname or IP address of RFID reader',
-	        nargs='*')
-	parser.add_argument('-p', '--port', default=llrp.LLRP_PORT, type=int,
-	        help='port to connect to (default {})'.format(llrp.LLRP_PORT))
-	parser.add_argument('-t', '--time', default=10, type=float,
-	        help='number of seconds for which to inventory (default 10)')
-	parser.add_argument('-d', '--debug', action='store_true',
-	        help='show debugging output')
-	parser.add_argument('-n', '--report-every-n-tags', default=1, type=int,
-	        dest='every_n', metavar='N', help='issue a TagReport every N tags')
-	parser.add_argument('-X', '--tx-power', default=0, type=int,
-	        dest='tx_power', help='Transmit power (default 0=max power)')
-	parser.add_argument('-M', '--modulation', default='M8',
-	        help='modulation (default M8)')
-	parser.add_argument('-T', '--tari', default=0, type=int,
-	        help='Tari value (default 0=auto)')
-	parser.add_argument('-s', '--session', default=2, type=int,
-	        help='Gen2 session (default 2)')
-	parser.add_argument('-P', '--tag-population', default=4, type=int,
-	        dest='population', help="Tag Population value (default 4)")
+	parser = argparse.ArgumentParser(description='Wisent data transfer application for CRFID')
+	parser.add_argument('host', help='IP address of RFID reader', nargs='*')
+	parser.add_argument('-p', '--port', default=llrp.LLRP_PORT, type=int, help='port to connect to (default {})'.format(llrp.LLRP_PORT))
+	parser.add_argument('-t', '--time', default=10, type=float, help='number of seconds for which to inventory (default 10)')
+	parser.add_argument('-d', '--debug', action='store_true', help='show debugging output')
+	parser.add_argument('-n', '--report-every-n-tags', default=200, type=int, dest='every_n', metavar='N', help='issue a TagReport every N tags')
+	parser.add_argument('-X', '--tx-power', default=0, type=int, dest='tx_power', help='Transmit power (default 0=max power)')
+	parser.add_argument('-M', '--modulation', default='WISP5', help='modulation (default WISP5)')
+	parser.add_argument('-T', '--tari', default=0, type=int, help='Tari value (default 0=auto)')
+	parser.add_argument('-s', '--session', default=2, type=int, help='Gen2 session (default 2)')
+	parser.add_argument('-P', '--tag-population', default=32, type=int, dest='population', help="Tag Population value (default 32)")
 	
 	# read or write
 	op = parser.add_mutually_exclusive_group(required=True)
-	op.add_argument('-r', '--read-words', type=int,
-	        help='Number of words to read from MB 0 WordPtr 0')
-	op.add_argument('-w', '--write-words', type=int,
-	        help='Number of words to write to MB 0 WordPtr 0')
+	op.add_argument('-r', '--read-words', type=int, help='Number of words to read from MB 0 WordPtr 0')
+	op.add_argument('-w', '--write-words', type=int, help='Number of words to write to MB 0 WordPtr 0')
 	parser.add_argument('-l', '--logfile')
+	
 	# specify content to write
-	parser.add_argument('-c', '--write_content', action=hexact,
-	        help='Content to write when using -w, example: 0xaabb, 0x1234')
-	parser.add_argument('-f', '--filename', type=str,
-	        help='The intel hexfile to flash when using -w', dest='filename')
+	parser.add_argument('-c', '--write_content', action=hexact, help='Content to write when using -w, example: 0xaabb, 0x1234')
+	parser.add_argument('-f', '--filename', type=str, help='The intel hexfile to flash when using -w', dest='filename')
 	parser.add_argument('-m', '--maxwordcount', default=16, type=int, help='maximum number of data words to send using BlockWrite', dest='message_payload')
 	
 	args = parser.parse_args()
@@ -707,6 +694,7 @@ def init_logging ():
 	
 	logger.log(logLevel, 'log level: {}'.format(logging.getLevelName(logLevel)))
 
+
 # CRC16-CCITT, poly = 0x1021
 # Input: int, hex character.
 def crc16_ccitt(crc, data):
@@ -716,10 +704,6 @@ def crc16_ccitt(crc, data):
 	crc = (crc << 8) ^ (x << 12) ^ (x << 5) ^ (x)
 	return crc & 0xffff
 
-
-#crc_update = CRC_START
-
-#print hex(crc_update)
 
 def main ():
 	parse_args()
