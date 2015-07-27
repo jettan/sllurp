@@ -114,6 +114,36 @@ def constructWisentMessage(payload_size):
 	return [wisent_message, message_verification]
 
 
+def sendWisentMessage(n, p = ""):
+	global fac, words_sent, remaining_length, index, write_data, check_data
+	# Remaining data can be sent in 1 message, so proceed to next line afterwards.
+	
+	if (n <= message_payload):
+		wisent_message    = constructWisentMessage(n)
+		message           = toLLRPMessage(3+n, wisent_message[0])
+		words_sent       += n
+		remaining_length -= n*4
+		index += 1
+	# Remaining data has to be split in multiple messages because of payload size.
+	else:
+		wisent_message    = constructWisentMessage(message_payload)
+		message           = toLLRPMessage(3+message_payload, wisent_message[0])
+		words_sent       += message_payload
+		remaining_length -= message_payload * 4
+	
+	write_data     = wisent_message[0]
+	check_data     = wisent_message[1]
+	
+	if (len(p) > 0):
+		logger.info("Next block: " + check_data + p)
+	
+	# Send the message to the reader.
+	try:
+		fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
+	except:
+		logger.info("Error when trying to construct next AccessSpec on new line.")
+
+
 # Start Wisent transfer session with a Write command.
 def startWisentTransfer (proto):
 	global write_state, check_data, start_time
@@ -144,6 +174,8 @@ def wisentTransfer (seen_tags):
 	for tag in seen_tags:
 		if (write_state == -1):
 			write_state = -2
+			
+			# Uncomment this line to shutdown immediately after transfer.
 			fac.politeShutdown()
 		try:
 			if (tag['EPC-96'][0:4] == "1337" and write_state >= 0):
@@ -186,31 +218,7 @@ def wisentTransfer (seen_tags):
 						# Proceed only if current line has whole number of words of data.
 						if ((remaining_length % 4) == 0):
 							num_words = remaining_length / 4
-							
-							# Remaining data can be sent in 1 message, so proceed to next line afterwards.
-							if (num_words <= message_payload):
-								wisent_message    = constructWisentMessage(num_words)
-								message           = toLLRPMessage(3+num_words, wisent_message[0])
-								words_sent       += num_words
-								remaining_length -= num_words*4
-								index += 1
-							# Remaining data has to be split in multiple messages because of payload size.
-							else:
-								wisent_message    = constructWisentMessage(message_payload)
-								message           = toLLRPMessage(3+message_payload, wisent_message[0])
-								words_sent       += message_payload
-								remaining_length -= message_payload * 4
-							
-							write_data     = wisent_message[0]
-							check_data     = wisent_message[1]
-							logger.info("Next block: " + check_data  + progress_string)
-								
-							# Send the message to the reader.
-							try:
-								fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-							except:
-								logger.info("Error when trying to construct next AccessSpec on new line.")
-								
+							sendWisentMessage(num_words, progress_string)
 						else:
 							logger.info("Line " + str(index) + " of hex file has odd number of bytes, which is not supported.")
 				# NACK
@@ -237,29 +245,7 @@ def wisentTransfer (seen_tags):
 							message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
 							
 						num_words = remaining_length / 4
-						
-						# Remaining data can be sent in 1 message, so proceed to next line afterwards.
-						if (num_words <= message_payload):
-							wisent_message    = constructWisentMessage(num_words)
-							message           = toLLRPMessage(3+num_words, wisent_message[0])
-							words_sent       += num_words
-							remaining_length -= num_words*4
-							index += 1
-						# Remaining data has to be split in multiple messages because of payload size.
-						else:
-							wisent_message    = constructWisentMessage(message_payload)
-							message           = toLLRPMessage(3+message_payload, wisent_message[0])
-							words_sent       += message_payload
-							remaining_length -= message_payload * 4
-						
-						write_data     = wisent_message[0]
-						check_data     = wisent_message[1]
-							
-						# Send the message to the reader.
-						try:
-							fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-						except:
-							logger.info("Error when trying to construct next AccessSpec on new line.")
+						sendWisentMessage(num_words)
 					else:
 						logger.info("Maximum resends reached... aborting.")
 						write_state = -1
@@ -321,29 +307,7 @@ def tagReportCallback (llrpMsg):
 					message_payload = max(MIN_PAYLOAD, message_payload / THROTTLE_DOWN)
 					
 				num_words = remaining_length / 4
-				
-				# Remaining data can be sent in 1 message, so proceed to next line afterwards.
-				if (num_words <= message_payload):
-					wisent_message    = constructWisentMessage(num_words)
-					message           = toLLRPMessage(3+num_words, wisent_message[0])
-					words_sent       += num_words
-					remaining_length -= num_words*4
-					index += 1
-				# Remaining data has to be split in multiple messages because of payload size.
-				else:
-					wisent_message    = constructWisentMessage(message_payload)
-					message           = toLLRPMessage(3+message_payload, wisent_message[0])
-					words_sent       += message_payload
-					remaining_length -= message_payload * 4
-				
-				write_data     = wisent_message[0]
-				check_data     = wisent_message[1]
-					
-				# Send the message to the reader.
-				try:
-					fac.nextAccess(readParam=None, writeParam=message, stopParam=global_stop_param)
-				except:
-					logger.info("Error when trying to construct next AccessSpec on new line.")
+				sendWisentMessage(num_words)
 			else:
 				logger.info("Maximum resends reached... aborting.")
 				write_state = -1
