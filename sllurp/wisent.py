@@ -43,7 +43,10 @@ OCV                            = 15                # Number of operations/comman
 TIMEOUT_VALUE                  = 20                # Number of NACKs before timeout.  (N_threshold)
 MAX_RESEND_VALUE               = 3                 # Maximum number of resends. (R_max)
 CONSECUTIVE_MESSAGES_THRESHOLD = 5                 # Messages before throttle up. (M_threshold)
-T                              = [1,2,3,4,6,7,16]  # Set of allowed values for S_p after throttle.
+T                              = [1,2,3,4,6,8,16]  # Set of allowed values for S_p after throttle.
+THROTTLE_DOWN_LOS              = 2                 # Decrease throttle index by this on LOS.
+THROTTLE_DOWN                  = 1                 # Decrease throttle index by this on wrong EPC
+THROTTLE_UP                    = 1                 # Increase throttle index by this on threshold.
 
 ######################################################################################################
 
@@ -128,8 +131,8 @@ def sendWisentMessage(n, p = ""):
 	global fac, words_sent, remaining_length, index, write_data, check_data
 	
 	# Decide whether whole line can be sent with 1 message or has to be split.
-	n                 = n if (n <= message_payload) else message_payload
 	index             = (index + 1) if (n <= message_payload) else index
+	n                 = n if (n <= message_payload) else message_payload
 	
 	wisent_message    = constructWisentMessage(n)
 	message           = toLLRPMessage(3+n, wisent_message[0])
@@ -192,7 +195,7 @@ def wisentTransfer (seen_tags):
 					# Throttle up.
 					if (consecutive_messages_count >= CONSECUTIVE_MESSAGES_THRESHOLD):
 						consecutive_messages_count = 0
-						throttle_index = min(len(T)-1, throttle_index+1)
+						throttle_index = min(len(T)-1, throttle_index + THROTTLE_UP)
 						message_payload = T[throttle_index]
 					
 					# Start of a new line.
@@ -239,11 +242,12 @@ def wisentTransfer (seen_tags):
 						index       = (index -1) if (remaining_length == 0) else index
 						sent_data   =  write_data[8:len(write_data)-4]
 						words_sent -=  len(sent_data)/4
+						logger.info("Undone words: " + str(len(sent_data)/4))
 						remaining_length += len(sent_data)
 						num_words         = remaining_length / 4
 						
 						# Throttle down.
-						throttle_index    = max(0,throttle_index - 1)
+						throttle_index    = max(0,throttle_index - THROTTLE_DOWN)
 						message_payload   = T[throttle_index]
 						sendWisentMessage(num_words)
 					else:
@@ -293,11 +297,12 @@ def tagReportCallback (llrpMsg):
 				index       = (index -1) if (remaining_length == 0) else index
 				sent_data   =  write_data[8:len(write_data)-4]
 				words_sent -=  len(sent_data)/4
+				logger.info("Undone words: " + str(len(sent_data)/4))
 				remaining_length += len(sent_data)
 				num_words         = remaining_length / 4
 				
 				# Throttle down.
-				throttle_index    = max(0,throttle_index - 1)
+				throttle_index    = max(0,throttle_index - THROTTLE_DOWN_LOS)
 				message_payload   = T[throttle_index]
 				sendWisentMessage(num_words)
 			else:
