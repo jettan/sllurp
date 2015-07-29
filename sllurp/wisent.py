@@ -329,7 +329,7 @@ def parse_args ():
 	parser.add_argument('-P', '--tag-population', default=32, type=int, dest='population', help="Tag Population value (default 32)")
 	parser.add_argument('-l', '--logfile')
 	
-	parser.add_argument('-f', '--filename', type=str, help='the Intel Hex file to transfer', dest='filename')
+	parser.add_argument('-f', '--filename', type=str, help='the Intel Hex file to transfer', dest='filename', required=True)
 	parser.add_argument('-m', '--throttleindex', default=6, type=int, help='start size of message payload in words according to set T', dest='throttle_index')
 	
 	args = parser.parse_args()
@@ -436,9 +436,6 @@ def main ():
 		
 		# Start the sllurp reactor.
 		reactor.run()
-		
-	else:
-		logger.info("File not specified!")
 
 if __name__ == '__main__':
 	main()
