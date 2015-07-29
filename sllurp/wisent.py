@@ -44,9 +44,9 @@ TIMEOUT_VALUE                  = 20                # Number of NACKs before time
 MAX_RESEND_VALUE               = 3                 # Maximum number of resends. (R_max)
 CONSECUTIVE_MESSAGES_THRESHOLD = 10                # Messages before throttle up. (M_threshold)
 T                              = [1,2,3,4,6,8,16]  # Set of allowed values for S_p after throttle.
-THROTTLE_DOWN_LOS              = 0                 # Decrease throttle index by this on LOS.
-THROTTLE_DOWN                  = 0                 # Decrease throttle index by this on wrong EPC
-THROTTLE_UP                    = 0                 # Increase throttle index by this on threshold.
+THROTTLE_DOWN_LOS              = 3                 # Decrease throttle index by this on LOS.
+THROTTLE_DOWN                  = 2                 # Decrease throttle index by this on wrong EPC
+THROTTLE_UP                    = 1                 # Increase throttle index by this on threshold.
 
 ######################################################################################################
 
