@@ -45,7 +45,7 @@ set(gcf,'Renderer','painters');
 
 
 s = 6; % Number of OPS.
-yLabelName = 'SOPS (\psi)';
+yLabelName = 'SOPS';
 
 
 hold on;
@@ -79,7 +79,7 @@ set(gcf,'Renderer','painters');
 
 
 s = 4; % Efficiency
-yLabelName = 'Efficiency (\eta)';
+yLabelName = 'Efficiency';
 
 hold on;
 scatter (xdata,d2(:,:,s),'x');
@@ -111,7 +111,7 @@ set(gcf,'Renderer','painters');
 
 hold on
 s = 5; % Throughput
-yLabelName = 'Throughput (\theta) [B/sec]';
+yLabelName = 'Throughput [B/sec]';
 
 scatter (xdata,d2(:,:,s),'x');
 scatter (xdata,d3(:,:,s),'+')
